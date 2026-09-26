@@ -1,0 +1,16 @@
+{
+  "name": "Studio Noir — Hair & Style Atelier",
+  "short_name": "Studio Noir",
+  "description": "Luksusowe studio fryzjerskie — koloryzacja, cięcie, stylizacja i grooming.",
+  "start_url": "/studio-noir/index.html",
+  "display": "standalone",
+  "background_color": "#0b0b0e",
+  "theme_color": "#0b0b0e",
+  "icons": [
+    {
+      "src": "assets/icons/favicon.svg",
+      "sizes": "64x64",
+      "type": "image/svg+xml"
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+:root {
+  color-scheme: light dark;
+  --color-ink-900: #0b0b0e;
+  --color-ink-800: #141418;
+  --color-ink-700: #1c1c22;
+  --color-ink-200: #e8e7e4;
+  --color-ink-100: #f7f5f2;
+  --color-gold-400: #c7a47e;
+  --color-gold-300: #d6b996;
+  --color-accent-500: #9d8061;
+  --color-white: #ffffff;
+  --color-shadow: rgba(0, 0, 0, 0.2);
+  --color-glass: rgba(20, 20, 24, 0.65);
+  --color-glass-light: rgba(255, 255, 255, 0.75);
+
+  --font-display: "Playfair Display", serif;
+  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --fs-xs: 0.75rem;
+  --fs-sm: 0.875rem;
+  --fs-md: 1rem;
+  --fs-lg: 1.125rem;
+  --fs-xl: 1.5rem;
+  --fs-2xl: 2.25rem;
+  --fs-3xl: 3.25rem;
+
+  --space-2xs: 0.25rem;
+  --space-xs: 0.5rem;
+  --space-sm: 0.75rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  --space-2xl: 3rem;
+  --space-3xl: 4.5rem;
+
+  --radius-sm: 0.5rem;
+  --radius-md: 1rem;
+  --radius-lg: 1.5rem;
+  --radius-pill: 999px;
+
+  --shadow-sm: 0 6px 18px rgba(0, 0, 0, 0.12);
+  --shadow-md: 0 24px 48px rgba(0, 0, 0, 0.18);
+
+  --break-sm: 600px;
+  --break-md: 900px;
+  --break-lg: 1200px;
+}
+
+.theme--light {
+  --color-ink-900: #f5f1ec;
+  --color-ink-800: #ffffff;
+  --color-ink-700: #ece7e1;
+  --color-ink-200: #2b2b33;
+  --color-ink-100: #1f1f26;
+  --color-gold-400: #9d8061;
+  --color-gold-300: #b59676;
+  --color-accent-500: #7c5d3e;
+  --color-shadow: rgba(10, 10, 12, 0.12);
+  --color-glass: rgba(250, 249, 247, 0.75);
+  --color-glass-light: rgba(255, 255, 255, 0.9);
+}

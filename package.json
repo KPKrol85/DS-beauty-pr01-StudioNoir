@@ -1,0 +1,20 @@
+{
+  "name": "studio-noir",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build:css": "postcss assets/css/style.css -o assets/css/style.min.css",
+    "build:js": "esbuild assets/js/app.js --bundle --minify --sourcemap --outfile=assets/js/app.min.js",
+    "images": "imagemin assets/img/* --out-dir=assets/img",
+    "dev": "python -m http.server 5173",
+    "build": "npm run build:css && npm run build:js"
+  },
+  "devDependencies": {
+    "cssnano": "^6.0.0",
+    "imagemin-cli": "^7.0.0",
+    "postcss": "^8.4.38",
+    "postcss-cli": "^11.0.0",
+    "postcss-import": "^16.1.0",
+    "esbuild": "^0.25.0"
+  }
+}
