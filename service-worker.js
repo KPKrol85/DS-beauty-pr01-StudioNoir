@@ -1,72 +1,31 @@
-const CACHE_NAME = "studio-noir-v1";
-const ASSETS = [
-  "/studio-noir/",
-  "/studio-noir/index.html",
-  "/studio-noir/offline.html",
-  "/studio-noir/css/style.css",
-  "/studio-noir/css/style.min.css",
-  "/studio-noir/css/tokens.css",
-  "/studio-noir/css/base.css",
-  "/studio-noir/css/layout.css",
-  "/studio-noir/css/components.css",
-  "/studio-noir/css/sections.css",
-  "/studio-noir/js/main.js",
-  "/studio-noir/js/reveal.js",
-  "/studio-noir/js/header.js",
-  "/studio-noir/js/nav.js",
-  "/studio-noir/js/lightbox.js",
-  "/studio-noir/js/booking.js",
-  "/studio-noir/js/theme.js",
-  "/studio-noir/assets/img/hero-editorial.svg",
-  "/studio-noir/assets/icons/favicon.svg"
-];
-
-const OFFLINE_PAGE = "/studio-noir/offline.html";
-
-function isDocumentRequest(request) {
-  return request.mode === "navigate" || request.destination === "document";
-}
+// Vite injects the final production URLs and a content-derived cache version.
+const CACHE_NAME = "studio-noir-" + __STUDIO_NOIR_CACHE_VERSION__;
+const ASSETS = __STUDIO_NOIR_PRECACHE__;
+const OFFLINE_PAGE = "/offline.html";
 
 async function handleDocumentRequest(request) {
   try {
-    const response = await fetch(request);
-
-    if (response && response.ok) {
-      const cache = await caches.open(CACHE_NAME);
-      cache.put(request, response.clone());
-    }
-
-    return response;
-  } catch (error) {
-    const offlinePage = await caches.match(OFFLINE_PAGE);
-    if (offlinePage) return offlinePage;
-
-    return Response.error();
+    return await fetch(request);
+  } catch {
+    const cache = await caches.open(CACHE_NAME);
+    const pathname = new URL(request.url).pathname;
+    // Netlify also serves clean URLs such as /privacy; queries do not change the shell.
+    const path = pathname.replace(/\/$/, "") || "/index.html";
+    const page = path.endsWith(".html") ? path : `${path}.html`;
+    return (await cache.match(page)) || (await cache.match(OFFLINE_PAGE)) || Response.error();
   }
 }
 
 async function handleAssetRequest(request) {
-  const cached = await caches.match(request);
-  if (cached) return cached;
-
-  try {
-    const response = await fetch(request);
-
-    if (response && response.ok) {
-      const cache = await caches.open(CACHE_NAME);
-      cache.put(request, response.clone());
-    }
-
-    return response;
-  } catch (error) {
-    return Response.error();
-  }
+  const cache = await caches.open(CACHE_NAME);
+  // Use the same key as precaching: Vary: Origin differs for module/font requests.
+  const path = new URL(request.url).pathname;
+  return (await cache.match(path)) || fetch(request);
 }
 
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches
-      .open(CACHE_NAME)
+    caches.open(CACHE_NAME)
       .then((cache) => cache.addAll(ASSETS))
       .then(() => self.skipWaiting())
   );
@@ -74,26 +33,24 @@ self.addEventListener("install", (event) => {
 
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(
+    caches.keys()
+      .then((keys) => Promise.all(
         keys
-          .filter((key) => key !== CACHE_NAME)
+          .filter((key) => key.startsWith("studio-noir-") && key !== CACHE_NAME)
           .map((key) => caches.delete(key))
-      )
-    )
+      ))
+      .then(() => self.clients.claim())
   );
-  self.clients.claim();
 });
 
 self.addEventListener("fetch", (event) => {
   const { request } = event;
+  const url = new URL(request.url);
+  if (request.method !== "GET" || url.origin !== self.location.origin) return;
 
-  if (request.method !== "GET") return;
-
-  if (isDocumentRequest(request)) {
+  if (request.mode === "navigate") {
     event.respondWith(handleDocumentRequest(request));
-    return;
+  } else if (ASSETS.includes(url.pathname)) {
+    event.respondWith(handleAssetRequest(request));
   }
-
-  event.respondWith(handleAssetRequest(request));
 });

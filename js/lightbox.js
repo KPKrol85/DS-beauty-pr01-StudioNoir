@@ -57,9 +57,8 @@ export const initLightbox = () => {
 
   triggers.forEach((trigger) => {
     trigger.addEventListener("click", () => {
-      const src = trigger.getAttribute("data-lightbox");
       const img = trigger.querySelector("img");
-      open(src, img?.alt);
+      open(img.currentSrc || img.src, img.alt);
     });
   });
 

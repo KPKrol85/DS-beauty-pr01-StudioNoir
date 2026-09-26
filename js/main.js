@@ -22,8 +22,10 @@ if (document.readyState === "loading") {
   init();
 }
 
-if ("serviceWorker" in navigator) {
+if (import.meta.env.PROD && "serviceWorker" in navigator) {
   window.addEventListener("load", () => {
-    navigator.serviceWorker.register("/studio-noir/service-worker.js");
+    navigator.serviceWorker.register("/service-worker.js").catch((error) => {
+      console.error("Service worker registration failed:", error);
+    });
   });
 }
