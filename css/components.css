@@ -76,6 +76,26 @@
   text-transform: uppercase;
 }
 
+.table-scroll {
+  overflow-x: auto;
+  margin-bottom: var(--space-md);
+}
+
+.table {
+  width: 100%;
+  min-width: 48rem;
+  border-collapse: collapse;
+  font-size: var(--fs-sm);
+}
+
+.table th,
+.table td {
+  padding: var(--space-xs) var(--space-sm);
+  border: 1px solid rgba(214, 185, 150, 0.4);
+  text-align: left;
+  vertical-align: top;
+}
+
 .header {
   position: sticky;
   top: 0;
