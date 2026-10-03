@@ -1,15 +1,21 @@
 # Studio Noir — UI Improvements
 
 **Analysis date:** 2026-09-28
+**Completion date:** 2026-10-03
+**Status:** Completed
 **Project type:** Static multi-page website (Vite MPA build; vanilla HTML, CSS custom properties, and ES modules) — Polish-language demonstration site for a hair studio, KP_Code Digital Studio
 **Analysis mode:** Evidence-based UI improvement review
 **Focus:** Project-wide UI
 
 ## Improvement overview
 
-The interface is built on a layered stylesheet (`tokens.css` → `base.css` → `layout.css` → `components.css` → `sections.css`) with BEM naming, a dark editorial palette, and a small set of components shared by the home page and the three legal documents. The strongest opportunities lie between the token layer and the components: headings inherit body leading and user-agent sizes instead of a defined scale, the `.button` and `.pill` components depend on their host element for their box and cover only part of their interaction states, the legal documents inherit resets written for interface lists and links, and the sticky header changes its in-flow height when it condenses. The proposals below strengthen these existing systems without altering the visual identity, content, or architecture. Confirmed defects found during the analysis are excluded; those that affect confidence in the proposals are listed under Analysis limitations.
+This review identified five project-wide UI improvements focused on shared typography, long-form content, interaction components, booking controls, and sticky-header stability.
 
-## Proposed improvements
+All five selected improvements were implemented and verified. The completed work strengthened the existing design system without changing the project's core visual identity or architecture.
+
+The `Current state`, `Proposed improvement`, `Expected value`, `Implementation scope`, and `Acceptance criteria` fields below preserve the original pre-implementation analysis for archival traceability. Each item's `Status` records the completed implementation outcome.
+
+## Completed improvements
 
 ### IMP-UI-01 — Define a heading type scale with display line-height
 
@@ -76,16 +82,25 @@ The interface is built on a layered stylesheet (`tokens.css` → `base.css` → 
 - **Impact:** Medium
 - **Effort:** Medium
 
-## Selection summary
+## Completion summary
 
-These five were selected because they strengthen shared systems with the widest reach: heading typography, the button component, and the header appear on every content page; the booking widget is the home page's primary interaction; and the legal documents are three of the four content pages. Each is supported by source evidence and Chromium measurements.
+All five selected improvements were completed.
 
-IMP-UI-02 should use the heading tokens from IMP-UI-01 for document headings. The form-control reset in IMP-UI-03 also changes the line-height of the `<button>`-based booking options, so IMP-UI-04 is best built on top of it. IMP-UI-03 and IMP-UI-05 both touch the header's mini call to action, which should be sized in one place. IMP-UI-01, IMP-UI-03, and IMP-UI-05 can be implemented independently.
+Together they strengthened shared systems with broad project impact: heading typography, long-form content, button interactions, booking-selection controls, and sticky-header behavior.
 
-Two further confirmed opportunities were ranked below these because each is confined to a single section: at 375px every pricing row splits its price across two lines and insets its content 24px from the section edge (`css/sections.css:78-95`), and the About section's header-to-content gap is 108px against 48px elsewhere because a header margin stacks with a grid gap (`css/layout.css:18-29`).
+The implementation sequence preserved the original dependencies between the improvements: the legal-document work built on the heading system, the booking-control work followed the button normalization, and the final header pass consolidated the mini call-to-action sizing and sticky-header geometry.
 
-## Analysis limitations
+Two additional UI opportunities identified during the original review were intentionally not included in this completed round:
 
-- The bundled WOFF2 files in `assets/fonts/` contain only a Latin Extended subset: in Chromium, nearly all basic Latin letters, digits, Latin-1 characters such as "ó", and typographic punctuation fall back to system fonts, and only characters such as "ą", "ł", and "ś" render in Playfair Display and Inter. All measurements therefore reflect fallback-font rendering. This confirmed asset defect belongs in an audit; the typographic values in IMP-UI-01 and IMP-UI-02 and the wrapping measurements in IMP-UI-05 should be re-validated once the font files are corrected.
-- The light theme, applied by default when the system prefers light mode (`js/theme.js:14`), keeps component surfaces hardcoded to dark `rgba()` values; measured contrast of text on several components ranged from 1.32:1 on price tags to 2.93:1 on booking steps. This confirmed defect belongs in an audit and is not proposed here. The proposals were evaluated in the dark theme, and the color-bearing states in IMP-UI-03 to IMP-UI-05 should be verified in both themes once it is addressed.
-- Runtime checks used Chromium only, against a temporary local static server, at 1440×900, 1536×730, and widths from 430px down to 360px. Rendering was paused in the inspection environment, so screenshots, scroll events, and transitions were unavailable; results come from computed styles and synchronous layout measurements, and the header state oscillation described in IMP-UI-05 remains unconfirmed.
+- at 375px, pricing rows can split prices across two lines and inset their content 24px from the section edge;
+- the About section can have a larger header-to-content gap than surrounding sections because header margin and grid gap accumulate.
+
+These remain candidates for a future UI review rather than unfinished work in this document.
+
+## Original analysis limitations and follow-up context
+
+The following limitations and defects were identified during the original analysis. They were not part of the five completed improvements unless explicitly addressed by an individual implementation.
+
+- The bundled WOFF2 files in `assets/fonts/` contain only a Latin Extended subset: in Chromium, nearly all basic Latin letters, digits, Latin-1 characters such as "ó", and typographic punctuation fall back to system fonts, and only characters such as "ą", "ł", and "ś" render in Playfair Display and Inter. Measurements from the original analysis therefore reflected fallback-font rendering. This remains a separate asset-quality issue and should be re-evaluated when font work is undertaken.
+- The original review identified light-theme contrast problems caused by component surfaces using hardcoded dark `rgba()` values. This was treated as a separate defect rather than part of this UI-improvement round. Where individual completed improvements introduced or changed color-bearing states, their completion status records the later dark/light verification performed for that task.
+- The initial analysis used Chromium against a temporary local server and had limited runtime rendering during inspection. Those constraints apply to the original analysis only. The `Status` entries above record the later focused verification performed during implementation of each completed improvement.
