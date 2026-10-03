@@ -26,12 +26,11 @@ export const initBooking = () => {
   };
 
   const handleSelect = (buttons, value, setter) => {
-    buttons.forEach((btn) => btn.classList.remove("is-selected"));
     setter(value);
     buttons.forEach((btn) => {
-      if (btn.textContent === value) {
-        btn.classList.add("is-selected");
-      }
+      const isSelected = btn.textContent === value;
+      btn.classList.toggle("is-selected", isSelected);
+      btn.setAttribute("aria-pressed", String(isSelected));
     });
     updateSummary();
   };
