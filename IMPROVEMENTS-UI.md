@@ -92,10 +92,18 @@ The implementation sequence preserved the original dependencies between the impr
 
 Two additional UI opportunities identified during the original review were intentionally not included in this completed round:
 
-- at 375px, pricing rows can split prices across two lines and inset their content 24px from the section edge;
+- at 375px, pricing rows can split prices across two lines and inset their content 24px from the section edge (later addressed by IMP-UI-06);
 - the About section can have a larger header-to-content gap than surrounding sections because header margin and grid gap accumulate.
 
-These remain candidates for a future UI review rather than unfinished work in this document.
+The remaining opportunity is a candidate for a future UI review rather than unfinished work in this document.
+
+## Follow-up improvements
+
+### IMP-UI-06 — Improve mobile pricing-row layout
+
+- **Status:** Completed — rebuilt the pricing row as a named-area grid on flat markup with BEM element classes, matching the service cards. Below 600px the service name and price share the first line on a common baseline, the description spans the full row, and rows align flush with the section edge; from 600px the original inset two-column layout with a vertically centered price is preserved. Prices no longer wrap, and descriptions use `text-wrap: pretty` to avoid a single-word last line. Verified at 320, 360, 375, 390, and 414px, on both sides of the 600px boundary, and at 768 and 1440px in both themes: no horizontal overflow, every price on one line, and tablet and desktop row geometry unchanged.
+- **Affected area:** The pricing section on the home page.
+- **Evidence:** `css/sections.css:86-112`, `css/sections.css:280-289`, `index.html:173-187`
 
 ## Original analysis limitations and follow-up context
 

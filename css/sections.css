@@ -81,16 +81,32 @@
   gap: var(--space-md);
 }
 
+/* Narrow screens: the name and price share the first line, and the description
+   takes the full row width beneath them. Rows sit flush with the section edge. */
 .pricing__item {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: var(--space-md);
-  padding: var(--space-lg);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-areas:
+    "title price"
+    "desc desc";
+  align-items: baseline;
+  column-gap: var(--space-md);
+  padding: var(--space-lg) 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
+.pricing__title {
+  grid-area: title;
+}
+
+.pricing__desc {
+  grid-area: desc;
+  text-wrap: pretty;
+}
+
 .pricing__price {
+  grid-area: price;
+  white-space: nowrap;
   font-weight: 600;
   color: var(--color-gold-300);
 }
@@ -259,6 +275,17 @@
 
   .values {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .pricing__item {
+    grid-template-areas:
+      "title price"
+      "desc price";
+    padding: var(--space-lg);
+  }
+
+  .pricing__price {
+    align-self: center;
   }
 
   .gallery {
