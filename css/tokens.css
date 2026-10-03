@@ -12,9 +12,13 @@
   --color-shadow: rgba(0, 0, 0, 0.2);
   --color-glass: rgba(20, 20, 24, 0.65);
   --color-glass-light: rgba(255, 255, 255, 0.75);
+  /* Raised glass for bars floating over scrolled content; lifted off the page tone. */
+  --color-glass-raised: rgba(28, 28, 34, 0.85);
   /* Translucent accent washes for hovered and pressed interactive surfaces. */
   --color-state-hover: rgba(199, 164, 126, 0.12);
   --color-state-active: rgba(199, 164, 126, 0.24);
+  /* Accent hairline separating a raised surface from the content beneath it. */
+  --color-line-accent: rgba(199, 164, 126, 0.36);
 
   --font-display: "Playfair Display", serif;
   --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -48,6 +52,10 @@
 
   /* Minimum block size shared by interactive controls (48px touch target). */
   --size-control: 3rem;
+  /* Minimum block size of the sticky header bar, excluding its hairline. It
+     fits the two-line brand lockup and holds the bar at one height across
+     scroll states and viewport widths. */
+  --size-header: 4.25rem;
 
   --shadow-sm: 0 6px 18px rgba(0, 0, 0, 0.12);
   --shadow-md: 0 24px 48px rgba(0, 0, 0, 0.18);
@@ -69,6 +77,8 @@
   --color-shadow: rgba(10, 10, 12, 0.12);
   --color-glass: rgba(250, 249, 247, 0.75);
   --color-glass-light: rgba(255, 255, 255, 0.9);
+  --color-glass-raised: rgba(255, 255, 255, 0.85);
   --color-state-hover: rgba(157, 128, 97, 0.16);
   --color-state-active: rgba(157, 128, 97, 0.3);
+  --color-line-accent: rgba(157, 128, 97, 0.4);
 }

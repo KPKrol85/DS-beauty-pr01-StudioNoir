@@ -260,23 +260,24 @@
   backdrop-filter: blur(16px);
   background: rgba(11, 11, 14, 0.7);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-  transition: padding 0.3s ease, background 0.3s ease;
+  transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
+/* Surface, edge, and elevation only: the sticky header stays in flow, so the
+   scrolled state must never change its size or the page would shift. */
 .header--scrolled {
-  background: var(--color-glass);
+  background: var(--color-glass-raised);
+  border-bottom-color: var(--color-line-accent);
+  box-shadow: var(--shadow-md);
 }
 
 .header__inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--space-md) 0;
-  gap: var(--space-md);
-}
-
-.header--scrolled .header__inner {
+  min-height: var(--size-header);
   padding: var(--space-xs) 0;
+  gap: var(--space-md);
 }
 
 .logo {
@@ -378,18 +379,30 @@
     padding-bottom: calc(5.25rem + env(safe-area-inset-bottom, 0px));
   }
 
+  /* Tighter gaps and sub-line tracking keep the full lockup on one row beside
+     the mini CTA from 414px, with headroom for wider fallback fonts. */
+  .header__inner {
+    gap: var(--space-sm);
+  }
+
+  .logo__sub {
+    letter-spacing: 0.12em;
+  }
+
+  /* Compact .button: smallest type-scale size, one-line label, and the
+     component's own tracking and state transitions. */
   .header__mini-cta {
     display: inline-flex;
     margin-left: auto;
-    margin-right: var(--space-2xs);
-    padding: 0.45rem 0.8rem;
-    font-size: 0.58rem;
-    letter-spacing: 0.05em;
+    padding: var(--space-xs) var(--space-sm);
+    font-size: var(--fs-xs);
+    white-space: nowrap;
     min-height: 2.25rem;
     opacity: 0;
     transform: translateY(-0.35rem);
     pointer-events: none;
-    transition: opacity 0.25s ease, transform 0.25s ease;
+    transition: opacity 0.25s ease, transform 0.25s ease, box-shadow 0.2s ease,
+      background-color 0.2s ease;
   }
 
   .header__mini-cta.is-visible {
@@ -421,6 +434,14 @@
     font-size: 0.65rem;
     letter-spacing: 0.06em;
     text-align: center;
+  }
+}
+
+/* Below 414px the mark alone sits beside the mini CTA and nav toggle; the
+   header keeps its height through --size-header. */
+@media (max-width: 413px) {
+  .logo__sub {
+    display: none;
   }
 }
 
