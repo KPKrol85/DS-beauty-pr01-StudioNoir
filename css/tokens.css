@@ -12,6 +12,9 @@
   --color-shadow: rgba(0, 0, 0, 0.2);
   --color-glass: rgba(20, 20, 24, 0.65);
   --color-glass-light: rgba(255, 255, 255, 0.75);
+  /* Translucent accent washes for hovered and pressed interactive surfaces. */
+  --color-state-hover: rgba(199, 164, 126, 0.12);
+  --color-state-active: rgba(199, 164, 126, 0.24);
 
   --font-display: "Playfair Display", serif;
   --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
@@ -27,6 +30,7 @@
 
   --lh-heading: 1.25;
   --lh-display: 1.1;
+  --lh-control: 1.25;
 
   --space-2xs: 0.25rem;
   --space-xs: 0.5rem;
@@ -41,6 +45,9 @@
   --radius-md: 1rem;
   --radius-lg: 1.5rem;
   --radius-pill: 999px;
+
+  /* Minimum block size shared by interactive controls (48px touch target). */
+  --size-control: 3rem;
 
   --shadow-sm: 0 6px 18px rgba(0, 0, 0, 0.12);
   --shadow-md: 0 24px 48px rgba(0, 0, 0, 0.18);
@@ -62,4 +69,6 @@
   --color-shadow: rgba(10, 10, 12, 0.12);
   --color-glass: rgba(250, 249, 247, 0.75);
   --color-glass-light: rgba(255, 255, 255, 0.9);
+  --color-state-hover: rgba(157, 128, 97, 0.16);
+  --color-state-active: rgba(157, 128, 97, 0.3);
 }

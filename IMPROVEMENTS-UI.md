@@ -39,6 +39,7 @@ The interface is built on a layered stylesheet (`tokens.css` → `base.css` → 
 
 ### IMP-UI-03 — Normalize the button component's box and interaction states
 
+- **Status:** Completed — normalized the native `button` typography reset and gave `.button` a token-driven box (control line-height and 48px minimum height) so anchor and button hosts render at identical height; added enabled-only hover, pressed, and focus-visible states for both variants with theme-aware state tokens; verified in dark and light themes at 1440px and 375px, including booking confirmation and disabled behavior.
 - **Affected area:** The `.button` component on all pages (29 instances), including the header's call-to-action pair, hero actions, booking actions, and the legal pages' return links.
 - **Evidence:** `css/base.css:95-98`, `css/components.css:9-45`, `index.html:65-70`, `index.html:306`
 - **Current state:** `.button` sets font size, tracking, and padding but no line-height, so its height depends on the host element. Measured in Chromium, `<a class="button">` renders 48.4px tall (inherited 22.4px line-height) and `<button class="button">` 45px (user-agent `line-height: normal`); the `<button>` hosts — the theme toggle on all four content pages and the booking confirmation button — sit 3.4px shorter than the anchor buttons beside them. Only `.button--primary` defines hover and focus-visible feedback; `.button--ghost` sets only a border color, leaving its 13 instances without hover feedback, and neither variant defines a pressed state.

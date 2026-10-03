@@ -93,7 +93,8 @@ a {
 }
 
 button {
-  font-family: inherit;
+  font: inherit;
+  letter-spacing: inherit;
   color: inherit;
 }
 
