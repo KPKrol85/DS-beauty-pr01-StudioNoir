@@ -149,9 +149,9 @@ Repozytorium nie zawiera workflow CI/CD, a sama konfiguracja nie potwierdza akty
 ### SEO
 
 - Strona główna i strony prawne mają własne `<title>`, `meta description` oraz metadane Open Graph i Twitter Card.
-- `link rel="canonical"` i `og:url` wskazują adresy w domenie `https://studio-noir.pl/`.
+- `link rel="canonical"` i `og:url` wskazują adresy w domenie `https://ds-fashion-pr01-studionoir.netlify.app/`.
 - `public/robots.txt` zezwala na indeksowanie całej witryny i wskazuje mapę strony; `public/sitemap.xml` zawiera wyłącznie adres strony głównej.
-- `robots.txt` i `sitemap.xml` używają domeny `https://studio-noir.example/`, która różni się od domeny w adresach canonical.
+- `robots.txt` i `sitemap.xml` używają domeny `https://ds-fashion-pr01-studionoir.netlify.app/`, zgodnej z domeną w adresach canonical.
 
 ### PWA i obsługa offline
 
@@ -335,9 +335,9 @@ The repository contains no CI/CD workflow, and the configuration alone does not 
 ### SEO
 
 - The home page and the legal pages have their own `<title>`, `meta description`, and Open Graph and Twitter Card metadata.
-- `link rel="canonical"` and `og:url` point to URLs on the `https://studio-noir.pl/` domain.
+- `link rel="canonical"` and `og:url` point to URLs on the `https://ds-fashion-pr01-studionoir.netlify.app/` domain.
 - `public/robots.txt` allows indexing of the whole site and references the sitemap; `public/sitemap.xml` lists only the home page URL.
-- `robots.txt` and `sitemap.xml` use the `https://studio-noir.example/` domain, which differs from the domain used in the canonical URLs.
+- `robots.txt` and `sitemap.xml` use the `https://ds-fashion-pr01-studionoir.netlify.app/` domain, consistent with the domain used in the canonical URLs.
 
 ### PWA and Offline Support
 
