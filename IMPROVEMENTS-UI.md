@@ -13,6 +13,7 @@ The interface is built on a layered stylesheet (`tokens.css` → `base.css` → 
 
 ### IMP-UI-01 — Define a heading type scale with display line-height
 
+- **Status:** Completed — implemented a token-driven heading scale with explicit display line-heights, responsive heading tokens, and project-level `h1`–`h6` defaults; verified across representative desktop and mobile views.
 - **Affected area:** All headings — hero title, section titles, closing call to action, card, pricing, booking-step, and location headings, and legal document headings.
 - **Evidence:** `css/base.css:75-83`, `css/base.css:106-115`, `css/tokens.css:19-25`, `css/layout.css:22-24`, `css/sections.css:13-15`, `index.html:425`
 - **Current state:** The shared heading rule sets family, weight, margin, and tracking but no size or line-height, so every heading inherits the body `line-height: 1.6`. Measured in Chromium, the hero title renders at 64px on a 102.4px line box at 1440px, and its two lines occupy 143px at 375px; section titles render at 48px on a 76.8px line box. Display sizes are raw `clamp()` values in `layout.css` and `sections.css`, while `--fs-xl`, `--fs-2xl`, and `--fs-3xl` are defined but unused. Headings without a class fall back to user-agent sizes: every `h3` renders at 18.72px, and the closing call-to-action `h2` and the legal document `h2` elements render at 24px, against section titles of 32–48px.
