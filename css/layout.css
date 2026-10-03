@@ -20,7 +20,8 @@
 }
 
 .section__title {
-  font-size: clamp(2rem, 4vw, 3rem);
+  font-size: var(--fs-2xl);
+  line-height: var(--lh-display);
 }
 
 .section__inner {
