@@ -84,7 +84,7 @@ The `Current state`, `Proposed improvement`, `Expected value`, `Implementation s
 
 ## Completion summary
 
-All five selected improvements were completed.
+All five originally selected improvements were completed, followed by two additional improvements identified during the review.
 
 Together they strengthened shared systems with broad project impact: heading typography, long-form content, button interactions, booking-selection controls, and sticky-header behavior.
 
@@ -93,9 +93,9 @@ The implementation sequence preserved the original dependencies between the impr
 Two additional UI opportunities identified during the original review were intentionally not included in this completed round:
 
 - at 375px, pricing rows can split prices across two lines and inset their content 24px from the section edge (later addressed by IMP-UI-06);
-- the About section can have a larger header-to-content gap than surrounding sections because header margin and grid gap accumulate.
+- the About section can have a larger header-to-content gap than surrounding sections because header margin and grid gap accumulate (later addressed by IMP-UI-07).
 
-The remaining opportunity is a candidate for a future UI review rather than unfinished work in this document.
+Both opportunities were later addressed as follow-up improvements.
 
 ## Follow-up improvements
 
@@ -104,6 +104,12 @@ The remaining opportunity is a candidate for a future UI review rather than unfi
 - **Status:** Completed — rebuilt the pricing row as a named-area grid on flat markup with BEM element classes, matching the service cards. Below 600px the service name and price share the first line on a common baseline, the description spans the full row, and rows align flush with the section edge; from 600px the original inset two-column layout with a vertically centered price is preserved. Prices no longer wrap, and descriptions use `text-wrap: pretty` to avoid a single-word last line. Verified at 320, 360, 375, 390, and 414px, on both sides of the 600px boundary, and at 768 and 1440px in both themes: no horizontal overflow, every price on one line, and tablet and desktop row geometry unchanged.
 - **Affected area:** The pricing section on the home page.
 - **Evidence:** `css/sections.css:86-112`, `css/sections.css:280-289`, `index.html:173-187`
+
+### IMP-UI-07 — Normalize About section header-to-content spacing
+
+- **Status:** Completed — removed the single-use `.section__inner` grid wrapper, whose row gap stacked on the `.section__header` bottom margin and whose grid formatting context kept the title's bottom margin from collapsing; the About title-to-content gap measured 108px against 48px in every other section. About now uses the same `.container` composition as the other sections, leaving `.section__header` as the sole owner of header-to-content spacing, which resolves to 48px (`--space-2xl`) site-wide. Verified at 360, 375, 768, and 1440px in both themes: the About section is 60px shorter, the introductory paragraph and `.values` card geometry are unchanged, every other home-page and legal-page section keeps its measurements, and there is no horizontal overflow.
+- **Affected area:** The About section on the home page.
+- **Evidence:** `css/layout.css:18-20`, `index.html:100-128`
 
 ## Original analysis limitations and follow-up context
 
