@@ -1,7 +1,10 @@
 {
   "name": "studio-noir",
   "version": "1.0.0",
+  "description": "A premium hair studio demonstration website built with Vite, vanilla HTML, CSS, and JavaScript.",
   "private": true,
+  "author": "Kamil Król — KP_Code Digital Studio",
+  "license": "SEE LICENSE IN LICENSE.md",
   "type": "module",
   "engines": {
     "node": "^20.19.0 || >=22.12.0"
