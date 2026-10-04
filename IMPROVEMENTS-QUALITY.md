@@ -69,6 +69,7 @@ The proposals below keep two enhancements from failing closed when a browser cap
 
 ### IMP-QUALITY-05 — Make the reveal enhancement fail open
 
+- **Status:** Completed — reveal now fails open when `IntersectionObserver` is unavailable or cannot be created, and reveal content is always visible in print. Screen, reduced-motion, observer-failure, print, build, and diff checks passed.
 - **Affected area:** Section reveal animations (`js/reveal.js` and the `.reveal` rules), which wrap the hero and every section container on the home page.
 - **Evidence:** `js/reveal.js:3-24`, `css/sections.css:260-269`, `js/header.js:55-60`, `js/header.js:101-110`, `index.html:79-417`
 - **Current implementation:** `initReveal()` adds `.reveal` (`opacity: 0` with a 24px offset) to all 11 `[data-reveal]` elements before it creates its `IntersectionObserver`, and an element becomes visible only when the observer reports it. Nothing resets that state for print, and `css/` has no print rules. Unlike `js/header.js`, which already handles a missing `IntersectionObserver`, `js/reveal.js` has no such path, so a failure there would leave all hooked content hidden and stop the initializers that follow it in `init()`. In the Chromium probe, with print media on a freshly loaded, unscrolled page at 1280×800, only the two hero elements were visible; all nine section containers from About to the closing call to action computed `opacity: 0`.

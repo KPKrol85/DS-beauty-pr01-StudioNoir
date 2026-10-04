@@ -14,6 +14,7 @@ All significant changes to this project are documented in this file.
 - Reorganized static assets requiring stable public paths (web app manifest, favicon, `robots.txt`, `sitemap.xml`, Netlify `_redirects`) into `public/`, which Vite copies verbatim into `dist/` without processing.
 - Automated service worker cache-version and precache asset list generation from the actual production build output via a Vite plugin, replacing the previous hand-maintained cache identifier and file list.
 - Hardened theme preference handling so unavailable, blocked, or invalid browser storage no longer breaks theme switching or subsequent application initialization.
+- Hardened section reveal behavior so content remains visible when `IntersectionObserver` is unavailable or fails to initialize, and reveal state no longer hides content in print.
 
 ### Build and Tooling
 
