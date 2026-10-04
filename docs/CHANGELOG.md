@@ -13,6 +13,7 @@ All significant changes to this project are documented in this file.
 - Migrated the production build pipeline from PostCSS, esbuild, and a plain static file server to Vite, adding six HTML entry points and generating minified CSS/JS with content-hashed filenames exclusively in `dist/`, while keeping the root HTML/CSS/JS as canonical development sources.
 - Reorganized static assets requiring stable public paths (web app manifest, favicon, `robots.txt`, `sitemap.xml`, Netlify `_redirects`) into `public/`, which Vite copies verbatim into `dist/` without processing.
 - Automated service worker cache-version and precache asset list generation from the actual production build output via a Vite plugin, replacing the previous hand-maintained cache identifier and file list.
+- Hardened theme preference handling so unavailable, blocked, or invalid browser storage no longer breaks theme switching or subsequent application initialization.
 
 ### Build and Tooling
 
