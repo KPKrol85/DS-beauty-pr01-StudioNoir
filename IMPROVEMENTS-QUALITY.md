@@ -43,6 +43,7 @@ The proposals below keep two enhancements from failing closed when a browser cap
 
 ### IMP-QUALITY-03 — Extend the build-time guard to the page and offline-fallback contract
 
+- **Status:** Completed — the build guard now fails when a root-level `.html` page is not a declared input or when the precache lacks `/index.html` or `/offline.html`. Both failure cases were verified, and the valid production output, including the precache list and cache version, remained unchanged.
 - **Affected area:** The `studio-noir-precache` plugin in `vite.config.js` and the service worker's navigation fallback.
 - **Evidence:** `vite.config.js:28-42`, `vite.config.js:66-74`, `service-worker.js:4-17`, `README.md:184`, `netlify.toml:2`
 - **Current implementation:** The plugin fails the build when the worker's two placeholders are missing, then builds the precache list from the bundle and `public/`. The six pages are registered by hand in `build.rolldownOptions.input`, and the README notes that a new page needs a manual entry there. The worker resolves offline navigations to cached `.html` documents, otherwise to `/offline.html` (`OFFLINE_PAGE`), and returns `Response.error()` when neither is cached. Neither contract is checked: a root-level page missing from the inputs is still served by the dev server, but under this configuration it is neither emitted to `dist/` nor precached, and the build succeeds; if `offline.html` dropped out of the inputs, the worker would have no offline page to serve.

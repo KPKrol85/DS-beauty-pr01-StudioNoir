@@ -19,3 +19,4 @@ All significant changes to this project are documented in this file.
 
 - Expanded `.gitignore` to exclude generated build output, dependency directories, test and coverage artifacts, and local editor, agent, and environment files, while keeping canonical sources and project configuration under version control.
 - Added Netlify deployment configuration (`netlify.toml`) specifying the build command, the `dist` publish directory, and a no-cache header rule for the service worker.
+- Extended the Vite precache build guard to fail when a root-level HTML page is missing from the declared build inputs or when required offline fallback documents are absent from the precache.

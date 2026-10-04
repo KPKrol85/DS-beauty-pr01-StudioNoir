@@ -1,9 +1,17 @@
 import { createHash } from "node:crypto";
 import { readFileSync, readdirSync } from "node:fs";
-import { resolve } from "node:path";
+import { relative, resolve } from "node:path";
 import { defineConfig } from "vite";
 
 const root = import.meta.dirname;
+// The service worker's navigation fallback resolves to these cached documents.
+const FALLBACK_DOCUMENTS = ["/index.html", "/offline.html"];
+
+function rootPages() {
+  return readdirSync(root, { withFileTypes: true })
+    .filter((entry) => entry.isFile() && entry.name.endsWith(".html"))
+    .map((entry) => entry.name);
+}
 
 function publicAssets(directory, prefix = "") {
   return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
@@ -17,10 +25,15 @@ function publicAssets(directory, prefix = "") {
 }
 
 function precacheServiceWorker() {
+  let declaredInputs = new Set();
+
   return {
     name: "studio-noir-precache",
     apply: "build",
     enforce: "post",
+    buildStart({ input }) {
+      declaredInputs = new Set(Object.values(input).map((path) => relative(root, resolve(root, path))));
+    },
     generateBundle: {
       order: "post",
       handler(_options, bundle) {
@@ -40,6 +53,19 @@ function precacheServiceWorker() {
         }
 
         const names = [...assets.keys()].sort();
+        const precache = names.map((name) => `/${name}`);
+
+        // Report every broken page/fallback contract at once; one cause can break both.
+        const problems = [
+          ...rootPages()
+            .filter((page) => !declaredInputs.has(page))
+            .map((page) => `Root page ${page} is not declared in build.rolldownOptions.input.`),
+          ...FALLBACK_DOCUMENTS.filter((path) => !precache.includes(path)).map(
+            (path) => `Precache is missing ${path}, required by the service worker navigation fallback.`
+          ),
+        ];
+        if (problems.length > 0) this.error(problems.join("\n"));
+
         // Include document/static-file contents and worker logic, not just hashed names.
         const hash = createHash("sha256").update(worker.code);
         for (const name of names) {
@@ -47,7 +73,7 @@ function precacheServiceWorker() {
         }
 
         worker.code = worker.code
-          .replaceAll("__STUDIO_NOIR_PRECACHE__", JSON.stringify(names.map((name) => `/${name}`)))
+          .replaceAll("__STUDIO_NOIR_PRECACHE__", JSON.stringify(precache))
           .replaceAll("__STUDIO_NOIR_CACHE_VERSION__", JSON.stringify(hash.digest("hex").slice(0, 16)));
       },
     },

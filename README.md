@@ -163,7 +163,7 @@ Repozytorium nie zawiera workflow CI/CD, a sama konfiguracja nie potwierdza akty
 
 - `public/manifest.webmanifest` definiuje `start_url` i `scope` jako `/`, `display: "standalone"`, kolory motywu oraz jedną ikonę SVG (64×64). Manifest jest podpięty na stronie głównej i stronach prawnych.
 - `js/main.js` rejestruje `/service-worker.js` po zdarzeniu `load`, wyłącznie w buildzie produkcyjnym.
-- Podczas buildu plugin `studio-noir-precache` zastępuje w workerze znaczniki `__STUDIO_NOIR_PRECACHE__` i `__STUDIO_NOIR_CACHE_VERSION__`. Lista precache obejmuje wszystkie pliki wyjściowe buildu oraz pliki z `public/` z wyjątkiem nazw zaczynających się od `_`. Wersja cache to fragment skrótu SHA-256 z kodu workera oraz nazw i zawartości tych plików. Brak znaczników przerywa build błędem.
+- Podczas buildu plugin `studio-noir-precache` zastępuje w workerze znaczniki `__STUDIO_NOIR_PRECACHE__` i `__STUDIO_NOIR_CACHE_VERSION__`. Lista precache obejmuje wszystkie pliki wyjściowe buildu oraz pliki z `public/` z wyjątkiem nazw zaczynających się od `_`. Wersja cache to fragment skrótu SHA-256 z kodu workera oraz nazw i zawartości tych plików. Build przerywa się błędem, gdy brakuje znaczników, gdy strona `.html` w katalogu głównym nie jest zadeklarowana w `build.rolldownOptions.input` lub gdy w wygenerowanej liście precache brakuje `/index.html` albo `/offline.html`.
 - Instalacja zapisuje zasoby w cache `studio-noir-<wersja>` i wywołuje `skipWaiting()`; aktywacja usuwa wyłącznie starsze cache z prefiksem `studio-noir-` i przejmuje otwarte karty (`clients.claim()`).
 - Nawigacja korzysta najpierw z sieci. Bez połączenia worker zwraca zapisaną stronę (również dla adresów bez rozszerzenia, np. `/privacy`) lub `offline.html`.
 - Zasoby z listy precache są serwowane z cache, a w razie braku wpisu — z sieci. Żądania spoza listy i do innych domen nie są przechwytywane.
@@ -187,7 +187,7 @@ Repozytorium nie zawiera workflow CI/CD, a sama konfiguracja nie potwierdza akty
 
 - Zmiany wprowadza się w źródłach: HTML w katalogu głównym, `css/`, `js/`, `assets/`, `public/` i `service-worker.js`. Katalog `dist/` jest wyłącznie wynikiem buildu.
 - Nagłówek i stopka są powielone w `index.html`, `privacy.html`, `terms.html` i `cookies.html` — zmiany nawigacji lub stopki trzeba nanieść w każdym z tych plików.
-- Nowa strona HTML wymaga dodania wejścia w `build.rolldownOptions.input` w `vite.config.js`. Nowe strony i nowe pliki w `public/` trafiają do listy precache automatycznie.
+- Nowa strona HTML wymaga dodania wejścia w `build.rolldownOptions.input` w `vite.config.js`; brak wejścia dla strony w katalogu głównym przerywa build. Nowe strony i nowe pliki w `public/` trafiają do listy precache automatycznie.
 - Wersji cache nie zmienia się ręcznie; znaczniki `__STUDIO_NOIR_PRECACHE__` i `__STUDIO_NOIR_CACHE_VERSION__` muszą pozostać w `service-worker.js`.
 - Uchwyt konta Instagram używany przez linki `data-instagram-link` jest zdefiniowany w `js/config.js`.
 - Historia zmian jest prowadzona w [CHANGELOG.md](CHANGELOG.md).
@@ -355,7 +355,7 @@ The repository contains no CI/CD workflow, and the configuration alone does not 
 
 - `public/manifest.webmanifest` defines `start_url` and `scope` as `/`, `display: "standalone"`, theme colours, and a single SVG icon (64×64). The manifest is linked from the home page and the legal pages.
 - `js/main.js` registers `/service-worker.js` after the `load` event, in production builds only.
-- During the build, the `studio-noir-precache` plugin replaces the `__STUDIO_NOIR_PRECACHE__` and `__STUDIO_NOIR_CACHE_VERSION__` markers in the worker. The precache list covers every build output file plus the files from `public/`, except names starting with `_`. The cache version is a truncated SHA-256 hash of the worker code and the names and contents of those files. Missing markers fail the build with an error.
+- During the build, the `studio-noir-precache` plugin replaces the `__STUDIO_NOIR_PRECACHE__` and `__STUDIO_NOIR_CACHE_VERSION__` markers in the worker. The precache list covers every build output file plus the files from `public/`, except names starting with `_`. The cache version is a truncated SHA-256 hash of the worker code and the names and contents of those files. The build fails with an error when the markers are missing, when a root-level `.html` page is not declared in `build.rolldownOptions.input`, or when `/index.html` or `/offline.html` is missing from the generated precache list.
 - Installation stores the assets in the `studio-noir-<version>` cache and calls `skipWaiting()`; activation deletes only older caches with the `studio-noir-` prefix and takes control of open tabs (`clients.claim()`).
 - Navigation requests are network-first. When offline, the worker returns the cached page (including extensionless URLs such as `/privacy`) or `offline.html`.
 - Assets on the precache list are served from the cache, falling back to the network when no entry exists. Requests outside the list and cross-origin requests are not intercepted.
@@ -379,7 +379,7 @@ The repository contains no CI/CD workflow, and the configuration alone does not 
 
 - Changes are made in the sources: root HTML files, `css/`, `js/`, `assets/`, `public/`, and `service-worker.js`. The `dist/` directory is build output only.
 - The header and footer are duplicated in `index.html`, `privacy.html`, `terms.html`, and `cookies.html` — navigation or footer changes must be applied in each of these files.
-- A new HTML page requires a new entry in `build.rolldownOptions.input` in `vite.config.js`. New pages and new files in `public/` are added to the precache list automatically.
+- A new HTML page requires a new entry in `build.rolldownOptions.input` in `vite.config.js`; a root-level page without an entry fails the build. New pages and new files in `public/` are added to the precache list automatically.
 - The cache version is never changed manually; the `__STUDIO_NOIR_PRECACHE__` and `__STUDIO_NOIR_CACHE_VERSION__` markers must remain in `service-worker.js`.
 - The Instagram handle used by `data-instagram-link` links is defined in `js/config.js`.
 - The change history is kept in [CHANGELOG.md](CHANGELOG.md).
