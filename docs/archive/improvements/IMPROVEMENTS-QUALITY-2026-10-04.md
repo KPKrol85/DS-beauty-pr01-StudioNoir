@@ -1,19 +1,27 @@
 # Studio Noir — Quality Improvements
 
 **Analysis date:** 2026-10-04
+**Completion date:** 2026-10-04
+**Status:** Completed
 **Project type:** Static multi-page website (Vite MPA build; vanilla HTML, CSS custom properties, and ES modules; service worker with a build-generated precache) — Polish-language demonstration site for a hair studio, KP_Code Digital Studio
 **Analysis mode:** Evidence-based quality improvement review
 **Focus:** Project-wide quality
 
 ## Improvement overview
 
-Studio Noir's runtime code is small and largely defensive: modules locate their elements through `data-*` hooks so one script serves every page, the header falls back when `IntersectionObserver` is unavailable, the mobile menu and the lightbox manage focus, and the build derives the service worker's precache list and cache version from the actual output and fails when the worker's placeholders are missing.
+This review identified five project-wide quality improvements focused on runtime resilience, regression protection for accessibility state, and build-time verification. At the time of the analysis, the only automated assertion was the service-worker placeholder check in the build; interaction state, accessibility state, and build contracts were verified manually.
 
-Verification is the weakest area. `package.json` defines only `dev`, `build`, and `preview`; the repository has no tests and no CI, and the placeholder check is the only automated assertion. Interaction state, accessibility state, and build contracts are verified manually.
+All five selected improvements were implemented and verified:
 
-The proposals below keep two enhancements from failing closed when a browser capability is missing, turn documented manual invariants into build failures, and add a first browser regression check where state handling proved most fragile. Runtime observations come from one focused Chromium probe described under Analysis limitations.
+- theme persistence is fail-safe when browser storage is unavailable, throws, or holds an invalid value;
+- the shared navigation's mobile/desktop state contract is fixed and covered by a focused Playwright regression test, run through `npm run test:nav`;
+- the production build fails when a root-level page is not a declared input or when the precache lacks the documents the offline fallback depends on;
+- the production build fails on undefined CSS custom-property references used without a fallback;
+- the reveal enhancement fails open when `IntersectionObserver` is unavailable or cannot be created, and reveal content stays visible in print.
 
-## Proposed improvements
+The `Current implementation`, `Proposed improvement`, `Expected quality value`, `Implementation scope`, and `Acceptance criteria` fields below preserve the original pre-implementation analysis for archival traceability. Each item's `Status` records the completed implementation outcome.
+
+## Completed improvements
 
 ### IMP-QUALITY-01 — Keep theme switching working when browser storage is unavailable
 
@@ -80,16 +88,19 @@ The proposals below keep two enhancements from failing closed when a browser cap
 - **Impact:** Low
 - **Effort:** Small
 
-## Selection summary
+## Completion summary
 
-- **Why these five:** Each protects existing, documented behavior — theme persistence, the menu's accessibility contract, the production page and offline set, the token system, and the reveal enhancement — and each rests on source evidence, with runtime observations where the outcome depended on browser state. They extend existing mechanisms (the build plugin and the current modules) rather than add infrastructure; the one new tool is in IMP-QUALITY-02, where focus, `inert`, and breakpoint transitions cannot be verified statically.
-- **Quality areas:** Runtime resilience and graceful degradation (01, 05), regression protection for accessibility state (02), and build-time verification of page, offline, and stylesheet contracts (03, 04).
-- **Dependencies:** IMP-QUALITY-02 needs approval for a browser-automation dev dependency and depends on fixing the two navigation defects. IMP-QUALITY-04 fails the build until the existing `--color-text-muted` reference is resolved. IMP-QUALITY-01, 03, and 05 are independent. IMP-QUALITY-03 and 04 both add build-time checks and fit one session, but neither requires the other.
-- **Scope:** Four Small proposals and one Medium, each a bounded change with its own focused check — a practical backlog for focused development sessions, without a guarantee that all five fit into one day.
-- **Considered but not selected:** Explicit `width` and `height` on the hero image, the only in-flow content image without them; the current placeholder is an 889-byte SVG, so the layout-shift window is short (revisit when photography replaces the placeholders). Aligning font preloads with usage: Playfair Display 500 and 700 are preloaded on all four content pages, yet no rule uses those weights; this belongs with the font-subset defect recorded in the archived UI report, because the font files are unchanged since that analysis and that defect decides what the preloaded files render. Security response headers: no user-controlled content, inline scripts, or third-party scripts were found, so current evidence does not demonstrate their relevance.
+All five selected improvements were completed.
 
-## Analysis limitations
+- **Quality areas strengthened:** Runtime resilience and graceful degradation (01, 05), regression protection for accessibility state (02), and build-time verification of page, offline, and stylesheet contracts (03, 04).
+- **New automated safeguards:** A Playwright regression test for the shared navigation (`tests/nav.spec.js`, run through `npm run test:nav` against the Vite dev server), and three build-time guards in `vite.config.js` alongside the existing placeholder check: undeclared root-level pages, missing offline-fallback documents in the precache, and undefined CSS custom-property references without a fallback.
+- **Runtime resilience:** Theme switching and later initializers no longer depend on browser storage, and reveal-hooked content is no longer hidden when the observer is unavailable or when the page is printed.
+- **Defects resolved along the way:** The three defects the analysis referenced but kept outside its proposals were fixed as part of the related improvements — `<main>` remaining `inert` after widening past 900px and the desktop navigation panel's `aria-hidden="true"` and `role="dialog"` (IMP-QUALITY-02), and the undefined `--color-text-muted` reference (IMP-QUALITY-04).
+- **Outside this cycle:** Explicit `width` and `height` on the hero image (revisit when photography replaces the placeholder SVG); aligning font preloads with the weights actually used, which belongs with the font-subset defect recorded in the archived UI report; and security response headers, whose relevance current evidence does not demonstrate. CI integration of the regression test was also out of scope.
 
-- No production build was run. Dependencies are not installed (`node_modules` is absent), and installing them was outside this task, so `dist/`, the injected precache list, and Vite's rewritten asset URLs were not inspected. The build behavior described in IMP-QUALITY-03 follows from `vite.config.js` and Vite's handling of declared inputs.
-- Runtime observations come from a single Chromium probe against the source files served by a plain static server, not the Vite dev server, a preview build, or the deployment. Storage blocking was simulated by making `localStorage` access throw, and print output was examined through print-media emulation rather than a printed page. Safari and Firefox were not checked.
-- Confirmed defects are outside this report and belong in an audit or review. Three are referenced above: `<main>` stays `inert` after the menu is opened below 900px and the viewport is widened (`js/nav.js:18-21`, `js/nav.js:86-90`); the visible desktop navigation panel carries `aria-hidden="true"` and `role="dialog"` (`index.html:56`, `privacy.html:52`, `terms.html:52`, `cookies.html:41`, `js/nav.js:28-32`, `js/nav.js:97`); and `--color-text-muted` is undefined (`css/sections.css:171`). Other defects found during the analysis were reported to the project owner separately.
+## Verification notes and remaining limitations
+
+- The original analysis ran without installed dependencies or a production build, using a single Chromium probe against a plain static server. Those constraints apply to the analysis only; each item's `Status` records the verification performed during implementation, including `npm run build`, `npm run test:nav`, deliberate failure probes for the build guards, and `git diff --check`.
+- Automated browser coverage runs in a single Chromium project (`playwright.config.js`) and covers only the shared navigation. Safari and Firefox were not comprehensively exercised.
+- The repository has no CI; the regression test and the build guards run locally and, for the build guards, in the Netlify build.
+- Other defects found during the original analysis were reported to the project owner separately and are not part of this cycle; they belong to later audit work.
