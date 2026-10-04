@@ -1,3 +1,7 @@
+// Below this width the panel is a modal menu; from it, the inline desktop
+// navigation. Keep in sync with the 900px rules in css/components.css.
+const DESKTOP_QUERY = "(min-width: 900px)";
+
 const getFocusableElements = (container) =>
   Array.from(
     container.querySelectorAll(
@@ -5,44 +9,56 @@ const getFocusableElements = (container) =>
     )
   );
 
+const setOptionalAttribute = (element, name, value) => {
+  if (value === null) {
+    element.removeAttribute(name);
+  } else {
+    element.setAttribute(name, value);
+  }
+};
+
 export const initNav = () => {
   const toggle = document.querySelector("[data-nav-toggle]");
   const panel = document.querySelector("[data-nav-panel]");
   const pageContent = document.querySelector("[data-page-content]");
   if (!toggle || !panel) return;
 
+  const desktopViewport = window.matchMedia(DESKTOP_QUERY);
   let isOpen = false;
+  let isPageLocked = false;
 
-  const isMobileViewport = () => window.innerWidth < 900;
-
-  const setPageInert = (nextOpenState) => {
-    if (!pageContent || !isMobileViewport() || !("inert" in pageContent)) return;
-    pageContent.inert = nextOpenState;
+  // Releases only a lock the menu applied, so a breakpoint change never clears
+  // the scroll lock of another overlay, such as the lightbox.
+  const setPageLocked = (locked) => {
+    if (locked === isPageLocked) return;
+    isPageLocked = locked;
+    document.body.style.overflow = locked ? "hidden" : "";
+    if (pageContent) pageContent.inert = locked;
   };
 
-  const setMenuState = (nextOpenState) => {
-    isOpen = nextOpenState;
-    panel.classList.toggle("is-open", isOpen);
+  // All panel semantics derive from the viewport and the open state, so a
+  // breakpoint change cannot leave mobile-only state on the desktop navigation.
+  const render = () => {
+    const isDesktop = desktopViewport.matches;
+
     toggle.setAttribute("aria-expanded", String(isOpen));
-
-    if (isOpen) {
-      panel.removeAttribute("aria-hidden");
-    } else {
-      panel.setAttribute("aria-hidden", "true");
-    }
-
-    document.body.style.overflow = isOpen && isMobileViewport() ? "hidden" : "";
-    setPageInert(isOpen);
+    panel.classList.toggle("is-open", isOpen);
+    setOptionalAttribute(panel, "role", isDesktop ? null : "dialog");
+    setOptionalAttribute(panel, "aria-modal", isDesktop ? null : "true");
+    setOptionalAttribute(panel, "aria-hidden", isDesktop || isOpen ? null : "true");
+    setPageLocked(isOpen);
   };
 
   const openMenu = () => {
-    setMenuState(true);
+    isOpen = true;
+    render();
     const focusables = getFocusableElements(panel);
     focusables[0]?.focus();
   };
 
   const closeMenu = () => {
-    setMenuState(false);
+    isOpen = false;
+    render();
     toggle.focus();
   };
 
@@ -55,7 +71,7 @@ export const initNav = () => {
   });
 
   panel.addEventListener("click", (event) => {
-    if (event.target.closest(".nav__link")) {
+    if (isOpen && event.target.closest(".nav__link")) {
       closeMenu();
     }
   });
@@ -83,16 +99,16 @@ export const initNav = () => {
     }
   });
 
-  window.addEventListener("resize", () => {
-    if (!isMobileViewport()) {
-      setMenuState(false);
-      return;
+  // The menu is mobile-only: either direction across the breakpoint closes it.
+  desktopViewport.addEventListener("change", () => {
+    // In the mobile layout the closed panel is hidden, so focus must leave it.
+    if (!desktopViewport.matches && panel.contains(document.activeElement)) {
+      toggle.focus();
     }
 
-    if (isOpen) {
-      setMenuState(true);
-    }
+    isOpen = false;
+    render();
   });
 
-  setMenuState(false);
+  render();
 };

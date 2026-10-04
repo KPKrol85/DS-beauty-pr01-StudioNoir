@@ -30,7 +30,8 @@ Aktualny zakres:
 
 - **Runtime:** HTML, CSS z natywnymi custom properties (bez preprocesora), moduły ES JavaScript bez bibliotek.
 - **Fonty:** lokalne pliki WOFF2 zadeklarowane w `css/base.css` jako Playfair Display i Inter (grubości 400–700).
-- **Build:** Vite `^8.3.1` (8.3.1 w `package-lock.json`) — jedyna zależność projektu (`devDependencies`); wejścia buildu konfigurowane przez `build.rolldownOptions`.
+- **Build:** Vite `^8.3.1` (8.3.1 w `package-lock.json`) — zależność deweloperska (`devDependencies`); wejścia buildu konfigurowane przez `build.rolldownOptions`.
+- **Testy:** Playwright — `@playwright/test` `^1.63.0` (1.63.0 w `package-lock.json`), zależność deweloperska używana przez skoncentrowany test regresji przeglądarkowej nawigacji.
 - **Środowisko:** Node.js `^20.19.0 || >=22.12.0` (`engines` w `package.json`), npm (`package-lock.json`).
 - **Wdrożenie:** konfiguracja Netlify (`netlify.toml`, `public/_redirects`).
 
@@ -79,7 +80,10 @@ Aktualny zakres:
 │   ├── robots.txt
 │   ├── sitemap.xml
 │   └── assets/icons/favicon.svg
+├── tests/
+│   └── nav.spec.js         # test regresji przeglądarkowej nawigacji
 ├── vite.config.js
+├── playwright.config.js    # konfiguracja Playwright (Chromium, serwer Vite dev)
 ├── netlify.toml
 ├── package.json
 ├── package-lock.json
@@ -103,9 +107,11 @@ npm ci
 npm run dev       # vite — serwer deweloperski, domyślnie http://localhost:5173
 npm run build     # vite build — build produkcyjny do dist/
 npm run preview   # vite preview — podgląd dist/, domyślnie http://localhost:4173
+npm run test:nav  # playwright test — test regresji przeglądarkowej wspólnego kontraktu nawigacji
 ```
 
 - Porty nie są ustawione w `vite.config.js`; podane wartości to domyślne ustawienia Vite.
+- `npm run test:nav` sam uruchamia serwer Vite dev na porcie 5183 i wymaga przeglądarki Chromium dla Playwright (`npx playwright install chromium`).
 - Strony korzystają ze ścieżek absolutnych i modułów ES, dlatego wymagają serwera HTTP — nie należy otwierać plików HTML bezpośrednio z dysku.
 - Service worker jest rejestrowany tylko w buildzie produkcyjnym (`import.meta.env.PROD` w `js/main.js`), a więc w `npm run preview`, ale nie w `npm run dev`.
 - Zachowanie offline sprawdza się w podglądzie. Jeżeli wcześniej zarejestrowano worker pod tym samym adresem i portem, należy go wyrejestrować w narzędziach deweloperskich przeglądarki i odświeżyć stronę.
@@ -216,7 +222,8 @@ Current scope:
 
 - **Runtime:** HTML, CSS with native custom properties (no preprocessor), and dependency-free JavaScript ES modules.
 - **Fonts:** local WOFF2 files declared in `css/base.css` as Playfair Display and Inter (weights 400–700).
-- **Build:** Vite `^8.3.1` (8.3.1 in `package-lock.json`) — the project's only dependency (`devDependencies`); build inputs are configured through `build.rolldownOptions`.
+- **Build:** Vite `^8.3.1` (8.3.1 in `package-lock.json`) — a development dependency (`devDependencies`); build inputs are configured through `build.rolldownOptions`.
+- **Testing:** Playwright — `@playwright/test` `^1.63.0` (1.63.0 in `package-lock.json`), a development dependency used by the focused browser regression test for the navigation.
 - **Environment:** Node.js `^20.19.0 || >=22.12.0` (`engines` in `package.json`), npm (`package-lock.json`).
 - **Deployment:** Netlify configuration (`netlify.toml`, `public/_redirects`).
 
@@ -265,7 +272,10 @@ Current scope:
 │   ├── robots.txt
 │   ├── sitemap.xml
 │   └── assets/icons/favicon.svg
+├── tests/
+│   └── nav.spec.js         # browser regression test for the navigation
 ├── vite.config.js
+├── playwright.config.js    # Playwright configuration (Chromium, Vite dev server)
 ├── netlify.toml
 ├── package.json
 ├── package-lock.json
@@ -289,9 +299,11 @@ npm ci
 npm run dev       # vite — development server, default http://localhost:5173
 npm run build     # vite build — production build into dist/
 npm run preview   # vite preview — serves dist/, default http://localhost:4173
+npm run test:nav  # playwright test — browser regression test for the shared navigation contract
 ```
 
 - Ports are not set in `vite.config.js`; the values above are Vite defaults.
+- `npm run test:nav` starts its own Vite dev server on port 5183 and requires the Playwright Chromium browser (`npx playwright install chromium`).
 - Pages use absolute paths and ES modules, so they require an HTTP server — the HTML files should not be opened directly from disk.
 - The service worker is registered only in production builds (`import.meta.env.PROD` in `js/main.js`), so it is active in `npm run preview` but not in `npm run dev`.
 - Offline behaviour is checked in preview. If a worker was previously registered on the same address and port, unregister it in the browser developer tools and reload the page.

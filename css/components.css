@@ -271,6 +271,12 @@
   box-shadow: var(--shadow-md);
 }
 
+/* backdrop-filter makes the header the containing block for fixed descendants,
+   which would confine the open mobile panel to the header's own box. */
+.header:has(.nav__panel.is-open) {
+  backdrop-filter: none;
+}
+
 .header__inner {
   display: flex;
   align-items: center;
