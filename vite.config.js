@@ -80,10 +80,49 @@ function precacheServiceWorker() {
   };
 }
 
+// Comments are blanked, not removed, so match offsets keep their line numbers.
+function readStylesheets() {
+  const directory = resolve(root, "css");
+  return readdirSync(directory)
+    .filter((name) => name.endsWith(".css"))
+    .sort()
+    .map((name) => ({
+      file: `css/${name}`,
+      css: readFileSync(resolve(directory, name), "utf8").replace(/\/\*[\s\S]*?\*\//g, (comment) =>
+        comment.replace(/[^\n]/g, " ")
+      ),
+    }));
+}
+
+// Project-level name resolution only: a declaration in any selector scope defines
+// a property, and a var() with a fallback may name an undefined one.
+function cssCustomPropertyGuard() {
+  return {
+    name: "studio-noir-css-custom-properties",
+    apply: "build",
+    buildStart() {
+      const stylesheets = readStylesheets();
+      const defined = new Set(
+        stylesheets.flatMap(({ css }) => [...css.matchAll(/(?<=^|[\s{;])(--[\w-]+)\s*:/g)].map((match) => match[1]))
+      );
+
+      const problems = stylesheets.flatMap(({ file, css }) =>
+        [...css.matchAll(/var\(\s*(--[\w-]+)\s*\)/g)]
+          .filter((match) => !defined.has(match[1]))
+          .map((match) => {
+            const line = css.slice(0, match.index).split("\n").length;
+            return `${file}:${line} references undefined custom property ${match[1]} without a fallback.`;
+          })
+      );
+      if (problems.length > 0) this.error(problems.join("\n"));
+    },
+  };
+}
+
 export default defineConfig({
   base: "/",
   appType: "mpa",
-  plugins: [precacheServiceWorker()],
+  plugins: [cssCustomPropertyGuard(), precacheServiceWorker()],
   build: {
     outDir: "dist",
     // Keep images/fonts as cacheable files, including the gallery's lightbox sources.

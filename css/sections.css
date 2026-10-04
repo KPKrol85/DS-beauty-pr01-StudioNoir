@@ -168,7 +168,6 @@
 
 .booking__next-step {
   margin: var(--space-sm) 0 0;
-  color: var(--color-text-muted);
 }
 
 .booking__summary {

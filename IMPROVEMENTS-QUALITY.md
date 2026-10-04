@@ -56,6 +56,7 @@ The proposals below keep two enhancements from failing closed when a browser cap
 
 ### IMP-QUALITY-04 — Verify that CSS custom-property references resolve
 
+- **Status:** Completed — removed the unresolved `--color-text-muted` reference and added a build-time guard for undefined CSS custom properties used without a fallback. Misspelled-reference and fallback probes passed; `npm run build` and `git diff --check` passed.
 - **Affected area:** Token-driven CSS: definitions in `css/tokens.css` (including the `.theme--light` overrides), component-scoped properties, and every `var()` consumer in `css/`.
 - **Evidence:** `css/sections.css:169-172`, `css/tokens.css:1-84`, `css/components.css:100-109`, `package.json:9-13`, `docs/archive/improvements/IMPROVEMENTS-UI-2026-10-04.md:119`
 - **Current implementation:** Shared design decisions are custom properties, and the light theme works by overriding them. Nothing checks that referenced properties exist. A search of the stylesheets, HTML, and scripts found one unresolved reference: `.booking__next-step` uses `var(--color-text-muted)` without a fallback, and nothing defines that property (a defect outside this report). Under CSS custom-property rules the declaration is invalid at computed-value time, so the text takes the inherited color instead of a muted one, and no tool reports it.
