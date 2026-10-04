@@ -30,6 +30,7 @@ The proposals below make these existing practices explicit in the documents that
 
 ### IMP-WORKFLOW-02 — Define when a change requires a changelog entry
 
+- **Status:** Completed — `docs/CHANGELOG.md` now defines when substantive changes are recorded, excludes routine bookkeeping and trivial changes, and expects each implementation task to state an explicit changelog yes/no decision.
 - **Affected workflow:** Changelog maintenance.
 - **Evidence:** `docs/CHANGELOG.md:1-24`; Git history of `docs/CHANGELOG.md` (only `bbe8085`, `575621d`, `c0daaaf`, and `df38ba5` added entries after `46111cd`); `6f8dc3e` (added Playwright, `playwright.config.js`, `tests/nav.spec.js`, and the `test:nav` script with no changelog entry); UI cycle commits `4c4e78a`, `112a25c`, `4251ba2`, `1a77fbc`, `a1097d8`, `8860748`, `803bfbe` (no changelog entries); `AGENTS.md:52`; `CLAUDE.md:61`.
 - **Current workflow:** The changelog states that it documents "all significant changes", but whether an entry is written depends on whether the individual task prompt asks for one, because both agent instruction files permit changelog updates only when the task explicitly includes them. As a result, four of the five completed quality improvements have entries while the fifth — which introduced the project's only test tooling — does not, and none of the seven completed UI improvements has one. Every entry sits under `[Unreleased]`.
