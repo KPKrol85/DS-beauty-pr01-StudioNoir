@@ -114,7 +114,31 @@ npm run test:nav  # playwright test — test regresji przeglądarkowej wspólneg
 - `npm run test:nav` sam uruchamia serwer Vite dev na porcie 5183 i wymaga przeglądarki Chromium dla Playwright (`npx playwright install chromium`).
 - Strony korzystają ze ścieżek absolutnych i modułów ES, dlatego wymagają serwera HTTP — nie należy otwierać plików HTML bezpośrednio z dysku.
 - Service worker jest rejestrowany tylko w buildzie produkcyjnym (`import.meta.env.PROD` w `js/main.js`), a więc w `npm run preview`, ale nie w `npm run dev`.
-- Zachowanie offline sprawdza się w podglądzie. Jeżeli wcześniej zarejestrowano worker pod tym samym adresem i portem, należy go wyrejestrować w narzędziach deweloperskich przeglądarki i odświeżyć stronę.
+
+### Weryfikacja zmian
+
+Dla każdej zmiany uruchamia się najmniejszy zestaw kontroli obejmujący kontrakt, którego dotyczy zmiana — nie wszystkie polecenia po każdej zmianie.
+
+Co weryfikują polecenia:
+
+- `npm run build` — oprócz wygenerowania `dist/` jest statyczną walidacją projektu. Kontrole z `vite.config.js` (pluginy `studio-noir-precache` i `studio-noir-css-custom-properties`) działają tylko podczas buildu, nie w `npm run dev`. Build przerywa się błędem, gdy:
+  1. w `service-worker.js` brakuje znacznika precache `__STUDIO_NOIR_PRECACHE__` lub `__STUDIO_NOIR_CACHE_VERSION__`;
+  2. strona `.html` w katalogu głównym nie jest zadeklarowana w `build.rolldownOptions.input`;
+  3. w wygenerowanej liście precache brakuje `/index.html` lub `/offline.html`, z których worker korzysta przy nawigacji bez połączenia;
+  4. odwołanie `var(--właściwość)` bez wartości zapasowej w pliku `css/*.css` wskazuje właściwość niestandardową, której nie definiuje żaden arkusz `css/*.css`.
+- `npm run test:nav` — test regresji przeglądarkowej wyłącznie dla wspólnego kontraktu nawigacji (`tests/nav.spec.js`): menu mobilne jako okno modalne z pułapką fokusu, zamykanie klawiszem Escape i wyborem linku, czyszczenie stanu mobilnego po poszerzeniu otwartego menu do układu desktopowego (900 px) oraz dostępność nawigacji desktopowej dla technologii asystujących. Działa w Chromium, na stronie głównej i na serwerze Vite dev — nie sprawdza `dist/` ani pozostałych interakcji strony.
+- `npm run preview` — serwuje `dist/` po `npm run build` i jako jedyne polecenie projektu uruchamia service worker, dlatego w nim sprawdza się ręcznie precache, zachowanie offline i produkcyjne działanie PWA. Jeżeli wcześniej zarejestrowano worker pod tym samym adresem i portem, należy go wyrejestrować w narzędziach deweloperskich przeglądarki i odświeżyć stronę. Podgląd nie stosuje konfiguracji Netlify (`_redirects`, nagłówki z `netlify.toml`).
+- `git diff --check` — lekka, końcowa kontrola diffu przed commitem (błędy białych znaków, znaczniki konfliktów). Nie testuje aplikacji.
+
+Dobór kontroli:
+
+| Zmiana | Kontrole |
+| --- | --- |
+| CSS, strony HTML w katalogu głównym, pliki w `public/` | `npm run build`, `git diff --check` |
+| Wspólna nawigacja: markup nagłówka i menu, `js/nav.js`, style nawigacji i menu, przełączanie stanu mobilnego i desktopowego | `npm run build` (przy zmianach CSS lub HTML), `npm run test:nav`, `git diff --check` |
+| `service-worker.js`, precache, `offline.html`, produkcyjne działanie PWA | `npm run build`, następnie `npm run preview`; `git diff --check` |
+| Pozostałe skrypty w `js/` (np. rezerwacja, lightbox, motyw) — bez testów automatycznych | `npm run build`, ręczna kontrola w `npm run dev`, `git diff --check` |
+| Wyłącznie dokumentacja | `git diff --check` |
 
 ### Build produkcyjny
 
@@ -163,7 +187,7 @@ Repozytorium nie zawiera workflow CI/CD, a sama konfiguracja nie potwierdza akty
 
 - `public/manifest.webmanifest` definiuje `start_url` i `scope` jako `/`, `display: "standalone"`, kolory motywu oraz jedną ikonę SVG (64×64). Manifest jest podpięty na stronie głównej i stronach prawnych.
 - `js/main.js` rejestruje `/service-worker.js` po zdarzeniu `load`, wyłącznie w buildzie produkcyjnym.
-- Podczas buildu plugin `studio-noir-precache` zastępuje w workerze znaczniki `__STUDIO_NOIR_PRECACHE__` i `__STUDIO_NOIR_CACHE_VERSION__`. Lista precache obejmuje wszystkie pliki wyjściowe buildu oraz pliki z `public/` z wyjątkiem nazw zaczynających się od `_`. Wersja cache to fragment skrótu SHA-256 z kodu workera oraz nazw i zawartości tych plików. Build przerywa się błędem, gdy brakuje znaczników, gdy strona `.html` w katalogu głównym nie jest zadeklarowana w `build.rolldownOptions.input` lub gdy w wygenerowanej liście precache brakuje `/index.html` albo `/offline.html`.
+- Podczas buildu plugin `studio-noir-precache` zastępuje w workerze znaczniki `__STUDIO_NOIR_PRECACHE__` i `__STUDIO_NOIR_CACHE_VERSION__`. Lista precache obejmuje wszystkie pliki wyjściowe buildu oraz pliki z `public/` z wyjątkiem nazw zaczynających się od `_`. Wersja cache to fragment skrótu SHA-256 z kodu workera oraz nazw i zawartości tych plików. Kontrole, którymi plugin przerywa build, opisuje sekcja [Weryfikacja zmian](#weryfikacja-zmian).
 - Instalacja zapisuje zasoby w cache `studio-noir-<wersja>` i wywołuje `skipWaiting()`; aktywacja usuwa wyłącznie starsze cache z prefiksem `studio-noir-` i przejmuje otwarte karty (`clients.claim()`).
 - Nawigacja korzysta najpierw z sieci. Bez połączenia worker zwraca zapisaną stronę (również dla adresów bez rozszerzenia, np. `/privacy`) lub `offline.html`.
 - Zasoby z listy precache są serwowane z cache, a w razie braku wpisu — z sieci. Żądania spoza listy i do innych domen nie są przechwytywane.
@@ -306,7 +330,31 @@ npm run test:nav  # playwright test — browser regression test for the shared n
 - `npm run test:nav` starts its own Vite dev server on port 5183 and requires the Playwright Chromium browser (`npx playwright install chromium`).
 - Pages use absolute paths and ES modules, so they require an HTTP server — the HTML files should not be opened directly from disk.
 - The service worker is registered only in production builds (`import.meta.env.PROD` in `js/main.js`), so it is active in `npm run preview` but not in `npm run dev`.
-- Offline behaviour is checked in preview. If a worker was previously registered on the same address and port, unregister it in the browser developer tools and reload the page.
+
+### Change verification
+
+Each change gets the smallest set of checks that covers the contract it affects — not every command after every change.
+
+What each command verifies:
+
+- `npm run build` — besides producing `dist/`, it is the project's static validation step. The checks in `vite.config.js` (the `studio-noir-precache` and `studio-noir-css-custom-properties` plugins) run only during the build, not in `npm run dev`. The build fails when:
+  1. the `__STUDIO_NOIR_PRECACHE__` or `__STUDIO_NOIR_CACHE_VERSION__` precache placeholder is missing from `service-worker.js`;
+  2. a root-level `.html` page is not declared in `build.rolldownOptions.input`;
+  3. the generated precache list is missing `/index.html` or `/offline.html`, which the worker relies on for navigation without a connection;
+  4. a `var(--property)` reference without a fallback in a `css/*.css` file names a custom property that no `css/*.css` stylesheet defines.
+- `npm run test:nav` — browser regression test for the shared navigation contract only (`tests/nav.spec.js`): the mobile menu as a modal with a focus trap, closing on Escape and on link activation, clearing the mobile state when an open menu is widened to the desktop layout (900px), and desktop navigation exposure to assistive technologies. It runs in Chromium, on the home page, against the Vite dev server — it does not check `dist/` or any other page interactions.
+- `npm run preview` — serves `dist/` after `npm run build` and is the only project command in which the service worker runs, so precache, offline behaviour, and production PWA behaviour are checked there manually. If a worker was previously registered on the same address and port, unregister it in the browser developer tools and reload the page. Preview does not apply the Netlify configuration (`_redirects`, headers from `netlify.toml`).
+- `git diff --check` — lightweight final diff check before committing (whitespace errors, conflict markers). It does not test the application.
+
+Choosing checks:
+
+| Change | Checks |
+| --- | --- |
+| CSS, root-level HTML pages, files in `public/` | `npm run build`, `git diff --check` |
+| Shared navigation: header and menu markup, `js/nav.js`, navigation and menu styles, mobile/desktop state switching | `npm run build` (for CSS or HTML changes), `npm run test:nav`, `git diff --check` |
+| `service-worker.js`, precache, `offline.html`, production PWA behaviour | `npm run build`, then `npm run preview`; `git diff --check` |
+| Other scripts in `js/` (e.g. booking, lightbox, theme) — no automated tests | `npm run build`, manual check in `npm run dev`, `git diff --check` |
+| Documentation only | `git diff --check` |
 
 ### Production Build
 
@@ -355,7 +403,7 @@ The repository contains no CI/CD workflow, and the configuration alone does not 
 
 - `public/manifest.webmanifest` defines `start_url` and `scope` as `/`, `display: "standalone"`, theme colours, and a single SVG icon (64×64). The manifest is linked from the home page and the legal pages.
 - `js/main.js` registers `/service-worker.js` after the `load` event, in production builds only.
-- During the build, the `studio-noir-precache` plugin replaces the `__STUDIO_NOIR_PRECACHE__` and `__STUDIO_NOIR_CACHE_VERSION__` markers in the worker. The precache list covers every build output file plus the files from `public/`, except names starting with `_`. The cache version is a truncated SHA-256 hash of the worker code and the names and contents of those files. The build fails with an error when the markers are missing, when a root-level `.html` page is not declared in `build.rolldownOptions.input`, or when `/index.html` or `/offline.html` is missing from the generated precache list.
+- During the build, the `studio-noir-precache` plugin replaces the `__STUDIO_NOIR_PRECACHE__` and `__STUDIO_NOIR_CACHE_VERSION__` markers in the worker. The precache list covers every build output file plus the files from `public/`, except names starting with `_`. The cache version is a truncated SHA-256 hash of the worker code and the names and contents of those files. The checks with which the plugin fails the build are listed under [Change verification](#change-verification).
 - Installation stores the assets in the `studio-noir-<version>` cache and calls `skipWaiting()`; activation deletes only older caches with the `studio-noir-` prefix and takes control of open tabs (`clients.claim()`).
 - Navigation requests are network-first. When offline, the worker returns the cached page (including extensionless URLs such as `/privacy`) or `offline.html`.
 - Assets on the precache list are served from the cache, falling back to the network when no entry exists. Requests outside the list and cross-origin requests are not intercepted.
