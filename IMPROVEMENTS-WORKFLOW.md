@@ -56,6 +56,7 @@ The proposals below make these existing practices explicit in the documents that
 
 ### IMP-WORKFLOW-04 — Document the manual Netlify release sequence
 
+- **Status:** Completed — manual Netlify CLI deployment of the locally built `dist/` is now documented as the canonical release path, the ordered release sequence is defined in both the PL and EN README deployment sections, and production preview checks are part of the documented release preparation.
 - **Affected workflow:** Production build preparation and manual delivery.
 - **Evidence:** `README.md:130-143` and `README.md:322-335`; `netlify.toml:1-8`; `AGENTS.md:51` ("Follow the existing Git and manual Netlify delivery workflow"); `README.md:116-117` (offline behavior is checked in preview); `public/sitemap.xml` (`lastmod` maintained by hand).
 - **Current workflow:** The README describes two mechanisms side by side: `netlify.toml` defines a Netlify-side build (`npm run build`, publish `dist`), and a manual CLI publish (`npx netlify deploy --prod --dir=dist`) uploads the local `dist/` after `npm run build`. The agent instructions call the delivery workflow manual. The README does not say which mechanism is the one in use, and the documented manual path goes straight from build to production publish without a step confirming that `dist/` was built from the committed tree or that the preview, offline fallback, and 404 page were checked. The Netlify CLI is fetched by `npx` at run time and is not pinned by the repository.

@@ -36,6 +36,7 @@ When an implementation task is defined, apply this policy and state `Changelog: 
 - Hardened section reveal behavior so content remains visible when `IntersectionObserver` is unavailable or fails to initialize, and reveal state no longer hides content in print.
 - Defined a changelog inclusion policy based on substantive project impact and explicit per-task changelog decisions.
 - Documented the improvement-report lifecycle in the README: active reports in the repository root, per-item status updates that preserve the original analysis, finalization only after every item is resolved, and archiving to `docs/archive/improvements/` under a completion-date filename.
+- Documented manual Netlify CLI deployment of the locally built `dist/` as the canonical release path, with an ordered release sequence in the README: clean working tree, `npm ci`, `npm run build`, production preview checks (PWA, offline fallback, direct `/404.html`), and `npx netlify deploy --prod --dir=dist`.
 
 ### Build and Tooling
 

@@ -153,18 +153,34 @@ Wszystkie adresy zakładają publikację w katalogu głównym domeny (`base: "/"
 
 ### Wdrożenie
 
+Kanoniczną ścieżką wydania jest ręczna publikacja lokalnie zbudowanego katalogu `dist/` przez Netlify CLI.
+
 Repozytorium zawiera konfigurację Netlify:
 
 - `netlify.toml` — polecenie buildu `npm run build`, katalog publikacji `dist` oraz nagłówek `Cache-Control: no-cache` dla `/service-worker.js`;
 - `public/_redirects` — reguła `/* /404.html 404`: istniejące pliki mają pierwszeństwo, a brakujące adresy zwracają `404.html` ze statusem 404.
 
-Po wykonaniu `npm run build` zawartość `dist/` można opublikować ręcznie przez Netlify CLI. Narzędzie nie jest zależnością projektu (`npx` pobiera je przy uruchomieniu), a publikacja wymaga uwierzytelnienia i wyboru właściwej witryny:
+Pliki te są konfiguracją repozytorium, a nie mechanizmem wydania: nie publikują niczego, a sama konfiguracja nie potwierdza aktywnego wdrożenia. Repozytorium nie zawiera workflow CI/CD.
 
-```bash
-npx netlify deploy --prod --dir=dist
-```
+Wydanie produkcyjne przygotowuje się w tej kolejności:
 
-Repozytorium nie zawiera workflow CI/CD, a sama konfiguracja nie potwierdza aktywnego wdrożenia. `vite preview` nie interpretuje reguł z `_redirects`, dlatego lokalnie stronę błędu można obejrzeć pod `/404.html`.
+1. `git status` — drzewo robocze powinno być czyste, aby wydanie powstało z zatwierdzonego stanu projektu.
+2. `npm ci` — instaluje zależności zgodnie z `package-lock.json`.
+3. `npm run build` — tworzy świeży katalog `dist/` i uruchamia kontrole buildu opisane w sekcji [Weryfikacja zmian](#weryfikacja-zmian).
+4. `npm run preview` — ręczna kontrola wyniku produkcyjnego przed publikacją, w zakresie istotnym dla wydania:
+   - strona główna ładuje się poprawnie;
+   - service worker rejestruje się, a PWA działa jak w środowisku produkcyjnym;
+   - bez połączenia działa obsługa offline, w tym strona zastępcza `offline.html`;
+   - strona błędu wyświetla się po bezpośrednim otwarciu `/404.html`.
+
+   `vite preview` nie stosuje reguł z `_redirects` ani nagłówków z `netlify.toml`, więc nie odwzorowuje w pełni działania Netlify — dlatego stronę błędu sprawdza się bezpośrednio pod `/404.html`.
+5. Po pozytywnej weryfikacji `dist/` publikuje się ręcznie przez Netlify CLI. Narzędzie nie jest zależnością projektu (`npx` pobiera je przy uruchomieniu), a publikacja wymaga uwierzytelnienia i wyboru właściwej witryny:
+
+   ```bash
+   npx netlify deploy --prod --dir=dist
+   ```
+
+Opcjonalnie, przed krokiem 5, to samo polecenie bez flagi `--prod` (`npx netlify deploy --dir=dist`) publikuje wersję roboczą (draft deploy) pod osobnym adresem, bez zmiany wdrożenia produkcyjnego. Nie jest to wymagany krok wydania.
 
 ### Dostępność
 
@@ -374,18 +390,34 @@ All URLs assume deployment at the domain root (`base: "/"`). The contents of `di
 
 ### Deployment
 
+The canonical release path is a manual publish of the locally built `dist/` directory with the Netlify CLI.
+
 The repository includes Netlify configuration:
 
 - `netlify.toml` — build command `npm run build`, publish directory `dist`, and a `Cache-Control: no-cache` header for `/service-worker.js`;
 - `public/_redirects` — the rule `/* /404.html 404`: existing files take precedence, and missing URLs return `404.html` with a 404 status.
 
-After running `npm run build`, the contents of `dist/` can be published manually with the Netlify CLI. The CLI is not a project dependency (`npx` fetches it on demand), and publishing requires authentication and selecting the correct site:
+These files are repository configuration, not the release mechanism: they do not publish anything by themselves, and the configuration alone does not confirm an active deployment. The repository contains no CI/CD workflow.
 
-```bash
-npx netlify deploy --prod --dir=dist
-```
+A production release is prepared in this order:
 
-The repository contains no CI/CD workflow, and the configuration alone does not confirm an active deployment. `vite preview` does not apply the `_redirects` rules, so the error page can be viewed locally at `/404.html`.
+1. `git status` — the working tree should be clean, so that the release is built from the committed project state.
+2. `npm ci` — installs dependencies as locked in `package-lock.json`.
+3. `npm run build` — produces a fresh `dist/` and runs the build checks listed under [Change verification](#change-verification).
+4. `npm run preview` — manual check of the production output before publishing, as relevant to the release:
+   - the home page loads correctly;
+   - the service worker registers and the PWA behaves as in production;
+   - offline behaviour works without a connection, including the `offline.html` fallback;
+   - the error page renders when `/404.html` is opened directly.
+
+   `vite preview` does not apply the `_redirects` rules or the `netlify.toml` headers, so it does not fully emulate Netlify — which is why the error page is checked directly at `/404.html`.
+5. After successful verification, publish `dist/` manually with the Netlify CLI. The CLI is not a project dependency (`npx` fetches it on demand), and publishing requires authentication and selecting the correct site:
+
+   ```bash
+   npx netlify deploy --prod --dir=dist
+   ```
+
+Optionally, before step 5, the same command without the `--prod` flag (`npx netlify deploy --dir=dist`) publishes a draft deploy at a separate URL without changing the production deploy. It is not a required release step.
 
 ### Accessibility
 
