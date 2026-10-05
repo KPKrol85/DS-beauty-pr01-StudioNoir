@@ -35,6 +35,7 @@ When an implementation task is defined, apply this policy and state `Changelog: 
 - Hardened theme preference handling so unavailable, blocked, or invalid browser storage no longer breaks theme switching or subsequent application initialization.
 - Hardened section reveal behavior so content remains visible when `IntersectionObserver` is unavailable or fails to initialize, and reveal state no longer hides content in print.
 - Defined a changelog inclusion policy based on substantive project impact and explicit per-task changelog decisions.
+- Documented the improvement-report lifecycle in the README: active reports in the repository root, per-item status updates that preserve the original analysis, finalization only after every item is resolved, and archiving to `docs/archive/improvements/` under a completion-date filename.
 
 ### Build and Tooling
 

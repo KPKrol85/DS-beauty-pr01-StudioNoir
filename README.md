@@ -215,6 +215,11 @@ Repozytorium nie zawiera workflow CI/CD, a sama konfiguracja nie potwierdza akty
 - Wersji cache nie zmienia się ręcznie; znaczniki `__STUDIO_NOIR_PRECACHE__` i `__STUDIO_NOIR_CACHE_VERSION__` muszą pozostać w `service-worker.js`.
 - Uchwyt konta Instagram używany przez linki `data-instagram-link` jest zdefiniowany w `js/config.js`.
 - Historia zmian jest prowadzona w [CHANGELOG.md](CHANGELOG.md).
+- Cykl raportu usprawnień:
+  - Aktywny raport (np. `IMPROVEMENTS-WORKFLOW.md`) znajduje się w katalogu głównym repozytorium do czasu rozstrzygnięcia wszystkich jego pozycji.
+  - Wynik wdrożenia lub innego rozstrzygnięcia pozycji zapisuje się zwięźle w jej polu `Status`, bez powielania pełnego raportu z wdrożenia. Pierwotne pola analizy (np. dowody, stan bieżący, proponowane usprawnienie, oczekiwana wartość, zakres i kryteria akceptacji) pozostają dla identyfikowalności jako zapis powodu, dla którego pozycja powstała, i nie są przepisywane tak, jakby opisywały stan po wdrożeniu.
+  - Raport finalizuje się dopiero po rozstrzygnięciu wszystkich pozycji; do tego czasu pozostaje aktywny. Finalizacja dodaje datę zakończenia (`Completion date`), oznacza cały raport jako zakończony (`Status: Completed`), zmienia wprowadzenie tak, by opisywało wykonaną pracę, dodaje podsumowanie zakończenia i w razie potrzeby oddziela ograniczenia pierwotnej analizy od weryfikacji wykonanej przy wdrożeniu. Wzorem są zarchiwizowane raporty UI i Quality; szczegółowa forma może zależeć od przebiegu cyklu.
+  - Sfinalizowany raport przenosi się do `docs/archive/improvements/` pod nazwą `IMPROVEMENTS-<CATEGORY>-<YYYY-MM-DD>.md`. Data w nazwie pliku to data zakończenia cyklu, nie data analizy — raport UI przeanalizowany 2026-09-28 zarchiwizowano jako `IMPROVEMENTS-UI-2026-10-04.md`.
 
 ## EN
 
@@ -431,3 +436,8 @@ The repository contains no CI/CD workflow, and the configuration alone does not 
 - The cache version is never changed manually; the `__STUDIO_NOIR_PRECACHE__` and `__STUDIO_NOIR_CACHE_VERSION__` markers must remain in `service-worker.js`.
 - The Instagram handle used by `data-instagram-link` links is defined in `js/config.js`.
 - The change history is kept in [CHANGELOG.md](CHANGELOG.md).
+- Improvement-report lifecycle:
+  - An active report (for example `IMPROVEMENTS-WORKFLOW.md`) stays in the repository root until all of its items are resolved.
+  - When an item is implemented or otherwise resolved, its outcome is recorded concisely in that item's `Status`, without duplicating the full implementation report. The original analysis fields (such as evidence, current state, proposed improvement, expected value, implementation scope, and acceptance criteria) are kept for traceability as the record of why the item existed, and are not rewritten as though they described the post-implementation state.
+  - A report is finalised only after every item is resolved; until then it remains active. Finalisation adds the completion date (`Completion date`), marks the whole report as completed (`Status: Completed`), reframes the introduction to describe the completed work, adds a completion summary, and, where relevant, separates the original analysis limitations from the verification performed during implementation. The archived UI and Quality reports serve as the reference; the exact framing may depend on the history of the cycle.
+  - The finalised report is moved to `docs/archive/improvements/` as `IMPROVEMENTS-<CATEGORY>-<YYYY-MM-DD>.md`. The filename date is the completion date of the cycle, not the analysis date — the UI report analysed on 2026-09-28 was archived as `IMPROVEMENTS-UI-2026-10-04.md`.
