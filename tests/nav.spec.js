@@ -6,7 +6,7 @@ const MOBILE = { width: 375, height: 812 };
 const BREAKPOINT = { width: 900, height: 800 };
 const DESKTOP = { width: 1280, height: 800 };
 
-const NAV_LINKS = ["O nas", "Usługi", "Cennik", "Styliści", "Galeria", "Rezerwacja"];
+const NAV_LINKS = ["O nas", "Usługi", "Cennik", "Styliści", "Galeria", "Rezerwacja", "Kontakt"];
 
 const getNav = (page) => ({
   landmark: page.getByRole("navigation", { name: "Główna" }),

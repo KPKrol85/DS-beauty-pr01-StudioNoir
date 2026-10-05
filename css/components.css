@@ -466,10 +466,15 @@
     display: none;
   }
 
+  /* The links, call to action, and theme toggle share one row with the brand
+     lockup and leave it no spare width near the breakpoint. Tighter link,
+     group, and button spacing than in the mobile menu keeps the lockup from
+     wrapping further, so the bar holds its height across desktop widths. */
   .nav__panel {
     position: static;
     transform: none;
     flex-direction: row;
+    gap: var(--space-lg);
     background: transparent;
     inset: auto;
     visibility: visible;
@@ -478,6 +483,7 @@
 
   .nav__list {
     flex-direction: row;
+    gap: var(--space-sm);
   }
 
   .nav__link {
@@ -487,6 +493,10 @@
   .nav__cta {
     display: flex;
     align-items: center;
+  }
+
+  .nav__cta .button {
+    padding-inline: var(--space-md);
   }
 }
 
