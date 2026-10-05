@@ -69,6 +69,7 @@ The proposals below make these existing practices explicit in the documents that
 
 ### IMP-WORKFLOW-05 — Keep shared agent rules in one canonical instruction file
 
+- **Status:** Completed — `AGENTS.md` is now the canonical shared instruction source, `CLAUDE.md` imports it and is reserved for Claude Code-specific additions, and the unique rules from both previous files were preserved.
 - **Affected workflow:** Agent-assisted development instructions.
 - **Evidence:** `AGENTS.md:1-71`; `CLAUDE.md:1-116`; commits `1da8cc3` and `b141419` (`b141419` rewrote both files in one commit); `AGENTS.md:17-28` (project orientation and context files — absent from `CLAUDE.md`); `CLAUDE.md:63-72` (commit guidance — absent from `AGENTS.md`); `.gitignore` (`.claude/`, `.codex/` local agent directories).
 - **Current workflow:** Two agents work on the repository, and each reads its own instruction file. Both files restate the same project rules — task approach, source-of-truth handling, no unrequested Git actions, focused verification, reporting — in different wording and structure, and they have already diverged: only `AGENTS.md` names the project's context files and current stack, and only `CLAUDE.md` contains the commit-message rules. Any rule change must be made twice.

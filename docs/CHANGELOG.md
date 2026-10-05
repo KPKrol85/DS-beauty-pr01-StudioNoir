@@ -37,6 +37,7 @@ When an implementation task is defined, apply this policy and state `Changelog: 
 - Defined a changelog inclusion policy based on substantive project impact and explicit per-task changelog decisions.
 - Documented the improvement-report lifecycle in the README: active reports in the repository root, per-item status updates that preserve the original analysis, finalization only after every item is resolved, and archiving to `docs/archive/improvements/` under a completion-date filename.
 - Documented manual Netlify CLI deployment of the locally built `dist/` as the canonical release path, with an ordered release sequence in the README: clean working tree, `npm ci`, `npm run build`, production preview checks (PWA, offline fallback, direct `/404.html`), and `npx netlify deploy --prod --dir=dist`.
+- Consolidated project-wide agent instructions into `AGENTS.md` as the single canonical contract for all coding agents, merging rules previously stated only in `CLAUDE.md` (including commit guidance and detailed engineering conventions); `CLAUDE.md` now imports `AGENTS.md` and is reserved for Claude Code-specific additions.
 
 ### Build and Tooling
 
