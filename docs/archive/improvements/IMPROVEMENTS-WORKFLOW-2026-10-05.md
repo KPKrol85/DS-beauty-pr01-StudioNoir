@@ -1,19 +1,23 @@
 # Studio Noir — Workflow Improvements
 
 **Analysis date:** 2026-10-04
+**Completion date:** 2026-10-05
+**Status:** Completed
 **Project type:** Static multi-page website (Vite MPA build; vanilla HTML, CSS custom properties, and ES modules; service worker with a build-generated precache; Netlify configuration) — Polish-language demonstration site for a hair studio, KP_Code Digital Studio
 **Analysis mode:** Evidence-based workflow improvement review
 **Focus:** Project-wide workflow
 
 ## Improvement overview
 
-Studio Noir's development workflow is small and mostly coherent: four npm scripts (`dev`, `build`, `preview`, `test:nav`), a lockfile-based install (`npm ci`), canonical sources clearly separated from ignored `dist/` output, and a production build that doubles as the project's static validator through three guards in `vite.config.js`. Delivery is documented as a manual Netlify workflow, and there is no CI.
+This review identified five project-wide workflow improvements focused on verification selection, changelog maintenance, the improvement-report lifecycle, manual release preparation, and agent instructions.
 
-The weaker areas are process knowledge that currently lives only in commit history, archived reports, or individual task prompts: which existing command proves which contract, when a change earns a changelog entry, how a completed improvement report is finalized and archived, and in what order a manual release is prepared. In addition, two agent instruction files (`AGENTS.md`, `CLAUDE.md`) carry overlapping project rules that have already diverged.
+At the time of the analysis, Studio Noir's development workflow was small and mostly coherent: four npm scripts (`dev`, `build`, `preview`, `test:nav`), a lockfile-based install (`npm ci`), canonical sources clearly separated from ignored `dist/` output, and a production build that doubled as the project's static validator through three guards in `vite.config.js`. Delivery was documented as a manual Netlify workflow, and there was no CI. The weaker areas were process knowledge that lived only in commit history, archived reports, or individual task prompts — which existing command proves which contract, when a change earns a changelog entry, how a completed improvement report is finalized and archived, and in what order a manual release is prepared — and two agent instruction files (`AGENTS.md`, `CLAUDE.md`) that carried overlapping project rules and had already diverged.
 
-The proposals below make these existing practices explicit in the documents that already own them. None introduces a new tool, dependency, script, or CI job.
+All five improvements were completed. Each made an existing practice explicit in the document that already owned the topic, and none introduced a new tool, dependency, script, or CI job. This document is an archival record of the completed cycle, not an active proposal.
 
-## Proposed improvements
+The `Affected workflow`, `Evidence`, `Current workflow`, `Proposed improvement`, `Expected practical value`, `Implementation scope`, `Acceptance criteria`, `Impact`, and `Effort` fields below are intentionally preserved from the original pre-implementation analysis as the record of why each improvement was created; their file and line references describe the repository at analysis time. Each item's `Status` records the completed outcome.
+
+## Completed improvements
 
 ### IMP-WORKFLOW-01 — Document which existing command verifies which project contract
 
@@ -80,7 +84,22 @@ The proposals below make these existing practices explicit in the documents that
 - **Impact:** Medium
 - **Effort:** Small
 
-## Selection summary
+## Completion summary
+
+All five selected improvements were completed:
+
+- **Verification selection (01):** the README maps each existing command to the contract it verifies, names every current build guard, and gives focused verification guidance.
+- **Change history (02):** `docs/CHANGELOG.md` defines which changes are recorded and requires an explicit `Changelog: yes` or `Changelog: no` decision for each implementation task.
+- **Improvement-cycle maintenance (03):** the README documents the improvement-report lifecycle and the completion-date archive convention; this report is the first archived under that documented convention.
+- **Release preparation (04):** manual Netlify CLI deployment of the locally built `dist/` is documented as the canonical release path, with an ordered release sequence that includes the production preview checks.
+- **Agent instructions (05):** shared project rules are consolidated in `AGENTS.md` as the single canonical source; `CLAUDE.md` imports it and holds only Claude Code-specific additions.
+- **Scope of change:** Documentation only — `README.md` (Polish and English sections), `docs/CHANGELOG.md`, `AGENTS.md`, and `CLAUDE.md`. No npm script, build guard, test, build or hosting configuration, or dependency was added or changed.
+- **Dependencies resolved:** The owner decision required by 04 established manual CLI deployment of the locally built `dist/` as canonical. 02 was implemented before 05, so the consolidated `AGENTS.md` defers changelog decisions to the single entry policy in `docs/CHANGELOG.md`.
+- **Outside this cycle:** Reconciling the earlier changelog gaps listed under IMP-WORKFLOW-02 (including the Playwright test tooling) remained a separate owner decision and was not performed. None of the alternatives listed under "Considered but not selected" below was implemented.
+
+## Original selection rationale
+
+The following rationale is preserved from the original analysis as the record of why these five improvements were selected. It describes the pre-implementation state and planning assumptions.
 
 - **Why these five:** Each formalizes a practice the project already follows or relies on — the build as validator, the changelog, the improvement-report cycle, manual Netlify delivery, and agent instructions — where current evidence shows the practice is undocumented, inconsistently applied, or duplicated. All five are documentation-level changes to files that already own the topic.
 - **Processes strengthened:** Verification selection (01), change history (02), improvement-cycle maintenance (03), release preparation (04), and agent-assisted task execution (05).
@@ -88,8 +107,16 @@ The proposals below make these existing practices explicit in the documents that
 - **Scope:** Five Small proposals, each verifiable by reading the changed document against the evidence above — a practical candidate backlog for a focused working session, without a guarantee that all five fit into one day.
 - **Considered but not selected:** Pinning the Node.js version for local and Netlify builds — `package.json:9-11` declares `engines`, but the repository has no version file and the Netlify build environment's Node version cannot be verified from the repository. Adding an aggregate `check` or `test` script — with one spec and a build that already runs every static guard, current evidence does not show repeated manual orchestration. CI integration of the regression test — no CI exists, and the archived Quality report deliberately left it out of scope.
 
-## Analysis limitations
+## Original analysis limitations and follow-up context
+
+The following limitations applied to the original analysis and are preserved as written; the context recorded at completion follows the list.
 
 - Dependencies are not installed (`node_modules/` is absent), so no build, test, or preview command was run. Statements about guard and command behavior come from `vite.config.js`, `package.json`, `playwright.config.js`, and archived verification records, not from fresh execution.
 - The Netlify site configuration, its build environment, and whether a deployment is active are not visible from the repository and were not checked.
 - Confirmed documentation defects found during the analysis are outside this report: the README links `[CHANGELOG.md](CHANGELOG.md)` and lists `CHANGELOG.md` at the root, although the file moved to `docs/CHANGELOG.md` in `46111cd` (`README.md:90`, `README.md:193`, `README.md:282`, `README.md:385`); the project-structure trees omit `docs/`, `LICENSE.md`, `AGENTS.md`, and `CLAUDE.md`; and `README.md:15` and `README.md:207` describe template placeholders such as `[Nazwa firmy]` in the legal pages, none of which are present in `privacy.html`, `terms.html`, or `cookies.html`.
+
+Follow-up context at completion:
+
+- This cycle changed documentation only, and the item statuses record documentation outcomes. This report does not record build, test, or preview runs, or a release performed with the sequence documented by IMP-WORKFLOW-04.
+- The Netlify site configuration, build environment, and deployment state remain outside what the repository shows. The README now states explicitly that the repository's Netlify configuration alone does not confirm an active deployment (IMP-WORKFLOW-04).
+- The documentation defects listed above were not addressed by this cycle. At completion, the README still referenced `CHANGELOG.md` at the repository root, its project-structure trees still omitted `docs/`, `LICENSE.md`, `AGENTS.md`, and `CLAUDE.md`, and it still described template placeholders that are absent from the legal pages. They remain separate documentation work.
