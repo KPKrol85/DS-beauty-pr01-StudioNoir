@@ -2,11 +2,33 @@ export const initLightbox = () => {
   const root = document.querySelector("[data-lightbox-root]");
   const image = document.querySelector("[data-lightbox-image]");
   const dialog = root?.querySelector('[role="dialog"]');
-  const closeButton = root?.querySelector("[data-lightbox-close]");
-  const triggers = document.querySelectorAll("[data-lightbox]");
-  if (!root || !image || !dialog || !triggers.length) return;
+  const closeButton = root?.querySelector("button[data-lightbox-close]");
+  const previousButton = root?.querySelector("[data-lightbox-previous]");
+  const nextButton = root?.querySelector("[data-lightbox-next]");
+  const caption = root?.querySelector("[data-lightbox-caption]");
+  const triggers = [...document.querySelectorAll("[data-lightbox]")];
+  if (
+    !root || !image || !dialog || !caption ||
+    !previousButton || !nextButton || !triggers.length
+  ) return;
 
-  let lastTrigger = null;
+  let currentIndex = 0;
+  let previousOverflow = "";
+
+  const render = () => {
+    const thumbnail = triggers[currentIndex].querySelector("img");
+    image.src = thumbnail.src;
+    image.alt = thumbnail.alt;
+    caption.textContent = `${thumbnail.alt} · ${currentIndex + 1} / ${triggers.length}`;
+  };
+
+  const navigate = (step) => {
+    currentIndex = (currentIndex + step + triggers.length) % triggers.length;
+    render();
+  };
+
+  const previous = () => navigate(-1);
+  const next = () => navigate(1);
 
   const getFocusableElements = () => {
     const selector =
@@ -31,14 +53,12 @@ export const initLightbox = () => {
     }
   };
 
-  const open = (src, alt) => {
-    const activeElement = document.activeElement;
-    lastTrigger = activeElement instanceof HTMLElement ? activeElement : null;
-
-    image.src = src;
-    image.alt = alt || "Podgląd zdjęcia";
+  const open = (index) => {
+    currentIndex = index;
+    render();
     root.classList.add("is-open");
     root.setAttribute("aria-hidden", "false");
+    previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
     focusDialog();
@@ -47,23 +67,26 @@ export const initLightbox = () => {
   const close = () => {
     root.classList.remove("is-open");
     root.setAttribute("aria-hidden", "true");
-    image.src = "";
-    document.body.style.overflow = "";
+    image.removeAttribute("src");
+    document.body.style.overflow = previousOverflow;
 
-    if (lastTrigger && document.contains(lastTrigger)) {
-      lastTrigger.focus();
+    const currentTrigger = triggers[currentIndex];
+    if (document.contains(currentTrigger)) {
+      currentTrigger.focus();
     }
   };
 
-  triggers.forEach((trigger) => {
+  triggers.forEach((trigger, index) => {
     trigger.addEventListener("click", () => {
-      const img = trigger.querySelector("img");
-      open(img.currentSrc || img.src, img.alt);
+      open(index);
     });
   });
 
+  previousButton.addEventListener("click", previous);
+  nextButton.addEventListener("click", next);
+
   root.addEventListener("click", (event) => {
-    if (event.target.hasAttribute("data-lightbox-close")) {
+    if (event.target instanceof Element && event.target.closest("[data-lightbox-close]")) {
       close();
     }
   });
@@ -73,6 +96,13 @@ export const initLightbox = () => {
 
     if (event.key === "Escape") {
       close();
+      return;
+    }
+
+    if (event.key === "ArrowLeft" || event.key === "ArrowRight") {
+      event.preventDefault();
+      if (event.key === "ArrowLeft") previous();
+      else next();
       return;
     }
 
