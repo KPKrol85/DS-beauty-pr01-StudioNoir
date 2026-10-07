@@ -26,10 +26,11 @@
   transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
 }
 
-/* States apply to enabled controls only. Hover is limited to hover-capable
+/* Hover and press states apply to available controls only; focus stays visible
+   on aria-disabled controls. Hover is limited to hover-capable
    pointers so touch taps leave no stuck state; presses engage faster than
    they release. */
-.button:not(:disabled):active {
+.button:not(:disabled):not([aria-disabled="true"]):active {
   transition-duration: 0.08s;
 }
 
@@ -45,13 +46,13 @@
 }
 
 @media (hover: hover) {
-  .button--primary:not(:disabled):hover {
+  .button--primary:not(:disabled):not([aria-disabled="true"]):hover {
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
   }
 }
 
-.button--primary:not(:disabled):active {
+.button--primary:not(:disabled):not([aria-disabled="true"]):active {
   transform: translateY(0);
   background-color: var(--color-accent-500);
   box-shadow: none;
@@ -66,16 +67,17 @@
 }
 
 @media (hover: hover) {
-  .button--ghost:not(:disabled):hover {
+  .button--ghost:not(:disabled):not([aria-disabled="true"]):hover {
     background-color: var(--color-state-hover);
   }
 }
 
-.button--ghost:not(:disabled):active {
+.button--ghost:not(:disabled):not([aria-disabled="true"]):active {
   background-color: var(--color-state-active);
 }
 
-.button:disabled {
+.button:disabled,
+.button[aria-disabled="true"] {
   opacity: 0.6;
   cursor: not-allowed;
   box-shadow: none;

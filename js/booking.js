@@ -43,22 +43,30 @@ export const initBooking = () => {
   const summaryService = root.querySelector("[data-summary-service]");
   const summaryStylist = root.querySelector("[data-summary-stylist]");
   const summaryStatus = root.querySelector("[data-summary-status]");
+  const requirement = root.querySelector("[data-booking-requirement]");
   const cta = root.querySelector("[data-booking-cta]");
 
   let selectedService = null;
   let selectedStylist = null;
+  let canConfirm = false;
 
   const updateSummary = () => {
     summaryService.textContent = selectedService || "—";
     summaryStylist.textContent = selectedStylist || "—";
 
-    if (selectedService && selectedStylist) {
-      summaryStatus.textContent = "Gotowe do potwierdzenia";
-      cta.removeAttribute("disabled");
-    } else {
-      summaryStatus.textContent = "Wybierz opcje";
-      cta.setAttribute("disabled", "true");
-    }
+    canConfirm = Boolean(selectedService && selectedStylist);
+    const status = canConfirm
+      ? "Gotowe do potwierdzenia."
+      : selectedService
+        ? "Wybierz stylistę."
+        : selectedStylist
+          ? "Wybierz usługę."
+          : "Wybierz usługę i stylistę.";
+
+    requirement.textContent = status;
+    summaryStatus.textContent = status;
+    cta.removeAttribute("disabled");
+    cta.setAttribute("aria-disabled", String(!canConfirm));
   };
 
   const handleSelect = (buttons, selectedButton, setter) => {
@@ -115,10 +123,12 @@ export const initBooking = () => {
   initPreselectLinks("data-booking-preselect-stylist", stylistButtons, "data-booking-stylist", selectStylist);
 
   cta.addEventListener("click", () => {
-    if (!selectedService || !selectedStylist) return;
+    if (!canConfirm) return;
     summaryStatus.textContent = "Rezerwacja wstępnie zapisana";
+    requirement.textContent = summaryStatus.textContent;
     cta.textContent = "Wysłano";
     cta.setAttribute("disabled", "true");
+    cta.removeAttribute("aria-disabled");
   });
 
   updateSummary();

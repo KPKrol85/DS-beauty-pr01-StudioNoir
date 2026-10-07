@@ -356,9 +356,10 @@
               <div class="booking__step" data-booking-step="3">
                 <h3>Krok 3</h3>
                 <p>Potwierdź termin.</p>
-                <button class="button button--primary" data-booking-cta type="button">
+                <button class="button button--primary" data-booking-cta type="button" aria-disabled="true" aria-describedby="booking-requirement">
                   Potwierdź rezerwację
                 </button>
+                <p class="booking__requirement" id="booking-requirement" data-booking-requirement>Wybierz usługę i stylistę.</p>
                 <ul class="booking__microcopy" aria-label="Najważniejsze informacje o rezerwacji">
                   <li class="pill">Oddzwaniamy do 15 min</li>
                   <li class="pill">Potwierdzenie SMS/DM</li>
@@ -372,7 +373,7 @@
                 <h3>Podsumowanie</h3>
                 <p class="booking__summary-line">Usługa: <span data-summary-service>—</span></p>
                 <p class="booking__summary-line">Stylista: <span data-summary-stylist>—</span></p>
-                <p class="booking__summary-line">Status: <span data-summary-status>Wybierz opcje</span></p>
+                <p class="booking__summary-line">Status: <span data-summary-status>Wybierz usługę i stylistę.</span></p>
               </aside>
               <aside class="booking__fallback" aria-label="Szybki kontakt w sprawie rezerwacji">
                 <h3>Szybki kontakt</h3>

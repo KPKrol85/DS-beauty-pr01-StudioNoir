@@ -188,7 +188,7 @@ Opcjonalnie, przed krokiem 5, to samo polecenie bez flagi `--prod` (`npx netlify
 - Globalny styl `:focus-visible` z wyraźnym obrysem.
 - Menu mobilne: przycisk z `aria-expanded` i `aria-controls`, synchronizacja `aria-hidden` panelu, przeniesienie fokusu do panelu i z powrotem do przycisku, pułapka fokusu dla Tab i Shift+Tab, zamykanie klawiszem Escape oraz `inert` na treści głównej w widoku mobilnym.
 - Lightbox: elementy galerii to natywne przyciski, okno ma `role="dialog"` i `aria-modal="true"`, fokus trafia na przycisk zamknięcia, pozostaje w oknie i wraca do elementu wywołującego; Escape zamyka podgląd.
-- Podsumowanie rezerwacji jest regionem `aria-live="polite"`, a przycisk potwierdzenia pozostaje wyłączony do czasu wyboru usługi i stylisty.
+- Podsumowanie rezerwacji jest regionem `aria-live="polite"`, a do czasu wyboru usługi i stylisty przycisk potwierdzenia pozostaje dostępny przez Tab z `aria-disabled="true"` i wskazówką o brakującym wyborze powiązaną przez `aria-describedby`; JavaScript blokuje potwierdzenie niepełnego wyboru.
 - Obrazy treściowe mają teksty alternatywne, a dekoracyjna nakładka hero jest ukryta przed technologiami asystującymi (`aria-hidden="true"`).
 - Przy `prefers-reduced-motion: reduce` CSS wyłącza płynne przewijanie i skraca animacje oraz przejścia, a `js/reveal.js` pomija animacje pojawiania się.
 
@@ -425,7 +425,7 @@ Optionally, before step 5, the same command without the `--prod` flag (`npx netl
 - A global `:focus-visible` style with a clear outline.
 - Mobile menu: a toggle button with `aria-expanded` and `aria-controls`, synchronised `aria-hidden` on the panel, focus moved into the panel and back to the toggle, a focus trap for Tab and Shift+Tab, Escape-key closing, and `inert` applied to the main content in the mobile viewport.
 - Lightbox: gallery items are native buttons, the overlay has `role="dialog"` and `aria-modal="true"`, focus moves to the close button, stays within the dialog, and returns to the triggering element; Escape closes the preview.
-- The booking summary is an `aria-live="polite"` region, and the confirmation button stays disabled until both a service and a stylist are selected.
+- The booking summary is an `aria-live="polite"` region; until both a service and a stylist are selected, the confirmation button stays in the Tab sequence with `aria-disabled="true"` and a missing-choice hint linked through `aria-describedby`, while JavaScript blocks confirmation of an incomplete selection.
 - Content images have text alternatives, and the decorative hero overlay is hidden from assistive technologies (`aria-hidden="true"`).
 - With `prefers-reduced-motion: reduce`, CSS disables smooth scrolling and shortens animations and transitions, and `js/reveal.js` skips the reveal animations.
 
