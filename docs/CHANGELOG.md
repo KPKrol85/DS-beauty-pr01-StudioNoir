@@ -26,6 +26,7 @@ When an implementation task is defined, apply this policy and state `Changelog: 
 ### Added
 
 - Added the initial Studio Noir single-page website implementation: home, privacy, terms, cookies, offline, and 404 pages with modular CSS/JS, a PWA manifest and service worker, and supporting fonts, icons, and image assets.
+- Added a "Zarezerwuj" booking link to every service and stylist card: it leads to the booking section with the matching service or stylist already selected and focused, keeps a choice already made for the other step, and remains a plain link to `#booking` without JavaScript. The booking widget now offers all five services listed in the Services section.
 
 ### Changed
 

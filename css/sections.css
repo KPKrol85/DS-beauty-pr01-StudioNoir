@@ -76,6 +76,14 @@
   gap: var(--space-xs);
 }
 
+/* Card booking link: sized to its label and kept at its own height at the card
+   foot, so the actions of one grid row line up while card rows stretch. */
+.service-card__action,
+.stylist-card__action {
+  justify-self: start;
+  align-self: end;
+}
+
 .pricing {
   display: grid;
   gap: var(--space-md);
@@ -154,6 +162,15 @@
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-sm);
+}
+
+/* Below 768px the fixed quick-contact bar covers the viewport bottom: a choice
+   scrolled into view keeps clear of the space the page reserves for that bar
+   (the body padding in css/components.css). */
+@media (max-width: 767px) {
+  .booking__options .choice {
+    scroll-margin-bottom: calc(5.25rem + env(safe-area-inset-bottom, 0px));
+  }
 }
 
 
