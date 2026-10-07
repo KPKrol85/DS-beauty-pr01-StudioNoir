@@ -7,7 +7,7 @@ const updateActiveLink = (linksById, nextId) => {
     link.classList.toggle(ACTIVE_CLASS, isActive);
 
     if (isActive) {
-      link.setAttribute('aria-current', 'page');
+      link.setAttribute('aria-current', 'location');
     } else {
       link.removeAttribute('aria-current');
     }
@@ -26,24 +26,25 @@ const initSectionSpy = (header) => {
     }
   });
 
-  const trackedSections = Array.from(document.querySelectorAll(SECTION_SELECTOR)).filter((section) =>
-    linksById.has(section.id)
-  );
+  const pageSections = Array.from(document.querySelectorAll(SECTION_SELECTOR));
 
-  if (!trackedSections.length) return;
+  if (!pageSections.length) return;
 
-  let activeSectionId = trackedSections[0].id;
+  let activeSectionId = null;
   const updateFromViewport = () => {
     const headerOffset = header.offsetHeight + 24;
     const probeLine = window.scrollY + headerOffset;
+    // A short final section may never reach the reading line before scrolling ends.
+    const atPageEnd = window.scrollY > 0 &&
+      Math.ceil(window.scrollY + window.innerHeight) >= document.documentElement.scrollHeight;
 
-    const current = trackedSections.find((section, index) => {
-      const next = trackedSections[index + 1];
+    const current = atPageEnd ? pageSections[pageSections.length - 1] : pageSections.find((section, index) => {
+      const next = pageSections[index + 1];
       if (!next) return probeLine >= section.offsetTop;
       return probeLine >= section.offsetTop && probeLine < next.offsetTop;
     });
 
-    const nextId = current?.id ?? trackedSections[0].id;
+    const nextId = current && linksById.has(current.id) ? current.id : null;
     if (nextId !== activeSectionId) {
       activeSectionId = nextId;
       updateActiveLink(linksById, activeSectionId);
@@ -52,36 +53,16 @@ const initSectionSpy = (header) => {
 
   updateActiveLink(linksById, activeSectionId);
 
-  if (!('IntersectionObserver' in window)) {
-    window.addEventListener('scroll', updateFromViewport, { passive: true });
-    window.addEventListener('resize', updateFromViewport);
-    updateFromViewport();
-    return;
-  }
+  // Observer thresholds need not fire when the reading line crosses a section boundary.
+  // Both paths use the same boundaries, including sections without a navigation link.
+  window.addEventListener('scroll', updateFromViewport, { passive: true });
+  window.addEventListener('resize', updateFromViewport);
+  updateFromViewport();
 
-  const visibleSections = new Map();
+  if (!('IntersectionObserver' in window)) return;
+
   const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach((entry) => {
-        visibleSections.set(entry.target.id, entry);
-      });
-
-      const bestVisible = Array.from(visibleSections.values())
-        .filter((entry) => entry.isIntersecting)
-        .sort((a, b) => {
-          if (b.intersectionRatio !== a.intersectionRatio) {
-            return b.intersectionRatio - a.intersectionRatio;
-          }
-
-          return a.boundingClientRect.top - b.boundingClientRect.top;
-        })[0];
-
-      const nextId = bestVisible?.target.id;
-      if (!nextId || nextId === activeSectionId) return;
-
-      activeSectionId = nextId;
-      updateActiveLink(linksById, activeSectionId);
-    },
+    updateFromViewport,
     {
       root: null,
       rootMargin: `-${header.offsetHeight + 20}px 0px -52% 0px`,
@@ -89,7 +70,7 @@ const initSectionSpy = (header) => {
     }
   );
 
-  trackedSections.forEach((section) => observer.observe(section));
+  pageSections.forEach((section) => observer.observe(section));
 };
 
 const initHeaderMiniCta = () => {

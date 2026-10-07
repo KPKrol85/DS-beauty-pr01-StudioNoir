@@ -16,6 +16,97 @@ const getNav = (page) => ({
   body: page.locator("body"),
 });
 
+const expectCurrentSection = async (page, sectionId = null) => {
+  const nav = getNav(page).landmark;
+  const active = nav.locator(".nav__link.is-active");
+  const current = nav.locator(".nav__link[aria-current]");
+
+  await expect(active).toHaveCount(sectionId ? 1 : 0);
+  await expect(current).toHaveCount(sectionId ? 1 : 0);
+  if (sectionId) {
+    await expect(active).toHaveAttribute("href", `#${sectionId}`);
+    await expect(current).toHaveAttribute("href", `#${sectionId}`);
+    await expect(current).toHaveAttribute("aria-current", "location");
+  }
+  await expect(nav.locator('.nav__link[aria-current="page"]')).toHaveCount(0);
+};
+
+const scrollToReadingPosition = async (page, sectionId, boundaryOffset = 2) => {
+  await page.evaluate(({ sectionId, boundaryOffset }) => {
+    const section = document.getElementById(sectionId);
+    const header = document.querySelector("[data-header]");
+    window.scrollTo({
+      top: section.offsetTop - header.offsetHeight - 24 + boundaryOffset,
+      behavior: "instant",
+    });
+  }, { sectionId, boundaryOffset });
+};
+
+for (const observerAvailable of [true, false]) {
+  test.describe(`section indicator ${observerAvailable ? "with" : "without"} IntersectionObserver`, () => {
+    test.use({ reducedMotion: "reduce" });
+    test.beforeEach(async ({ page }) => {
+      if (!observerAvailable) {
+        await page.addInitScript(() => { delete window.IntersectionObserver; });
+      }
+    });
+
+    for (const [layout, viewport] of [["desktop", DESKTOP], ["mobile", MOBILE]]) {
+      test(`${layout}: linked and unlinked reading positions and instant return to top`, async ({ page }) => {
+        await page.setViewportSize(viewport);
+        await page.goto("/");
+        await expectCurrentSection(page);
+
+        for (const [sectionId, expected] of [
+          ["about", "about"],
+          ["services", "services"],
+          ["pricing", "pricing"],
+          ["stylists", "stylists"],
+          ["gallery", "gallery"],
+          ["booking", "booking"],
+          ["testimonials", null],
+          ["location", "location"],
+          ["final-cta", null],
+        ]) {
+          await scrollToReadingPosition(page, sectionId);
+          await expectCurrentSection(page, expected);
+        }
+
+        // Return from a linked position so a stale current link cannot pass this check.
+        await scrollToReadingPosition(page, "services");
+        await expectCurrentSection(page, "services");
+        await page.evaluate(() => window.scrollTo({ top: 0, behavior: "instant" }));
+        await expectCurrentSection(page);
+      });
+
+      test(`${layout}: a direct services hash load marks its in-page location`, async ({ page }) => {
+        await page.setViewportSize(viewport);
+        await page.goto("/index.html#services");
+        await expectCurrentSection(page, "services");
+      });
+    }
+
+    test("section boundaries resolve in both directions and after resize", async ({ page }) => {
+      await page.setViewportSize(DESKTOP);
+      await page.goto("/");
+      await scrollToReadingPosition(page, "testimonials", -2);
+      await expectCurrentSection(page, "booking");
+      await scrollToReadingPosition(page, "testimonials");
+      await expectCurrentSection(page);
+      await scrollToReadingPosition(page, "location");
+      await expectCurrentSection(page, "location");
+      await scrollToReadingPosition(page, "location", -2);
+      await expectCurrentSection(page);
+
+      await page.setViewportSize(MOBILE);
+      await scrollToReadingPosition(page, "location");
+      await expectCurrentSection(page, "location");
+      await scrollToReadingPosition(page, "testimonials");
+      await expectCurrentSection(page);
+    });
+  });
+}
+
 const expectPageUnlocked = async (nav) => {
   await expect(nav.main).toHaveJSProperty("inert", false);
   await expect(nav.body).not.toHaveCSS("overflow", "hidden");

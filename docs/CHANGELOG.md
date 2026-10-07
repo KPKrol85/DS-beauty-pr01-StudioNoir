@@ -30,6 +30,7 @@ When an implementation task is defined, apply this policy and state `Changelog: 
 
 ### Changed
 
+- Corrected the current-section navigation indicator across the home page: linked sections mark their destination with `aria-current="location"`, while the hero, testimonials, and final CTA clear it, including after an instant return to the top and without IntersectionObserver.
 - The booking widget now names the missing service, stylist, or both beside confirmation and in the live summary; the unavailable confirmation button stays keyboard-focusable with `aria-disabled` and an `aria-describedby` hint, while activation remains blocked until both choices are selected.
 - Migrated the production build pipeline from PostCSS, esbuild, and a plain static file server to Vite, adding six HTML entry points and generating minified CSS/JS with content-hashed filenames exclusively in `dist/`, while keeping the root HTML/CSS/JS as canonical development sources.
 - Reorganized static assets requiring stable public paths (web app manifest, favicon, `robots.txt`, `sitemap.xml`, Netlify `_redirects`) into `public/`, which Vite copies verbatim into `dist/` without processing.
