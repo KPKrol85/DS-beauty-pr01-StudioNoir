@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import { readFileSync, readdirSync } from "node:fs";
 import { relative, resolve } from "node:path";
 import { defineConfig } from "vite";
+import { primaryNavigation } from "./build/primary-navigation.js";
 
 const root = import.meta.dirname;
 // The service worker's navigation fallback resolves to these cached documents.
@@ -122,7 +123,7 @@ function cssCustomPropertyGuard() {
 export default defineConfig({
   base: "/",
   appType: "mpa",
-  plugins: [cssCustomPropertyGuard(), precacheServiceWorker()],
+  plugins: [primaryNavigation(root), cssCustomPropertyGuard(), precacheServiceWorker()],
   build: {
     outDir: "dist",
     // Keep images/fonts as cacheable files, including the gallery's lightbox sources.

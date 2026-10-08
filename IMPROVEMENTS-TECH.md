@@ -17,6 +17,8 @@ No active technical report, plan, context document, audit, or review was found. 
 
 ### IMP-TECH-01 — Maintain the primary navigation links in one canonical source
 
+**Status:** Completed — `build/primary-navigation.js` owns the seven entries and renders the four list insertion points through a local Vite HTML transform. Dev/build HTML, original labels/order/URLs, shared-label propagation, and insertion-point errors were verified; `npm run build`, `npm run test:nav` (18/18), and `git diff --check` passed. Desktop links work without JavaScript in dev/production preview; mobile focus/menu/section behavior is preserved. The existing mobile menu still requires JavaScript to open.
+
 - **Affected area:** The seven-link primary navigation shared by the home page and three legal pages.
 - **Evidence:** `index.html:57-65`, `privacy.html:53-61`, `terms.html:53-61`, `cookies.html:42-50`; consumers in `js/header.js:17-27` and `js/nav.js:73-77`; current HTML inputs in `vite.config.js:130-139`.
 - **Current implementation:** Each page independently declares the same labels, section destinations, order, and `.nav__link` classes. Home links use fragments; legal-page links use `/index.html` plus those fragments. A shared navigation change therefore requires four markup edits. The completed contact-link addition in the archived UX report demonstrates this existing maintenance operation.

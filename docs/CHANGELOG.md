@@ -46,6 +46,7 @@ When an implementation task is defined, apply this policy and state `Changelog: 
 
 ### Build and Tooling
 
+- Centralized the seven primary navigation entries in one build-time source, using a local Vite HTML transform to render the four `.nav__list` insertion points in development and production, preserving home fragments and legal-page `/index.html#section` URLs; missing, duplicated, or malformed insertion points now fail explicitly.
 - Expanded `.gitignore` to exclude generated build output, dependency directories, test and coverage artifacts, and local editor, agent, and environment files, while keeping canonical sources and project configuration under version control.
 - Added Netlify deployment configuration (`netlify.toml`) specifying the build command, the `dist` publish directory, and a no-cache header rule for the service worker.
 - Extended the Vite precache build guard to fail when a root-level HTML page is missing from the declared build inputs or when required offline fallback documents are absent from the precache.

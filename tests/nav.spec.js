@@ -7,6 +7,32 @@ const BREAKPOINT = { width: 900, height: 800 };
 const DESKTOP = { width: 1280, height: 800 };
 
 const NAV_LINKS = ["O nas", "Usługi", "Cennik", "Styliści", "Galeria", "Rezerwacja", "Kontakt"];
+const NAV_SECTIONS = ["about", "services", "pricing", "stylists", "gallery", "booking", "location"];
+
+test.describe("primary navigation without browser JavaScript", () => {
+  test.use({ javaScriptEnabled: false, viewport: DESKTOP });
+
+  for (const route of ["/", "/index.html", "/privacy.html", "/terms.html", "/cookies.html"]) {
+    test(`${route}: rendered links retain their order and destinations`, async ({ page }) => {
+      const prefix = route === "/" || route === "/index.html" ? "" : "/index.html";
+      const response = await page.goto(route);
+      expect(response.ok()).toBe(true);
+      expect(await response.text()).not.toContain("studio-noir:primary-navigation");
+
+      const links = page.getByRole("navigation", { name: "Główna" }).getByRole("list").getByRole("link");
+      await expect(links).toHaveText(NAV_LINKS);
+      await expect(page.locator(".nav__list > li > .nav__link")).toHaveCount(7);
+
+      for (const [index, section] of NAV_SECTIONS.entries()) {
+        await page.goto(route);
+        await expect(links.nth(index)).toHaveAttribute("href", `${prefix}#${section}`);
+        await links.nth(index).click();
+        await expect(page).toHaveURL(new URL(`${prefix || route}#${section}`, response.url()).href);
+        await expect(page.locator(`main section[id="${section}"]`)).toBeInViewport();
+      }
+    });
+  }
+});
 
 const getNav = (page) => ({
   landmark: page.getByRole("navigation", { name: "Główna" }),
