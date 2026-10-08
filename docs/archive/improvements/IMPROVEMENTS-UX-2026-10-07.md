@@ -1,17 +1,21 @@
 # Studio Noir — UX Improvements
 
 **Analysis date:** 2026-10-05
+**Completion date:** 2026-10-07
+**Status:** Completed
 **Project type:** Static multi-page website (Vite MPA build; vanilla HTML, CSS custom properties, and ES modules; service worker with a build-generated precache) — Polish-language demonstration site for a hair studio, KP_Code Digital Studio
 **Analysis mode:** Evidence-based UX improvement review
 **Focus:** Project-wide UX
 
 ## Improvement overview
 
-The home page is a long one-page layout — 9.8 viewport heights at 1280×800 and 17.9 at 375×812 — with anchor navigation, a three-step booking widget backed by direct-contact options, a gallery lightbox, and a quick-contact bar below 768px. Three long legal documents share the same header. The interaction foundations are solid: the mobile menu and the lightbox manage focus as modal dialogs, the booking summary is a live region, and booking choices use dedicated controls with a non-color selected state.
+This review identified five improvements connecting the site's existing visitor journeys: reaching contact details, starting a booking from service and stylist cards, understanding missing booking choices, tracking the current section, and browsing the gallery inside its lightbox.
 
-The main opportunities lie in the connections between these parts rather than in the parts themselves. The studio's address and opening hours cannot be reached from the navigation. A service or stylist chosen while browsing has to be chosen again in the booking widget, which also omits two listed services. The widget does not say which choice is missing before confirmation. The current-section indicator misreports the position outside the linked sections. The lightbox shows one image at a time, without a caption. Confirmed defects found during the analysis are listed under the analysis limitations and are not presented as improvements.
+All five selected improvements were implemented and verified. The final lightbox change also corrected the viewport-height defect required to keep the image, caption, and controls accessible on short screens.
 
-## Proposed improvements
+The original analysis fields below, including evidence, current experience, proposed improvement, implementation scope, and acceptance criteria, are preserved for traceability. Each item's `Status` records its implementation outcome; the original analysis limitations remain separate from implementation verification.
+
+## Completed improvements
 
 ### IMP-UX-01 — Add the location and contact section to the main navigation
 
@@ -67,6 +71,7 @@ The main opportunities lie in the connections between these parts rather than in
 
 ### IMP-UX-05 — Browse the gallery inside the lightbox
 
+- **Status:** Completed — one current index and render path derive the preview source, alternative text, description, position, and focus-return target from the ordered gallery thumbnails. Previous/Next buttons and Left/Right arrow keys share circular navigation; the visible caption is a polite, atomic live region. The viewport-height grid keeps the complete dialog within the screen. Focused checks on `npm run dev` passed in Chromium and Firefox at 375×667 and 1440×900 in both themes, covering all six openings, button/arrow traversal and wrapping, synchronization, Tab/Shift+Tab, all close paths, focus return to the last viewed thumbnail, and scroll locking/restoration. `npm run build` and `git diff --check` passed. Screen-reader speech, real devices, WebKit, and deployment were not tested.
 - **Affected journey:** Gallery and lightbox preview on the home page.
 - **Evidence:** `js/lightbox.js:34-45` (opening shows one image); `js/lightbox.js:58-63` (each thumbnail opens independently); `js/lightbox.js:71-98` (only Escape and Tab are handled); `index.html:248-267` (six thumbnails with descriptive `alt` text and no visible captions); `index.html:463-471` (the dialog holds a close button and the image, labelled "Podgląd zdjęcia"); `assets/img/gallery-1.svg:5` (placeholder text "Look 1"). Chromium probe: the open dialog's only visible text is "✕", it has one focusable control, and ArrowRight does not change the image.
 - **Current experience:** Each thumbnail opens its own preview. To see the next image, the visitor closes the dialog — focus returns to the thumbnail — and opens the next one, six times for the whole gallery. The dialog shows no caption or position: descriptions such as "Koloryzacja ombre" exist only as `alt` text, so sighted visitors see the image (currently a "Look 1"–"Look 6" placeholder) without learning which look or service it shows.
@@ -77,7 +82,7 @@ The main opportunities lie in the connections between these parts rather than in
 - **Impact:** Medium
 - **Effort:** Medium
 
-## Selection summary
+## Original selection summary
 
 - **Relevance:** The five proposals cover the visitor's main tasks — finding visit details (01), turning a browsing decision into a booking (02), completing the booking choices (03), knowing where one is on the long one-page layout (04), and browsing the portfolio (05). Each improves an existing journey with existing content and adds no new product scope. None repeats completed work from the archived UI, Quality, or Workflow cycles; there is no active plan or UI report.
 - **Dependencies:** 04 follows 01, because 01 changes which sections have a navigation entry, especially if "Rezerwacja" is replaced. 02 and 03 both change `js/booking.js` and the booking markup, so they should be implemented one after the other. 05 depends on fixing the lightbox height defect first. The booking-confirmation defects listed under the limitations share `updateSummary` with 03; fixing them before 02 and 03 avoids building new paths into misleading confirmation feedback.
@@ -85,7 +90,22 @@ The main opportunities lie in the connections between these parts rather than in
 - **Scope:** Three Small proposals (01, 03, 04) and two Medium ones (02, 05), each verifiable with a focused browser check, plus `npm run test:nav` for the navigation markup change in 01. Together they form a practical candidate backlog for a focused development day, with no guarantee that all five fit into one day.
 - **Considered but not selected:** Instagram link behavior — on a desktop viewport the footer "Instagram" link, marked `target="_blank"` and pointing to the profile, navigated the same tab to the `ig.me` messaging URL after 900ms (`js/mobile-cta.js:5-38`). This is the documented behavior of `data-instagram-link` links (`README.md:25`); it reaches fewer visitors than the selected journeys, deciding which destination each Instagram link should open is a product choice, and the adjacent "Napisz DM" placeholder defect should be fixed first. In-page tables of contents for the legal documents — 14, 18, and 9 numbered sections, 14.1 to 24.1 viewport heights at 375px, no in-page links — would help a secondary journey with lower impact than the selected ones.
 
-## Analysis limitations
+## Completion summary
+
+All five selected improvements are completed. Contact details are reachable from the main navigation, service and stylist cards carry their choices into booking, missing choices are explained beside confirmation, the current-section indicator reflects the reading position, and the gallery can be browsed continuously inside its lightbox.
+
+The final implementation preserved the existing thumbnails and assets as the gallery's source of truth. Its supporting height correction uses a `90dvh` dialog (`90vh` fallback), intrinsic control/caption rows, and a shrinking image row with `object-fit: contain`. Closing by Escape, the overlay, or the close button returns focus to the thumbnail of the last displayed image and restores the previous body overflow value.
+
+## Implementation verification and remaining limitations
+
+- Earlier items retain their own verification records in `Status`; those navigation and booking scenarios were not rerun for IMP-UX-05.
+- IMP-UX-05 was checked against `npm run dev` in installed headless Chromium and Firefox, at 375×667 and 1440×900 in both themes: eight browser/viewport/theme combinations passed. Every thumbnail opened its own source image; each combination exercised 24 synchronized changes across complete forward/backward button and arrow cycles, including both wrap boundaries. Focus stayed on the active control during navigation, Tab/Shift+Tab cycled through the three controls, and every close path restored focus and scrolling.
+- Bounds and hit-target checks covered every image, caption, and control, with no horizontal overflow. The dialog measured approximately 337.5×600.3px at 375×667 and 720×810px at 1440×900. Screenshots were also inspected for mobile and desktop presentation.
+- The DOM contained one polite, atomic caption region, with one text mutation per image change and no live region on the dialog. This verifies the announcement mechanism, not actual screen-reader speech. Real mobile devices, touch input, WebKit/Safari, live deployment, and production PWA behavior were not checked.
+- `npm run build` and `git diff --check` passed. No dependencies or tracked test infrastructure were added, and `npm run test:nav` was not run for this lightbox-only change. README accessibility descriptions were updated in Polish and English, and one gallery behavior entry was added to `[Unreleased]`.
+- Other defects recorded by the original analysis were not reassessed or changed in IMP-UX-05. Their historical entries below do not certify their current state. The required lightbox-height defect is resolved by this implementation.
+
+## Original analysis limitations
 
 - Runtime behavior was inspected in a single probe run of headless Chromium, driven by the environment's global Playwright, against the canonical sources served by a plain static server on localhost, with all external requests blocked. Without Vite, `import.meta.env` is undefined, so `js/main.js` threw a `TypeError` after all initializers had run. The service worker, the production build, and `npm run dev` were not exercised. Dependencies are not installed, so no build, test, or preview command was run.
 - Text renders largely in fallback fonts, because the bundled WOFF2 files cover only a Latin Extended subset (recorded in the archived UI report). Width-dependent measurements may therefore differ in other environments. In this environment the desktop header measured 136px at 900px and 88px at 1024px, against 69px at 1280px, with no spare width between the logo and the navigation; this informs the scope of IMP-UX-01 but is not reported as a finding.
