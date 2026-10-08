@@ -31,6 +31,8 @@ No active technical report, plan, context document, audit, or review was found. 
 
 ### IMP-TECH-02 — Share the Tab-boundary wrapping algorithm between overlays
 
+**Status:** Completed — Shared `wrapTabFocus` utility integrated into both overlays, preserving their focus-discovery rules; `npm run test:nav` (18 tests) and focused Chromium lightbox checks passed.
+
 - **Affected area:** Keyboard focus wrapping in the mobile navigation and gallery lightbox.
 - **Evidence:** `js/nav.js:5-10`, `js/nav.js:79-100`; `js/lightbox.js:33-42`, `js/lightbox.js:94-128`.
 - **Current implementation:** Both document keydown handlers obtain an ordered collection of controls, handle an empty collection, identify its first and last elements, prevent the default action at a Tab boundary, and focus the opposite boundary. Their control-discovery rules differ: the navigation uses a selector, while the lightbox additionally filters element type, disabled state, and `aria-hidden`.

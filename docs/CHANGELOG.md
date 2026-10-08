@@ -30,6 +30,7 @@ When an implementation task is defined, apply this policy and state `Changelog: 
 
 ### Changed
 
+- Centralized Tab/Shift+Tab boundary wrapping in a shared DOM utility used by the mobile navigation and gallery lightbox, preserving their separate focusable-control discovery, open-state checks, and interaction behavior.
 - The gallery lightbox now browses images in a loop through Previous/Next buttons and Left/Right arrow keys, synchronizes the image alternative text with a visible description and position in a polite live region, keeps keyboard focus within its controls, and returns focus to the last viewed thumbnail on closing; the complete dialog now fits the viewport height.
 - Corrected the current-section navigation indicator across the home page: linked sections mark their destination with `aria-current="location"`, while the hero, testimonials, and final CTA clear it, including after an instant return to the top and without IntersectionObserver.
 - The booking widget now names the missing service, stylist, or both beside confirmation and in the live summary; the unavailable confirmation button stays keyboard-focusable with `aria-disabled` and an `aria-describedby` hint, while activation remains blocked until both choices are selected.

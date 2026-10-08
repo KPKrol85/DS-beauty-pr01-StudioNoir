@@ -1,3 +1,5 @@
+import { wrapTabFocus } from "./wrap-tab-focus.js";
+
 // Below this width the panel is a modal menu; from it, the inline desktop
 // navigation. Keep in sync with the 900px rules in css/components.css.
 const DESKTOP_QUERY = "(min-width: 900px)";
@@ -85,17 +87,7 @@ export const initNav = () => {
 
     if (event.key === "Tab") {
       const focusables = getFocusableElements(panel);
-      if (!focusables.length) return;
-      const first = focusables[0];
-      const last = focusables[focusables.length - 1];
-
-      if (event.shiftKey && document.activeElement === first) {
-        event.preventDefault();
-        last.focus();
-      } else if (!event.shiftKey && document.activeElement === last) {
-        event.preventDefault();
-        first.focus();
-      }
+      wrapTabFocus(event, focusables);
     }
   });
 

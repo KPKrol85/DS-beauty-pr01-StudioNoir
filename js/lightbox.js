@@ -1,3 +1,5 @@
+import { wrapTabFocus } from "./wrap-tab-focus.js";
+
 export const initLightbox = () => {
   const root = document.querySelector("[data-lightbox-root]");
   const image = document.querySelector("[data-lightbox-image]");
@@ -109,21 +111,6 @@ export const initLightbox = () => {
     if (event.key !== "Tab") return;
 
     const focusableElements = getFocusableElements();
-    if (!focusableElements.length) return;
-
-    const firstFocusable = focusableElements[0];
-    const lastFocusable = focusableElements[focusableElements.length - 1];
-    const activeElement = document.activeElement;
-
-    if (event.shiftKey && activeElement === firstFocusable) {
-      event.preventDefault();
-      lastFocusable.focus();
-      return;
-    }
-
-    if (!event.shiftKey && activeElement === lastFocusable) {
-      event.preventDefault();
-      firstFocusable.focus();
-    }
+    wrapTabFocus(event, focusableElements);
   });
 };
