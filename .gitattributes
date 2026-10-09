@@ -1,0 +1,28 @@
+# Detect text automatically; keep known source/configuration formats on LF.
+* text=auto
+
+*.html text eol=lf
+*.css text eol=lf
+*.js text eol=lf
+*.md text eol=lf
+*.json text eol=lf
+*.xml text eol=lf
+*.toml text eol=lf
+*.svg text eol=lf
+*.webmanifest text eol=lf
+*.txt text eol=lf
+
+# Extensionless repository and deployment configuration.
+/.gitattributes text eol=lf
+/.editorconfig text eol=lf
+/.gitignore text eol=lf
+public/_redirects text eol=lf
+
+# Fonts and raster images must not undergo text conversion.
+*.woff2 binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.avif binary
+*.gif binary

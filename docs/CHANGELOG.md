@@ -48,6 +48,7 @@ When an implementation task is defined, apply this policy and state `Changelog: 
 
 ### Build and Tooling
 
+- Added `.gitattributes` and `.editorconfig` to define LF line endings for text sources and configuration, binary handling for fonts and raster images, and UTF-8/two-space editor defaults with Markdown trailing whitespace preserved.
 - Centralized the PWA home-document and offline-fallback paths in a static ES module shared by Vite's precache guard and the bundled service worker, preserving offline navigation and automatic content-derived cache versioning.
 - Centralized the seven primary navigation entries in one build-time source, using a local Vite HTML transform to render the four `.nav__list` insertion points in development and production, preserving home fragments and legal-page `/index.html#section` URLs; missing, duplicated, or malformed insertion points now fail explicitly.
 - Expanded `.gitignore` to exclude generated build output, dependency directories, test and coverage artifacts, and local editor, agent, and environment files, while keeping canonical sources and project configuration under version control.
