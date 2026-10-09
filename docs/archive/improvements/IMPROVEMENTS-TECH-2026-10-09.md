@@ -1,6 +1,8 @@
 # Studio Noir — Technical Improvements
 
 **Analysis date:** 2026-10-08  
+**Completion date:** 2026-10-09
+**Status:** Completed
 **Project type:** Static Polish-language hair-studio demonstration website; Vite multi-page build, HTML, CSS custom properties, and vanilla JavaScript ES modules  
 **Analysis mode:** Evidence-based technical improvement review  
 **Focus:** Project-wide technical implementation
@@ -9,15 +11,15 @@
 
 The canonical implementation comprises six root HTML documents, five imported CSS layers, a shared JavaScript entry point with feature initializers, and a service worker processed by the local Vite precache plugin. Browser code has no runtime dependencies. Booking is an in-memory demonstration; theme preference uses localStorage. Generated production files belong exclusively to `dist/`.
 
-Four opportunities qualify: give repeated navigation declarations one source, consolidate the repeated Tab-boundary algorithm, align build-time and runtime ownership of offline document paths, and share the mobile contact-bar clearance. These address existing maintenance contracts without replacing the stack or changing public behavior.
+All four selected improvements were completed: primary navigation content now has one build-time source, both overlays share the Tab-boundary algorithm, the build guard and service worker share fallback document paths, and mobile layout and booking share the contact-bar clearance. The work consolidated existing maintenance contracts within the current stack and retained the established interaction behavior.
 
-No active technical report, plan, context document, audit, or review was found. The four completed UI, UX, Quality, and Workflow reports in `docs/archive/improvements/`, together with `docs/CHANGELOG.md`, were checked against current sources. Their completed navigation, booking, lightbox, theme, reveal, and build-guard objectives are excluded.
+The original analysis fields below, including `Evidence`, `Current implementation`, `Proposed improvement`, `Expected engineering value`, `Implementation scope`, and `Acceptance criteria`, are preserved as historical rationale. File paths are relative to the repository root; evidence line numbers refer to the analysis snapshot. Each item's `Status` records the implementation outcome and the verification reported during implementation. The original analysis limitations are separate from the implementation verification and finalization checks.
 
-## Proposed improvements
+## Completed improvements
 
 ### IMP-TECH-01 — Maintain the primary navigation links in one canonical source
 
-**Status:** Completed — `build/primary-navigation.js` owns the seven entries and renders the four list insertion points through a local Vite HTML transform. Dev/build HTML, original labels/order/URLs, shared-label propagation, and insertion-point errors were verified; `npm run build`, `npm run test:nav` (18/18), and `git diff --check` passed. Desktop links work without JavaScript in dev/production preview; mobile focus/menu/section behavior is preserved. The existing mobile menu still requires JavaScript to open.
+**Status:** Completed — `build/primary-navigation.js` owns the seven entries, and its Vite HTML transform renders the four `.nav__list` insertion points with home fragments and legal-page `/index.html#section` URLs. Recorded implementation verification: dev/build HTML, labels/order/URLs, shared-label propagation, insertion-point errors, desktop links without JavaScript in dev/production preview, and mobile focus/menu/section behavior; `npm run build`, `npm run test:nav` (18/18), and `git diff --check` passed. The existing mobile menu still requires JavaScript to open.
 
 - **Affected area:** The seven-link primary navigation shared by the home page and three legal pages.
 - **Evidence:** `index.html:57-65`, `privacy.html:53-61`, `terms.html:53-61`, `cookies.html:42-50`; consumers in `js/header.js:17-27` and `js/nav.js:73-77`; current HTML inputs in `vite.config.js:130-139`.
@@ -31,7 +33,7 @@ No active technical report, plan, context document, audit, or review was found. 
 
 ### IMP-TECH-02 — Share the Tab-boundary wrapping algorithm between overlays
 
-**Status:** Completed — Shared `wrapTabFocus` utility integrated into both overlays, preserving their focus-discovery rules; `npm run test:nav` (18 tests) and focused Chromium lightbox checks passed.
+**Status:** Completed — `js/wrap-tab-focus.js` exports `wrapTabFocus`, consumed by `js/nav.js` and `js/lightbox.js` for Tab/Shift+Tab boundary wrapping. Each overlay retains its own focus-discovery rules, open-state checks, and lifecycle. Recorded implementation verification: `npm run test:nav` (18/18) and focused Chromium lightbox checks passed, covering wrapping, arrow navigation, close paths, and focus return.
 
 - **Affected area:** Keyboard focus wrapping in the mobile navigation and gallery lightbox.
 - **Evidence:** `js/nav.js:5-10`, `js/nav.js:79-100`; `js/lightbox.js:33-42`, `js/lightbox.js:94-128`.
@@ -45,7 +47,7 @@ No active technical report, plan, context document, audit, or review was found. 
 
 ### IMP-TECH-03 — Share offline document paths between the worker and build guard
 
-**Status:** Completed — `js/pwa-paths.js` owns the home/offline paths consumed by Vite's fallback guard and bundled worker. `npm run build`, resolved precache/version markers, self-contained worker output, both in-memory missing-input guard checks, and Chromium installation/activation plus 10 offline navigation scenarios with preview stopped passed; home, legal/clean URLs, queries, and unknown-path fallback are preserved. `git diff --check` passed.
+**Status:** Completed — `js/pwa-paths.js` defines `HOME_DOCUMENT` and `OFFLINE_DOCUMENT`, imported by `vite.config.js` for the precache guard and by `service-worker.js` for navigation fallback. Navigation normalization and content-derived cache versioning remain intact. Recorded implementation verification: `npm run build`, resolved precache/version markers, self-contained worker output, both in-memory missing-input guard checks, and Chromium installation/activation plus 10 offline navigation scenarios with preview stopped passed, covering home, legal/clean URLs, queries, and unknown-path fallback. `git diff --check` passed.
 
 - **Affected area:** Source ownership of the PWA home-document and offline-fallback paths.
 - **Evidence:** `vite.config.js:7-8`, `vite.config.js:58-67`; `service-worker.js:4-15`; worker bundling and stable output name in `vite.config.js:138-142`.
@@ -59,7 +61,7 @@ No active technical report, plan, context document, audit, or review was found. 
 
 ### IMP-TECH-04 — Share the mobile contact-bar clearance between layout and booking
 
-**Status:** Completed — `--mobile-contact-bar-clearance` in `css/tokens.css` supplies mobile body padding and booking-choice scroll margin with the unchanged safe-area expression. `npm run build`, compiled-CSS inspection, and focused Chromium checks passed: 390/767/768/1440px clearances, padding on all six pages, light/dark and reduced-motion geometry, and service/stylist card preselection with focus, `#booking`, and visibility correction. `git diff --check` passed.
+**Status:** Completed — `--mobile-contact-bar-clearance` in `css/tokens.css` supplies body padding in `css/components.css` and booking-choice scroll margin in `css/sections.css` under their existing `max-width: 767px` conditions, retaining `calc(5.25rem + env(safe-area-inset-bottom, 0px))`. Recorded implementation verification: `npm run build`, compiled-CSS inspection, and focused Chromium checks passed for 390/767/768/1440px clearances, padding on all six pages, light/dark and reduced-motion geometry, and service/stylist card preselection with focus, `#booking`, and visibility correction. `git diff --check` passed.
 
 - **Affected area:** Mobile page padding and booking-option scroll clearance.
 - **Evidence:** `css/components.css:385-388`, `css/sections.css:167-174`; the consumer of computed scroll margin in `js/booking.js:22-34`; fixed-bar positioning in `css/components.css:422-437`.
@@ -71,15 +73,37 @@ No active technical report, plan, context document, audit, or review was found. 
 - **Impact:** Low
 - **Effort:** Small
 
-## Selection summary
+## Completion summary
 
-- The set addresses four distinct existing contracts: repeated navigation content, repeated keyboard wrapping, duplicated PWA paths, and duplicated mobile clearance. Benefits are source ownership and local maintainability, not measured performance or reliability gains.
-- All four can be implemented independently. IMP-TECH-01 and IMP-TECH-03 both touch `vite.config.js`, so sequential edits avoid overlap; neither depends on the other. IMP-TECH-02 requires preserving and directly checking both overlays' existing keyboard behavior.
-- One Medium and three Small proposals form a bounded candidate backlog for focused development. Effort and impact are relative judgments; completion within one working day is not guaranteed.
-- Four were selected because no fifth distinct opportunity had comparable evidence and a proportionate scope. Existing feature modules already have local responsibilities, and service/stylist styling and booking selection already share implementations. Further extraction solely for file organization, broader HTML templating, and a new state layer would not be justified by the current project.
-- These are proposals awaiting selection, not approved plan work. Testing expansion, initialization resilience, documentation corrections, and previously recorded interaction/content defects remain in their appropriate Quality, Workflow, or defect scopes.
+All four selected improvements were implemented:
 
-## Analysis limitations
+- **Navigation (IMP-TECH-01):** One ordered source renders the four primary navigation lists, so shared content changes no longer require four independent markup edits.
+- **Overlay focus (IMP-TECH-02):** One boundary-wrapping utility serves both overlays while each feature retains its own control eligibility and interaction state.
+- **PWA paths (IMP-TECH-03):** The build guard and service worker consume the same home/offline constants, removing independently maintained path literals.
+- **Mobile clearance (IMP-TECH-04):** One CSS token supplies the page reservation and booking scroll clearance, removing the duplicated safe-area expression.
+
+The maintainability benefit is shared ownership of these four contracts. This cycle records no measured performance or reliability gains and introduces no new runtime dependency, backend, or product scope. Generated output remains owned by the Vite build.
+
+## Implementation verification and remaining limitations
+
+- The per-item verification summaries are historical implementation records, added in commits `3ca7ce7` (01), `7f10cd7` (02), `9610f6d` (03), and `469c7f2` (04). They record the focused checks performed for each change; a build recorded for one item does not imply that every item ran a build or a full regression suite.
+- Finalization on 2026-10-09 checked all four completed contracts against their current source files, reviewed the status records and archive conventions, preserved the original analysis fields, checked document consistency and relocation references, confirmed the archive destination and root-file removal, and ran `git diff --check`. No build, test suite, browser scenario, production preview, or deployment was repeated during this documentation task.
+- Navigation links are rendered before browser JavaScript runs through Vite's dev/build HTML transform. The no-JavaScript record covers desktop links in those served outputs; the mobile menu still requires JavaScript to open. Unprocessed root HTML contains insertion points rather than the rendered navigation.
+- The focused Chromium records do not establish comprehensive cross-browser coverage, real-device behavior, non-zero device safe-area insets, screen-reader speech, Netlify delivery, or live production PWA behavior. Other Quality, Workflow, and defect objectives remained outside this technical cycle.
+
+## Original selection rationale
+
+The following rationale describes the pre-implementation analysis and its scope decisions.
+
+- The original set addressed four distinct maintenance contracts: repeated navigation content, repeated keyboard wrapping, duplicated PWA paths, and duplicated mobile clearance. Expected benefits concerned source ownership and local maintainability.
+- The four changes were assessed as independently implementable. IMP-TECH-01 and IMP-TECH-03 both touched `vite.config.js`, so sequential edits were recommended to avoid overlap; neither depended on the other. IMP-TECH-02 required preserving and directly checking both overlays' existing keyboard behavior.
+- One Medium and three Small effort estimates defined a bounded development scope. Effort and impact were relative judgments, with no guarantee of completion within one working day.
+- Four items were selected because no fifth distinct opportunity had comparable evidence and proportionate scope. Feature modules already had local responsibilities, and service/stylist styling and booking selection already shared implementations. Extraction solely for file organization, broader HTML templating, and a new state layer were not justified by that evidence.
+- At analysis time, no other active technical report, plan, context document, audit, or review was found. The completed UI, UX, Quality, and Workflow reports in `docs/archive/improvements/` and `docs/CHANGELOG.md` were checked against the sources then available. Their completed navigation, booking, lightbox, theme, reveal, and build-guard objectives were excluded, as were testing expansion, initialization resilience, documentation corrections, and previously recorded interaction/content defects.
+
+## Original analysis limitations
+
+The following limitations applied to the analysis on 2026-10-08 and are preserved as written. Later implementation verification and the documentation-only finalization checks are recorded separately above.
 
 - This review inspected canonical HTML/CSS/JavaScript, module consumers, Vite and deployment configuration, package scripts, the navigation spec, README, changelog, and archived reports. Dependencies are present, but no build, test suite, browser session, or production preview was run. Acceptance criteria describe future verification, not results achieved during discovery.
 - No `dist/` output was present. Generated-output behavior was traced from executable configuration and worker source; it was not observed in a fresh build. Netlify delivery, real devices, screen-reader speech, and production PWA behavior were not checked.
