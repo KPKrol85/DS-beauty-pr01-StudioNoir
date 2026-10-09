@@ -1,7 +1,8 @@
+import { HOME_DOCUMENT, OFFLINE_DOCUMENT } from "./js/pwa-paths.js";
+
 // Vite injects the final production URLs and a content-derived cache version.
 const CACHE_NAME = "studio-noir-" + __STUDIO_NOIR_CACHE_VERSION__;
 const ASSETS = __STUDIO_NOIR_PRECACHE__;
-const OFFLINE_PAGE = "/offline.html";
 
 async function handleDocumentRequest(request) {
   try {
@@ -10,9 +11,9 @@ async function handleDocumentRequest(request) {
     const cache = await caches.open(CACHE_NAME);
     const pathname = new URL(request.url).pathname;
     // Netlify also serves clean URLs such as /privacy; queries do not change the shell.
-    const path = pathname.replace(/\/$/, "") || "/index.html";
+    const path = pathname.replace(/\/$/, "") || HOME_DOCUMENT;
     const page = path.endsWith(".html") ? path : `${path}.html`;
-    return (await cache.match(page)) || (await cache.match(OFFLINE_PAGE)) || Response.error();
+    return (await cache.match(page)) || (await cache.match(OFFLINE_DOCUMENT)) || Response.error();
   }
 }
 

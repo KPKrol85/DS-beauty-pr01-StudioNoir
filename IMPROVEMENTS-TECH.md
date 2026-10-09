@@ -45,6 +45,8 @@ No active technical report, plan, context document, audit, or review was found. 
 
 ### IMP-TECH-03 — Share offline document paths between the worker and build guard
 
+**Status:** Completed — `js/pwa-paths.js` owns the home/offline paths consumed by Vite's fallback guard and bundled worker. `npm run build`, resolved precache/version markers, self-contained worker output, both in-memory missing-input guard checks, and Chromium installation/activation plus 10 offline navigation scenarios with preview stopped passed; home, legal/clean URLs, queries, and unknown-path fallback are preserved. `git diff --check` passed.
+
 - **Affected area:** Source ownership of the PWA home-document and offline-fallback paths.
 - **Evidence:** `vite.config.js:7-8`, `vite.config.js:58-67`; `service-worker.js:4-15`; worker bundling and stable output name in `vite.config.js:138-142`.
 - **Current implementation:** The precache plugin checks its own `FALLBACK_DOCUMENTS` array containing `/index.html` and `/offline.html`. The worker independently declares `/offline.html` and embeds `/index.html` in navigation normalization. The values agree today, but the build guard and the runtime consumer maintain separate copies of one document-path contract.

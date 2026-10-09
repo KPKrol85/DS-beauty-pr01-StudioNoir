@@ -3,10 +3,11 @@ import { readFileSync, readdirSync } from "node:fs";
 import { relative, resolve } from "node:path";
 import { defineConfig } from "vite";
 import { primaryNavigation } from "./build/primary-navigation.js";
+import { HOME_DOCUMENT, OFFLINE_DOCUMENT } from "./js/pwa-paths.js";
 
 const root = import.meta.dirname;
 // The service worker's navigation fallback resolves to these cached documents.
-const FALLBACK_DOCUMENTS = ["/index.html", "/offline.html"];
+const FALLBACK_DOCUMENTS = [HOME_DOCUMENT, OFFLINE_DOCUMENT];
 
 function rootPages() {
   return readdirSync(root, { withFileTypes: true })
