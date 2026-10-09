@@ -169,7 +169,7 @@
    (the body padding in css/components.css). */
 @media (max-width: 767px) {
   .booking__options .choice {
-    scroll-margin-bottom: calc(5.25rem + env(safe-area-inset-bottom, 0px));
+    scroll-margin-bottom: var(--mobile-contact-bar-clearance);
   }
 }
 

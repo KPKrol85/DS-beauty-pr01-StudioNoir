@@ -384,7 +384,7 @@
 
 @media (max-width: 767px) {
   body {
-    padding-bottom: calc(5.25rem + env(safe-area-inset-bottom, 0px));
+    padding-bottom: var(--mobile-contact-bar-clearance);
   }
 
   /* Tighter gaps and sub-line tracking keep the full lockup on one row beside

@@ -59,6 +59,8 @@ No active technical report, plan, context document, audit, or review was found. 
 
 ### IMP-TECH-04 — Share the mobile contact-bar clearance between layout and booking
 
+**Status:** Completed — `--mobile-contact-bar-clearance` in `css/tokens.css` supplies mobile body padding and booking-choice scroll margin with the unchanged safe-area expression. `npm run build`, compiled-CSS inspection, and focused Chromium checks passed: 390/767/768/1440px clearances, padding on all six pages, light/dark and reduced-motion geometry, and service/stylist card preselection with focus, `#booking`, and visibility correction. `git diff --check` passed.
+
 - **Affected area:** Mobile page padding and booking-option scroll clearance.
 - **Evidence:** `css/components.css:385-388`, `css/sections.css:167-174`; the consumer of computed scroll margin in `js/booking.js:22-34`; fixed-bar positioning in `css/components.css:422-437`.
 - **Current implementation:** Below 768px, body padding and booking-option `scroll-margin-bottom` independently repeat `calc(5.25rem + env(safe-area-inset-bottom, 0px))`. The booking stylesheet explicitly identifies that margin as the space reserved for the contact bar, and the booking focus correction reads the resulting computed margin.
