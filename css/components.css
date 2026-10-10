@@ -78,9 +78,15 @@
 
 .button:disabled,
 .button[aria-disabled="true"] {
-  opacity: 0.6;
   cursor: not-allowed;
   box-shadow: none;
+}
+
+/* Keep unavailable labels and their keyboard focus opaque; the darker fill
+   distinguishes the state without fading the whole control. */
+.button--primary:disabled,
+.button--primary[aria-disabled="true"] {
+  background-color: var(--color-accent-500);
 }
 
 /* Static informational label (prices, notes, counts); never interactive. */
@@ -93,7 +99,7 @@
   font-size: var(--fs-xs);
   text-transform: uppercase;
   letter-spacing: 0.14em;
-  background: rgba(20, 20, 24, 0.4);
+  background: rgba(var(--color-panel-rgb), 0.4);
 }
 
 /* Selectable choice control. The leading ring is its state indicator — empty
@@ -260,7 +266,7 @@
   top: 0;
   z-index: 100;
   backdrop-filter: blur(16px);
-  background: rgba(11, 11, 14, 0.7);
+  background: rgba(var(--color-page-rgb), 0.7);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
@@ -430,7 +436,7 @@
     gap: var(--space-xs);
     padding: var(--space-xs);
     border-radius: var(--radius-md);
-    background: var(--color-glass);
+    background: var(--color-glass-raised);
     backdrop-filter: blur(14px);
     border: 1px solid rgba(255, 255, 255, 0.16);
     box-shadow: var(--shadow-md);

@@ -12,7 +12,7 @@
 }
 
 .section--cta {
-  background: linear-gradient(135deg, rgba(157, 128, 97, 0.3), rgba(20, 20, 24, 0.8));
+  background: linear-gradient(135deg, rgba(157, 128, 97, 0.3), rgba(var(--color-panel-rgb), 0.8));
 }
 
 .section__header {

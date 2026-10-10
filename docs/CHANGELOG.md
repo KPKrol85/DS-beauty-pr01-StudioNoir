@@ -30,6 +30,7 @@ When an implementation task is defined, apply this policy and state `Changelog: 
 
 ### Changed
 
+- Corrected light-theme contrast on cards, booking panels, informational pills, the shared header, and the final CTA; strengthened accent text and control/focus colors, kept unavailable primary-button labels opaque, prevented the hero wash from dimming its content, and increased mobile contact-bar opacity for readable controls over illustrations.
 - Centralized mobile contact-bar clearance in `--mobile-contact-bar-clearance`, shared by mobile body padding and booking-choice scroll margin, preserving the existing breakpoint and safe-area calculation.
 - Centralized Tab/Shift+Tab boundary wrapping in a shared DOM utility used by the mobile navigation and gallery lightbox, preserving their separate focusable-control discovery, open-state checks, and interaction behavior.
 - The gallery lightbox now browses images in a loop through Previous/Next buttons and Left/Right arrow keys, synchronizes the image alternative text with a visible description and position in a polite live region, keeps keyboard focus within its controls, and returns focus to the last viewed thumbnail on closing; the complete dialog now fits the viewport height.

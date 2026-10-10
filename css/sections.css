@@ -15,6 +15,12 @@
   line-height: var(--lh-display);
 }
 
+/* The decorative wash must not composite over text, actions, or focus rings. */
+.hero__copy {
+  position: relative;
+  z-index: 1;
+}
+
 .hero__subtitle {
   font-size: var(--fs-lg);
   max-width: 34rem;
@@ -35,7 +41,7 @@
   position: absolute;
   inset: auto 0 0;
   height: 50%;
-  background: linear-gradient(180deg, transparent, rgba(11, 11, 14, 0.9));
+  background: linear-gradient(180deg, transparent, rgba(var(--color-page-rgb), 0.9));
   pointer-events: none;
 }
 
@@ -46,7 +52,7 @@
 
 .value-card {
   padding: var(--space-lg);
-  background: rgba(20, 20, 24, 0.6);
+  background: rgba(var(--color-panel-rgb), 0.6);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
   border: 1px solid rgba(255, 255, 255, 0.05);
@@ -55,7 +61,7 @@
 .service-card,
 .stylist-card {
   padding: var(--space-lg);
-  background: rgba(20, 20, 24, 0.7);
+  background: rgba(var(--color-panel-rgb), 0.7);
   border-radius: var(--radius-md);
   border: 1px solid rgba(255, 255, 255, 0.05);
   box-shadow: var(--shadow-sm);
@@ -155,7 +161,7 @@
   padding: var(--space-lg);
   border-radius: var(--radius-md);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  background: rgba(20, 20, 24, 0.6);
+  background: rgba(var(--color-panel-rgb), 0.6);
 }
 
 .booking__options {
@@ -208,7 +214,7 @@
   padding: var(--space-lg);
   border-radius: var(--radius-md);
   border: 1px solid rgba(255, 255, 255, 0.12);
-  background: rgba(20, 20, 24, 0.5);
+  background: rgba(var(--color-panel-rgb), 0.5);
 }
 
 .booking__fallback-actions {
@@ -254,7 +260,7 @@
   text-align: center;
   padding: var(--space-2xl);
   border-radius: var(--radius-lg);
-  background: rgba(11, 11, 14, 0.6);
+  background: rgba(var(--color-page-rgb), 0.6);
 }
 
 .footer {

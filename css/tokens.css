@@ -9,6 +9,9 @@
   --color-gold-300: #d6b996;
   --color-accent-500: #9d8061;
   --color-white: #ffffff;
+  /* Theme-paired channels retain each translucent surface's existing alpha. */
+  --color-page-rgb: 11, 11, 14;
+  --color-panel-rgb: 20, 20, 24;
   --color-shadow: rgba(0, 0, 0, 0.2);
   --color-glass: rgba(20, 20, 24, 0.65);
   --color-glass-light: rgba(255, 255, 255, 0.75);
@@ -73,9 +76,11 @@
   --color-ink-700: #ece7e1;
   --color-ink-200: #2b2b33;
   --color-ink-100: #1f1f26;
-  --color-gold-400: #9d8061;
-  --color-gold-300: #b59676;
-  --color-accent-500: #7c5d3e;
+  --color-gold-400: #7c5d3e;
+  --color-gold-300: #806040;
+  --color-accent-500: #65492f;
+  --color-page-rgb: 245, 241, 236;
+  --color-panel-rgb: 255, 255, 255;
   --color-shadow: rgba(10, 10, 12, 0.12);
   --color-glass: rgba(250, 249, 247, 0.75);
   --color-glass-light: rgba(255, 255, 255, 0.9);

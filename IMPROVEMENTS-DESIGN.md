@@ -6,7 +6,7 @@
 
 **Analysis date:** 2026-10-10 (Europe/Warsaw)
 
-**Status:** Proposed — awaiting owner review; no implementation authorized
+**Status:** Open — approved IMP-DESIGN-01A contrast slice completed; IMP-DESIGN-01B and the remaining design proposals are pending. Original audit evidence below is retained.
 
 **Scope:** Creative direction, home-page composition, visitor journeys, shared visual system, and proportionate legal-page consistency review.
 
@@ -149,7 +149,7 @@ Priority means implementation value/dependency, not a severity score: **P1** est
 
 ### IMP-DESIGN-01 — Establish paired editorial materials
 
-- **Status:** Proposed
+- **Status:** Open — IMP-DESIGN-01A completed and verified (2026-10-10); IMP-DESIGN-01B pending.
 - **Priority:** P1
 - **Affected area:** Shared surfaces, accents, corners, borders, and elevation in both themes.
 - **Evidence:** Source: `css/tokens.css`, `.value-card`, `.service-card`, `.stylist-card`, `.quote`, `.booking__step`, `.cta` in `css/sections.css`; `.header` and `.pill` in `css/components.css`. Runtime: dark card/header/CTA fills persist in light mode.
@@ -160,6 +160,26 @@ Priority means implementation value/dependency, not a severity score: **P1** est
 - **Acceptance criteria:** Both themes have explicitly mapped surfaces; affected cards, quotes, header, pills, and final CTA have measured readable text/focus contrast over their actual backgrounds. Primary actions remain recognizable; choice/static-label distinction remains. Legal prose/table geometry is preserved. No new library or unrelated token overhaul.
 - **Impact:** High
 - **Effort:** Medium
+
+#### IMP-DESIGN-01A — Theme Surface Contrast: completed 2026-10-10
+
+- **Implemented scope:** Contrast corrections only. Two theme-paired RGB tokens preserve the existing alpha of affected card, pill, booking, header, and CTA surfaces. Light-theme gold/accent values now support text, button labels, control borders, and focus. Unavailable primary buttons use an opaque darker fill instead of fading their labels/focus. Hero copy sits above its decorative wash; the wash follows the page theme. The mobile contact bar uses the existing raised-glass token to keep control borders readable over dark illustrations. No broader editorial material redesign was implemented.
+- **Measurement method:** Installed headless Chromium against local Vite. Background pixels were sampled with the target text temporarily transparent; foreground swatches were rendered in the same element to include ancestor opacity and the hero overlay. Three positions along representative text lines sampled translucent/gradient backgrounds. Control borders were compared with resolved inner/outer surfaces; visible focus edges were sampled against their adjacent pixels (top edges of controls, visible side edges of tall table regions). Temporary probes and screenshots are outside canonical project sources.
+
+| Representative combination, 1440×900 unless stated | Rendered background context | Before | After |
+| --- | --- | --- | --- |
+| Light resting header logo, home/shared legal header | 70% page surface over the page: RGB 81/80/80 → 245/241/236 | 1.75:1 | 12.48:1 |
+| Light service-card paragraph | 70% panel over the muted section: RGB 90/90/93 → 255/255/255 | 2.04:1 | 14.04:1 |
+| Light service price pill | 40% pill layered over the card: RGB 62/62/66 → 255/255/255 | 1.32:1 | 14.04:1 |
+| Light final CTA paragraph | Page/panel surfaces over the diagonal gradient; lowest of three sampled text positions | 1.26:1 | 11.95:1 |
+| Light pricing accent | Ivory page RGB 245/241/236; foreground RGB 181/150/118 → 128/96/64 | 2.46:1 | 5.10:1 |
+| Dark hero primary label, rest / pressed | Gold fill previously dimmed by the overlying gradient; copy now above it | 3.84:1 / 2.72:1 | 8.46:1 / 5.33:1 |
+| Light hero primary label, rest | Actual foreground and gold fill previously both dimmed by the overlay | 2.52:1 | 5.35:1 |
+| Light selected booking-choice focus | Visible outline edge against the resolved booking panel | 1.27:1 | 5.63:1 |
+
+- **Verification:** Home, privacy, terms, and cookies in both themes at 360, 375, 768, 900, and 1440px (900px viewport height): 40 combinations and 444 representative samples, with no failed applicable text/boundary/focus targets. Measured component/prose/table geometry matched the baseline, with no document horizontal overflow. Header height remained unchanged when scrolled: 69px at four widths and the pre-existing 88.17px at 900px. Table focus was checked on 30 regions; native ArrowRight/ArrowLeft scrolling passed on all 18 overflowing regions. Booking selection retained its filled ring and `aria-pressed`; unavailable confirmation remained focusable. Menu/lightbox focus and Escape were exercised. Reduced motion was enabled for the measurement matrix. System-preference initialization, theme toggling, and stored preference after reload passed separately. Mobile-bar hover/pressed/focus samples over seven sections at 375×800 met the targets in both themes; the light-theme minima were 7.80:1 text, 3.18:1 border, and 4.39:1 focus. Home/CTA screenshots were visually inspected at 375px, plus home screenshots at 1440px, in both themes.
+- **Project checks:** `npm run build` passed; `npm run test:nav` passed all 18 tests; `git diff --check` passed. Changelog: yes, one user-visible contrast entry in `docs/CHANGELOG.md`.
+- **Boundaries and limitations:** This is a representative component contrast review, not whole-project WCAG certification. Decorative card/pill/table hairlines, the already readable quote and booking-summary surfaces, typography, spacing, radii, responsive breakpoints, HTML/JS contracts, and assets were retained. Other browsers, real touch devices, screen-reader speech, zoom/landscape coverage, complete no-JS booking behavior, external destinations, production PWA/offline behavior, and deployment were not verified. The original audit's separate font, booking, menu, and content findings remain outside scope. IMP-DESIGN-01 stays open for 01B; the design report remains open.
 
 ### IMP-DESIGN-02 — Art-direct typography after font repair
 
