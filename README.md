@@ -12,7 +12,7 @@ Aktualny zakres:
 
 - rezerwacja działa wyłącznie po stronie przeglądarki — potwierdzenie zmienia jedynie status w interfejsie, dane nie są nigdzie wysyłane ani zapisywane;
 - grafiki w `assets/img/` to zastępcze ilustracje SVG;
-- `privacy.html`, `terms.html` i `cookies.html` zawierają szablonową treść z polami do uzupełnienia (np. `[Nazwa firmy]`, `[Adres]`, `[E-mail kontaktowy]`).
+- `privacy.html`, `terms.html` i `cookies.html` zawierają treści prawne i informacyjne opracowane dla demonstracyjnego serwisu Studio Noir; nie stanowią gotowej dokumentacji prawnej dla rzeczywistego salonu.
 
 ### Kluczowe funkcje
 
@@ -31,15 +31,17 @@ Aktualny zakres:
 - **Runtime:** HTML, CSS z natywnymi custom properties (bez preprocesora), moduły ES JavaScript bez bibliotek.
 - **Fonty:** lokalne pliki WOFF2 zadeklarowane w `css/base.css` jako Playfair Display i Inter (grubości 400–700).
 - **Build:** Vite `^8.3.1` (8.3.1 w `package-lock.json`) — zależność deweloperska (`devDependencies`); wejścia buildu konfigurowane przez `build.rolldownOptions`.
-- **Testy:** Playwright — `@playwright/test` `^1.63.0` (1.63.0 w `package-lock.json`), zależność deweloperska używana przez skoncentrowany test regresji przeglądarkowej nawigacji.
+- **Testy:** Playwright — `@playwright/test` `^1.63.0` (1.63.0 w `package-lock.json`), zależność deweloperska używana przez skoncentrowany zestaw testów regresji przeglądarkowej nawigacji.
 - **Środowisko:** Node.js `^20.19.0 || >=22.12.0` (`engines` w `package.json`), npm (`package-lock.json`).
 - **Wdrożenie:** konfiguracja Netlify (`netlify.toml`, `public/_redirects`).
 
 ### Architektura
 
-- **Kanoniczne źródła:** dokumenty HTML w katalogu głównym, `css/`, `js/`, `assets/`, `public/` oraz `service-worker.js`. HTML odwołuje się bezpośrednio do `/css/style.css` i `/js/main.js`.
+- **Kanoniczne źródła:** dokumenty HTML w katalogu głównym, `build/`, `css/`, `js/`, `assets/`, `public/` oraz `service-worker.js`. HTML odwołuje się bezpośrednio do `/css/style.css` i `/js/main.js`.
+- **Nawigacja:** `build/primary-navigation.js` definiuje siedem głównych wpisów. Transformacja HTML Vite renderuje listy `.nav__list` w development i buildzie produkcyjnym: na stronie głównej cele mają postać `#section`, a na stronach prawnych `/index.html#section`. Wyrenderowane linki istnieją bez JavaScript w przeglądarce; otwarcie panelu mobilnego nadal wymaga JavaScript. Źródłowe HTML zawierają w listach znacznik `<!-- studio-noir:primary-navigation -->`.
 - **JavaScript:** `js/main.js` to jedyny punkt wejścia, ładowany przez stronę główną i strony prawne. Importuje moduły funkcjonalne i po załadowaniu DOM wywołuje ich funkcje `init*`. Moduły wyszukują swoje elementy przez atrybuty `data-*` i kończą działanie, gdy ich nie znajdą, dzięki czemu ten sam skrypt obsługuje wszystkie strony. `offline.html` i `404.html` ładują wyłącznie CSS.
-- **CSS:** `css/style.css` importuje warstwy w kolejności `tokens.css` → `base.css` → `layout.css` → `components.css` → `sections.css`. Motyw jasny nadpisuje tokeny kolorów w klasie `.theme--light`.
+- **Fokus nakładek:** `wrapTabFocus` z `js/wrap-tab-focus.js` obsługuje zawijanie Tab/Shift+Tab na granicach listy kontrolek w menu mobilnym i lightboxie. `js/nav.js` i `js/lightbox.js` nadal samodzielnie wybierają dostępne kontrolki i sprawdzają stan otwarcia.
+- **CSS:** `css/style.css` importuje warstwy w kolejności `tokens.css` → `base.css` → `layout.css` → `components.css` → `sections.css`. Motyw jasny nadpisuje tokeny kolorów w klasie `.theme--light`. Poniżej 768 px token `--mobile-contact-bar-clearance` z `css/tokens.css` dostarcza wspólny odstęp dla `padding-bottom` elementu `body` w `css/components.css` i `scroll-margin-bottom` opcji rezerwacji w `css/sections.css`, uwzględniając safe area; `js/booking.js` odczytuje obliczony margines przy korekcie widoczności wyboru.
 - **Build:** `vite.config.js` ustawia `appType: "mpa"`, `base: "/"` i siedem wejść: sześć stron HTML oraz `service-worker.js`. Lokalny plugin `studio-noir-precache` uzupełnia service worker o listę precache i wersję cache.
 - **Pliki o stałych adresach:** `public/` zawiera manifest, ikonę, `robots.txt`, `sitemap.xml` i `_redirects`; Vite kopiuje je do `dist/` bez przetwarzania.
 
@@ -47,16 +49,24 @@ Aktualny zakres:
 
 ```text
 .
+├── .gitignore
+├── .gitattributes
+├── .editorconfig
+├── AGENTS.md               # wspólne instrukcje agentów
+├── CLAUDE.md               # odwołanie do AGENTS.md dla Claude Code
+├── LICENSE.md
 ├── index.html              # strona główna (układ jednostronicowy)
-├── privacy.html            # polityka prywatności (szablon)
-├── terms.html              # regulamin (szablon)
-├── cookies.html            # polityka cookies (szablon)
+├── privacy.html            # polityka prywatności serwisu demonstracyjnego
+├── terms.html              # regulamin serwisu demonstracyjnego
+├── cookies.html            # polityka cookies serwisu demonstracyjnego
 ├── offline.html            # strona zastępcza offline
 ├── 404.html                # strona błędu 404
 ├── service-worker.js       # źródło service workera
 ├── assets/
 │   ├── fonts/              # fonty WOFF2
 │   └── img/                # ilustracje SVG
+├── build/
+│   └── primary-navigation.js # wspólne wpisy i transformacja HTML nawigacji
 ├── css/
 │   ├── style.css           # punkt wejścia CSS (@import warstw)
 │   ├── tokens.css
@@ -69,6 +79,8 @@ Aktualny zakres:
 │   ├── config.js
 │   ├── header.js
 │   ├── nav.js
+│   ├── wrap-tab-focus.js
+│   ├── pwa-paths.js
 │   ├── reveal.js
 │   ├── lightbox.js
 │   ├── booking.js
@@ -80,14 +92,17 @@ Aktualny zakres:
 │   ├── robots.txt
 │   ├── sitemap.xml
 │   └── assets/icons/favicon.svg
+├── docs/
+│   ├── CHANGELOG.md
+│   └── archive/
+│       └── improvements/   # zakończone raporty usprawnień
 ├── tests/
-│   └── nav.spec.js         # test regresji przeglądarkowej nawigacji
+│   └── nav.spec.js         # testy regresji przeglądarkowej nawigacji
 ├── vite.config.js
 ├── playwright.config.js    # konfiguracja Playwright (Chromium, serwer Vite dev)
 ├── netlify.toml
 ├── package.json
 ├── package-lock.json
-├── CHANGELOG.md
 └── README.md
 ```
 
@@ -107,7 +122,7 @@ npm ci
 npm run dev       # vite — serwer deweloperski, domyślnie http://localhost:5173
 npm run build     # vite build — build produkcyjny do dist/
 npm run preview   # vite preview — podgląd dist/, domyślnie http://localhost:4173
-npm run test:nav  # playwright test — test regresji przeglądarkowej wspólnego kontraktu nawigacji
+npm run test:nav  # playwright test — testy regresji przeglądarkowej wspólnego kontraktu nawigacji
 ```
 
 - Porty nie są ustawione w `vite.config.js`; podane wartości to domyślne ustawienia Vite.
@@ -126,7 +141,13 @@ Co weryfikują polecenia:
   2. strona `.html` w katalogu głównym nie jest zadeklarowana w `build.rolldownOptions.input`;
   3. w wygenerowanej liście precache brakuje `/index.html` lub `/offline.html`, z których worker korzysta przy nawigacji bez połączenia;
   4. odwołanie `var(--właściwość)` bez wartości zapasowej w pliku `css/*.css` wskazuje właściwość niestandardową, której nie definiuje żaden arkusz `css/*.css`.
-- `npm run test:nav` — test regresji przeglądarkowej wyłącznie dla wspólnego kontraktu nawigacji (`tests/nav.spec.js`): menu mobilne jako okno modalne z pułapką fokusu, zamykanie klawiszem Escape i wyborem linku, czyszczenie stanu mobilnego po poszerzeniu otwartego menu do układu desktopowego (900 px) oraz dostępność nawigacji desktopowej dla technologii asystujących. Działa w Chromium, na stronie głównej i na serwerze Vite dev — nie sprawdza `dist/` ani pozostałych interakcji strony.
+- `npm run test:nav` — skoncentrowane testy regresji przeglądarkowej nawigacji (`tests/nav.spec.js`):
+  - etykiety, kolejność, cele i działanie siedmiu linków na stronie głównej (`/`, `/index.html`) i stronach prawnych (`/privacy.html`, `/terms.html`, `/cookies.html`) bez JavaScript w przeglądarce, w widoku desktopowym;
+  - wskaźnik bieżącej sekcji z `IntersectionObserver` i bez niego, w widoku mobilnym i desktopowym: sekcje z linkiem i bez linku, powrót na górę, wejście przez fragment `#services`, granice sekcji i zmiana rozmiaru okna;
+  - menu mobilne jako okno modalne: stan ARIA, `inert`, blokada przewijania, przenoszenie i zawijanie fokusu, otwieranie klawiaturą oraz zamykanie przez Escape i wybór linku;
+  - czyszczenie stanu otwartego menu przy przejściu do układu desktopowego (900 px), zwolnienie pułapki fokusu i dostępność nawigacji desktopowej dla technologii asystujących.
+
+  Testy działają w Chromium na serwerze Vite dev. Nie sprawdzają `dist/`, produkcyjnego PWA ani pozostałych interakcji; nie zapewniają pełnej regresji, audytu dostępności ani pokrycia wielu przeglądarek.
 - `npm run preview` — serwuje `dist/` po `npm run build` i jako jedyne polecenie projektu uruchamia service worker, dlatego w nim sprawdza się ręcznie precache, zachowanie offline i produkcyjne działanie PWA. Jeżeli wcześniej zarejestrowano worker pod tym samym adresem i portem, należy go wyrejestrować w narzędziach deweloperskich przeglądarki i odświeżyć stronę. Podgląd nie stosuje konfiguracji Netlify (`_redirects`, nagłówki z `netlify.toml`).
 - `git diff --check` — lekka, końcowa kontrola diffu przed commitem (błędy białych znaków, znaczniki konfliktów). Nie testuje aplikacji.
 
@@ -135,8 +156,8 @@ Dobór kontroli:
 | Zmiana | Kontrole |
 | --- | --- |
 | CSS, strony HTML w katalogu głównym, pliki w `public/` | `npm run build`, `git diff --check` |
-| Wspólna nawigacja: markup nagłówka i menu, `js/nav.js`, style nawigacji i menu, przełączanie stanu mobilnego i desktopowego | `npm run build` (przy zmianach CSS lub HTML), `npm run test:nav`, `git diff --check` |
-| `service-worker.js`, precache, `offline.html`, produkcyjne działanie PWA | `npm run build`, następnie `npm run preview`; `git diff --check` |
+| Wspólna nawigacja: `build/primary-navigation.js`, markup nagłówka i menu, `js/header.js`, `js/nav.js`, `js/wrap-tab-focus.js`, style nawigacji i menu, przełączanie stanu mobilnego i desktopowego | `npm run build` (przy zmianach generowania HTML, CSS lub HTML), `npm run test:nav`, `git diff --check` |
+| `service-worker.js`, `js/pwa-paths.js`, precache, `offline.html`, produkcyjne działanie PWA | `npm run build`, następnie `npm run preview`; `git diff --check` |
 | Pozostałe skrypty w `js/` (np. rezerwacja, lightbox, motyw) — bez testów automatycznych | `npm run build`, ręczna kontrola w `npm run dev`, `git diff --check` |
 | Wyłącznie dokumentacja | `git diff --check` |
 
@@ -203,7 +224,8 @@ Opcjonalnie, przed krokiem 5, to samo polecenie bez flagi `--prod` (`npx netlify
 
 - `public/manifest.webmanifest` definiuje `start_url` i `scope` jako `/`, `display: "standalone"`, kolory motywu oraz jedną ikonę SVG (64×64). Manifest jest podpięty na stronie głównej i stronach prawnych.
 - `js/main.js` rejestruje `/service-worker.js` po zdarzeniu `load`, wyłącznie w buildzie produkcyjnym.
-- Podczas buildu plugin `studio-noir-precache` zastępuje w workerze znaczniki `__STUDIO_NOIR_PRECACHE__` i `__STUDIO_NOIR_CACHE_VERSION__`. Lista precache obejmuje wszystkie pliki wyjściowe buildu oraz pliki z `public/` z wyjątkiem nazw zaczynających się od `_`. Wersja cache to fragment skrótu SHA-256 z kodu workera oraz nazw i zawartości tych plików. Kontrole, którymi plugin przerywa build, opisuje sekcja [Weryfikacja zmian](#weryfikacja-zmian).
+- `js/pwa-paths.js` definiuje wspólne stałe `HOME_DOCUMENT` (`/index.html`) i `OFFLINE_DOCUMENT` (`/offline.html`), używane przez kontrolę precache w `vite.config.js` i obsługę nawigacji bez połączenia w `service-worker.js`.
+- Podczas buildu plugin `studio-noir-precache` zastępuje w workerze znaczniki `__STUDIO_NOIR_PRECACHE__` i `__STUDIO_NOIR_CACHE_VERSION__`. Lista precache obejmuje pliki wyjściowe buildu poza samym `service-worker.js` oraz pliki z `public/` z wyjątkiem nazw zaczynających się od `_`. Wersja cache to fragment skrótu SHA-256 z kodu workera oraz nazw i zawartości tych plików. Kontrole, którymi plugin przerywa build, opisuje sekcja [Weryfikacja zmian](#weryfikacja-zmian).
 - Instalacja zapisuje zasoby w cache `studio-noir-<wersja>` i wywołuje `skipWaiting()`; aktywacja usuwa wyłącznie starsze cache z prefiksem `studio-noir-` i przejmuje otwarte karty (`clients.claim()`).
 - Nawigacja korzysta najpierw z sieci. Bez połączenia worker zwraca zapisaną stronę (również dla adresów bez rozszerzenia, np. `/privacy`) lub `offline.html`.
 - Zasoby z listy precache są serwowane z cache, a w razie braku wpisu — z sieci. Żądania spoza listy i do innych domen nie są przechwytywane.
@@ -225,12 +247,13 @@ Opcjonalnie, przed krokiem 5, to samo polecenie bez flagi `--prod` (`npx netlify
 
 ### Utrzymanie projektu
 
-- Zmiany wprowadza się w źródłach: HTML w katalogu głównym, `css/`, `js/`, `assets/`, `public/` i `service-worker.js`. Katalog `dist/` jest wyłącznie wynikiem buildu.
-- Nagłówek i stopka są powielone w `index.html`, `privacy.html`, `terms.html` i `cookies.html` — zmiany nawigacji lub stopki trzeba nanieść w każdym z tych plików.
+- Zmiany wprowadza się w źródłach: HTML w katalogu głównym, `build/`, `css/`, `js/`, `assets/`, `public/` i `service-worker.js`. Katalog `dist/` jest wyłącznie wynikiem buildu.
+- Etykiety, kolejność i cele głównych linków zmienia się w `build/primary-navigation.js`. W czterech dokumentach (`index.html`, `privacy.html`, `terms.html`, `cookies.html`) pozostają znaczniki w `.nav__list`; otaczająca struktura nagłówka i stopka nadal są utrzymywane osobno w każdym HTML.
+- `.gitignore` wyklucza wyniki buildu, zależności i lokalne artefakty. `.gitattributes` określa LF dla tekstowych źródeł i konfiguracji oraz traktuje fonty i obrazy rastrowe jako binarne. `.editorconfig` ustala UTF-8, LF, wcięcia po dwie spacje i końcowy znak nowej linii; zachowuje końcowe spacje w Markdown.
 - Nowa strona HTML wymaga dodania wejścia w `build.rolldownOptions.input` w `vite.config.js`; brak wejścia dla strony w katalogu głównym przerywa build. Nowe strony i nowe pliki w `public/` trafiają do listy precache automatycznie.
 - Wersji cache nie zmienia się ręcznie; znaczniki `__STUDIO_NOIR_PRECACHE__` i `__STUDIO_NOIR_CACHE_VERSION__` muszą pozostać w `service-worker.js`.
 - Uchwyt konta Instagram używany przez linki `data-instagram-link` jest zdefiniowany w `js/config.js`.
-- Historia zmian jest prowadzona w [CHANGELOG.md](CHANGELOG.md).
+- Historia zmian jest prowadzona w [docs/CHANGELOG.md](docs/CHANGELOG.md).
 - Cykl raportu usprawnień:
   - Aktywny raport (np. `IMPROVEMENTS-WORKFLOW.md`) znajduje się w katalogu głównym repozytorium do czasu rozstrzygnięcia wszystkich jego pozycji.
   - Wynik wdrożenia lub innego rozstrzygnięcia pozycji zapisuje się zwięźle w jej polu `Status`, bez powielania pełnego raportu z wdrożenia. Pierwotne pola analizy (np. dowody, stan bieżący, proponowane usprawnienie, oczekiwana wartość, zakres i kryteria akceptacji) pozostają dla identyfikowalności jako zapis powodu, dla którego pozycja powstała, i nie są przepisywane tak, jakby opisywały stan po wdrożeniu.
@@ -249,7 +272,7 @@ Current scope:
 
 - booking runs entirely in the browser — confirmation only changes the status shown in the interface; no data is sent or stored anywhere;
 - the graphics in `assets/img/` are placeholder SVG illustrations;
-- `privacy.html`, `terms.html`, and `cookies.html` contain template content with fields to be completed (e.g. `[Nazwa firmy]`, `[Adres]`, `[E-mail kontaktowy]`).
+- `privacy.html`, `terms.html`, and `cookies.html` contain legal and informational content written for the Studio Noir demonstration site; they are not ready-to-use legal documentation for a real salon.
 
 ### Key Features
 
@@ -268,15 +291,17 @@ Current scope:
 - **Runtime:** HTML, CSS with native custom properties (no preprocessor), and dependency-free JavaScript ES modules.
 - **Fonts:** local WOFF2 files declared in `css/base.css` as Playfair Display and Inter (weights 400–700).
 - **Build:** Vite `^8.3.1` (8.3.1 in `package-lock.json`) — a development dependency (`devDependencies`); build inputs are configured through `build.rolldownOptions`.
-- **Testing:** Playwright — `@playwright/test` `^1.63.0` (1.63.0 in `package-lock.json`), a development dependency used by the focused browser regression test for the navigation.
+- **Testing:** Playwright — `@playwright/test` `^1.63.0` (1.63.0 in `package-lock.json`), a development dependency used by the focused browser regression test suite for the navigation.
 - **Environment:** Node.js `^20.19.0 || >=22.12.0` (`engines` in `package.json`), npm (`package-lock.json`).
 - **Deployment:** Netlify configuration (`netlify.toml`, `public/_redirects`).
 
 ### Architecture
 
-- **Canonical sources:** HTML documents in the repository root, `css/`, `js/`, `assets/`, `public/`, and `service-worker.js`. The HTML references `/css/style.css` and `/js/main.js` directly.
+- **Canonical sources:** HTML documents in the repository root, `build/`, `css/`, `js/`, `assets/`, `public/`, and `service-worker.js`. The HTML references `/css/style.css` and `/js/main.js` directly.
+- **Navigation:** `build/primary-navigation.js` defines the seven primary entries. Vite's HTML transformation renders the `.nav__list` lists during development and production builds: destinations are `#section` on the home page and `/index.html#section` on legal pages. The rendered links exist without browser JavaScript; opening the mobile panel still requires JavaScript. The source HTML contains the `<!-- studio-noir:primary-navigation -->` marker inside the lists.
 - **JavaScript:** `js/main.js` is the single entry point, loaded by the home page and the legal pages. It imports the feature modules and calls their `init*` functions once the DOM is ready. Each module locates its elements through `data-*` attributes and exits early when they are absent, so the same script serves every page. `offline.html` and `404.html` load CSS only.
-- **CSS:** `css/style.css` imports the layers in the order `tokens.css` → `base.css` → `layout.css` → `components.css` → `sections.css`. The light theme overrides the colour tokens in the `.theme--light` class.
+- **Overlay focus:** `wrapTabFocus` from `js/wrap-tab-focus.js` wraps Tab/Shift+Tab at the boundaries of the control list in the mobile menu and lightbox. `js/nav.js` and `js/lightbox.js` still select their own eligible controls and check their open state.
+- **CSS:** `css/style.css` imports the layers in the order `tokens.css` → `base.css` → `layout.css` → `components.css` → `sections.css`. The light theme overrides the colour tokens in the `.theme--light` class. Below 768 px, the `--mobile-contact-bar-clearance` token from `css/tokens.css` supplies shared clearance for `padding-bottom` on `body` in `css/components.css` and booking-choice `scroll-margin-bottom` in `css/sections.css`, including the safe area; `js/booking.js` reads the computed margin when correcting choice visibility.
 - **Build:** `vite.config.js` sets `appType: "mpa"`, `base: "/"`, and seven inputs: the six HTML pages and `service-worker.js`. The local `studio-noir-precache` plugin injects the precache list and cache version into the service worker.
 - **Stable-path files:** `public/` holds the manifest, icon, `robots.txt`, `sitemap.xml`, and `_redirects`; Vite copies them into `dist/` without processing.
 
@@ -284,16 +309,24 @@ Current scope:
 
 ```text
 .
+├── .gitignore
+├── .gitattributes
+├── .editorconfig
+├── AGENTS.md               # shared agent instructions
+├── CLAUDE.md               # AGENTS.md reference for Claude Code
+├── LICENSE.md
 ├── index.html              # home page (one-page layout)
-├── privacy.html            # privacy policy (template)
-├── terms.html              # terms (template)
-├── cookies.html            # cookie policy (template)
+├── privacy.html            # demonstration-site privacy policy
+├── terms.html              # demonstration-site terms
+├── cookies.html            # demonstration-site cookie policy
 ├── offline.html            # offline fallback page
 ├── 404.html                # 404 error page
 ├── service-worker.js       # service worker source
 ├── assets/
 │   ├── fonts/              # WOFF2 fonts
 │   └── img/                # SVG illustrations
+├── build/
+│   └── primary-navigation.js # shared entries and navigation HTML transform
 ├── css/
 │   ├── style.css           # CSS entry point (@import of layers)
 │   ├── tokens.css
@@ -306,6 +339,8 @@ Current scope:
 │   ├── config.js
 │   ├── header.js
 │   ├── nav.js
+│   ├── wrap-tab-focus.js
+│   ├── pwa-paths.js
 │   ├── reveal.js
 │   ├── lightbox.js
 │   ├── booking.js
@@ -317,14 +352,17 @@ Current scope:
 │   ├── robots.txt
 │   ├── sitemap.xml
 │   └── assets/icons/favicon.svg
+├── docs/
+│   ├── CHANGELOG.md
+│   └── archive/
+│       └── improvements/   # completed improvement reports
 ├── tests/
-│   └── nav.spec.js         # browser regression test for the navigation
+│   └── nav.spec.js         # browser regression tests for the navigation
 ├── vite.config.js
 ├── playwright.config.js    # Playwright configuration (Chromium, Vite dev server)
 ├── netlify.toml
 ├── package.json
 ├── package-lock.json
-├── CHANGELOG.md
 └── README.md
 ```
 
@@ -344,7 +382,7 @@ npm ci
 npm run dev       # vite — development server, default http://localhost:5173
 npm run build     # vite build — production build into dist/
 npm run preview   # vite preview — serves dist/, default http://localhost:4173
-npm run test:nav  # playwright test — browser regression test for the shared navigation contract
+npm run test:nav  # playwright test — browser regression tests for the shared navigation contract
 ```
 
 - Ports are not set in `vite.config.js`; the values above are Vite defaults.
@@ -363,7 +401,13 @@ What each command verifies:
   2. a root-level `.html` page is not declared in `build.rolldownOptions.input`;
   3. the generated precache list is missing `/index.html` or `/offline.html`, which the worker relies on for navigation without a connection;
   4. a `var(--property)` reference without a fallback in a `css/*.css` file names a custom property that no `css/*.css` stylesheet defines.
-- `npm run test:nav` — browser regression test for the shared navigation contract only (`tests/nav.spec.js`): the mobile menu as a modal with a focus trap, closing on Escape and on link activation, clearing the mobile state when an open menu is widened to the desktop layout (900px), and desktop navigation exposure to assistive technologies. It runs in Chromium, on the home page, against the Vite dev server — it does not check `dist/` or any other page interactions.
+- `npm run test:nav` — focused browser regression tests for the navigation (`tests/nav.spec.js`):
+  - labels, order, destinations, and activation of the seven links on the home page (`/`, `/index.html`) and legal pages (`/privacy.html`, `/terms.html`, `/cookies.html`) without browser JavaScript, in the desktop layout;
+  - the current-section indicator with and without `IntersectionObserver`, in mobile and desktop layouts: linked and unlinked sections, return to the top, a direct `#services` fragment load, section boundaries, and viewport resize;
+  - the mobile menu as a modal: ARIA state, `inert`, scroll locking, focus movement and wrapping, keyboard opening, and closing on Escape and link activation;
+  - clearing the open menu's mobile state when switching to the desktop layout (900 px), releasing the focus trap, and desktop navigation exposure to assistive technologies.
+
+  The tests run in Chromium against the Vite dev server. They do not check `dist/`, production PWA behaviour, or other interactions; they do not provide complete regression, an accessibility audit, or cross-browser coverage.
 - `npm run preview` — serves `dist/` after `npm run build` and is the only project command in which the service worker runs, so precache, offline behaviour, and production PWA behaviour are checked there manually. If a worker was previously registered on the same address and port, unregister it in the browser developer tools and reload the page. Preview does not apply the Netlify configuration (`_redirects`, headers from `netlify.toml`).
 - `git diff --check` — lightweight final diff check before committing (whitespace errors, conflict markers). It does not test the application.
 
@@ -372,8 +416,8 @@ Choosing checks:
 | Change | Checks |
 | --- | --- |
 | CSS, root-level HTML pages, files in `public/` | `npm run build`, `git diff --check` |
-| Shared navigation: header and menu markup, `js/nav.js`, navigation and menu styles, mobile/desktop state switching | `npm run build` (for CSS or HTML changes), `npm run test:nav`, `git diff --check` |
-| `service-worker.js`, precache, `offline.html`, production PWA behaviour | `npm run build`, then `npm run preview`; `git diff --check` |
+| Shared navigation: `build/primary-navigation.js`, header and menu markup, `js/header.js`, `js/nav.js`, `js/wrap-tab-focus.js`, navigation and menu styles, mobile/desktop state switching | `npm run build` (for changes to HTML generation, CSS, or HTML), `npm run test:nav`, `git diff --check` |
+| `service-worker.js`, `js/pwa-paths.js`, precache, `offline.html`, production PWA behaviour | `npm run build`, then `npm run preview`; `git diff --check` |
 | Other scripts in `js/` (e.g. booking, lightbox, theme) — no automated tests | `npm run build`, manual check in `npm run dev`, `git diff --check` |
 | Documentation only | `git diff --check` |
 
@@ -440,7 +484,8 @@ Optionally, before step 5, the same command without the `--prod` flag (`npx netl
 
 - `public/manifest.webmanifest` defines `start_url` and `scope` as `/`, `display: "standalone"`, theme colours, and a single SVG icon (64×64). The manifest is linked from the home page and the legal pages.
 - `js/main.js` registers `/service-worker.js` after the `load` event, in production builds only.
-- During the build, the `studio-noir-precache` plugin replaces the `__STUDIO_NOIR_PRECACHE__` and `__STUDIO_NOIR_CACHE_VERSION__` markers in the worker. The precache list covers every build output file plus the files from `public/`, except names starting with `_`. The cache version is a truncated SHA-256 hash of the worker code and the names and contents of those files. The checks with which the plugin fails the build are listed under [Change verification](#change-verification).
+- `js/pwa-paths.js` defines the shared `HOME_DOCUMENT` (`/index.html`) and `OFFLINE_DOCUMENT` (`/offline.html`) constants, used by the precache guard in `vite.config.js` and offline navigation handling in `service-worker.js`.
+- During the build, the `studio-noir-precache` plugin replaces the `__STUDIO_NOIR_PRECACHE__` and `__STUDIO_NOIR_CACHE_VERSION__` markers in the worker. The precache list covers build output files other than `service-worker.js`, plus the files from `public/`, except names starting with `_`. The cache version is a truncated SHA-256 hash of the worker code and the names and contents of those files. The checks with which the plugin fails the build are listed under [Change verification](#change-verification).
 - Installation stores the assets in the `studio-noir-<version>` cache and calls `skipWaiting()`; activation deletes only older caches with the `studio-noir-` prefix and takes control of open tabs (`clients.claim()`).
 - Navigation requests are network-first. When offline, the worker returns the cached page (including extensionless URLs such as `/privacy`) or `offline.html`.
 - Assets on the precache list are served from the cache, falling back to the network when no entry exists. Requests outside the list and cross-origin requests are not intercepted.
@@ -462,12 +507,13 @@ Optionally, before step 5, the same command without the `--prod` flag (`npx netl
 
 ### Project Maintenance
 
-- Changes are made in the sources: root HTML files, `css/`, `js/`, `assets/`, `public/`, and `service-worker.js`. The `dist/` directory is build output only.
-- The header and footer are duplicated in `index.html`, `privacy.html`, `terms.html`, and `cookies.html` — navigation or footer changes must be applied in each of these files.
+- Changes are made in the sources: root HTML files, `build/`, `css/`, `js/`, `assets/`, `public/`, and `service-worker.js`. The `dist/` directory is build output only.
+- Primary-link labels, order, and destinations are changed in `build/primary-navigation.js`. The four documents (`index.html`, `privacy.html`, `terms.html`, `cookies.html`) retain markers inside `.nav__list`; the surrounding header structure and footer are still maintained separately in each HTML document.
+- `.gitignore` excludes build output, dependencies, and local artifacts. `.gitattributes` sets LF for text sources and configuration and treats fonts and raster images as binary. `.editorconfig` sets UTF-8, LF, two-space indentation, and a final newline; it preserves trailing spaces in Markdown.
 - A new HTML page requires a new entry in `build.rolldownOptions.input` in `vite.config.js`; a root-level page without an entry fails the build. New pages and new files in `public/` are added to the precache list automatically.
 - The cache version is never changed manually; the `__STUDIO_NOIR_PRECACHE__` and `__STUDIO_NOIR_CACHE_VERSION__` markers must remain in `service-worker.js`.
 - The Instagram handle used by `data-instagram-link` links is defined in `js/config.js`.
-- The change history is kept in [CHANGELOG.md](CHANGELOG.md).
+- The change history is kept in [docs/CHANGELOG.md](docs/CHANGELOG.md).
 - Improvement-report lifecycle:
   - An active report (for example `IMPROVEMENTS-WORKFLOW.md`) stays in the repository root until all of its items are resolved.
   - When an item is implemented or otherwise resolved, its outcome is recorded concisely in that item's `Status`, without duplicating the full implementation report. The original analysis fields (such as evidence, current state, proposed improvement, expected value, implementation scope, and acceptance criteria) are kept for traceability as the record of why the item existed, and are not rewritten as though they described the post-implementation state.
