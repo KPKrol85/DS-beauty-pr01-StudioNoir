@@ -1,7 +1,8 @@
 .eyebrow {
   text-transform: uppercase;
-  letter-spacing: 0.25em;
+  letter-spacing: var(--tracking-label);
   font-size: var(--fs-xs);
+  font-weight: 500;
   color: var(--color-gold-300);
   margin-bottom: var(--space-sm);
 }
@@ -18,8 +19,9 @@
   border: 1px solid transparent;
   background: transparent;
   font-size: var(--fs-sm);
+  font-weight: 500;
   line-height: var(--lh-control);
-  letter-spacing: 0.08em;
+  letter-spacing: var(--tracking-control);
   text-align: center;
   text-transform: uppercase;
   cursor: pointer;
@@ -96,8 +98,9 @@
   border-radius: var(--radius-sm);
   border: 1px solid var(--color-line);
   font-size: var(--fs-xs);
+  font-weight: 500;
   text-transform: uppercase;
-  letter-spacing: 0.14em;
+  letter-spacing: var(--tracking-control);
   background: transparent;
 }
 
@@ -165,7 +168,8 @@
   border-radius: var(--radius-sm);
   background: var(--color-surface-editorial);
   font-size: var(--fs-xs);
-  letter-spacing: 0.1em;
+  font-weight: 500;
+  letter-spacing: var(--tracking-control);
   text-transform: uppercase;
 }
 
@@ -305,7 +309,7 @@
 
 .logo__sub {
   font-size: var(--fs-xs);
-  letter-spacing: 0.24em;
+  letter-spacing: var(--tracking-label);
   text-transform: uppercase;
 }
 
@@ -356,7 +360,8 @@
 
 .nav__link {
   font-size: var(--fs-lg);
-  letter-spacing: 0.12em;
+  font-weight: 500;
+  letter-spacing: var(--tracking-control);
 }
 
 .nav__link.is-active {
@@ -391,14 +396,10 @@
     padding-bottom: var(--mobile-contact-bar-clearance);
   }
 
-  /* Tighter gaps and sub-line tracking keep the full lockup on one row beside
+  /* Tighter gaps keep the full lockup on one row beside
      the mini CTA from 414px, with headroom for wider fallback fonts. */
   .header__inner {
     gap: var(--space-sm);
-  }
-
-  .logo__sub {
-    letter-spacing: 0.12em;
   }
 
   /* Compact .button: smallest type-scale size, one-line label, and the
@@ -443,7 +444,7 @@
     min-height: 2.5rem;
     padding: 0.55rem 0.6rem;
     font-size: 0.65rem;
-    letter-spacing: 0.06em;
+    letter-spacing: var(--tracking-control);
     text-align: center;
   }
 }
@@ -573,6 +574,8 @@
 
 .lightbox__caption {
   margin: 0;
+  font-size: var(--fs-sm);
+  line-height: 1.5;
   text-align: center;
   overflow-wrap: anywhere;
 }

@@ -35,13 +35,18 @@
   --fs-md: 1rem;
   --fs-lg: 1.125rem;
   --fs-xl: 1.5rem;
-  /* Fluid display sizes: page/section titles, then hero. */
-  --fs-2xl: clamp(2rem, 4vw, 3rem);
-  --fs-3xl: clamp(2.8rem, 6vw, 4rem);
+  /* Quiet page/section titles and a distinct editorial hero display. */
+  --fs-2xl: clamp(2rem, 1.75rem + 1vw, 2.5rem);
+  --fs-3xl: clamp(2.75rem, 2rem + 2.8vw, 4.5rem);
 
   --lh-heading: 1.25;
   --lh-display: 1.1;
   --lh-control: 1.25;
+
+  --tracking-label: 0.12em;
+  --tracking-control: 0.04em;
+  --measure-display: 15ch;
+  --measure-intro: 60ch;
 
   --space-2xs: 0.25rem;
   --space-xs: 0.5rem;

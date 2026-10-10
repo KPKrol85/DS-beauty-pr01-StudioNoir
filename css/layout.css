@@ -22,7 +22,10 @@
 
 .section__title {
   font-size: var(--fs-2xl);
-  line-height: var(--lh-display);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
 }
 
 .card-grid {

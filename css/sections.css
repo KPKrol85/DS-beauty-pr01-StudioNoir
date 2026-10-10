@@ -11,8 +11,10 @@
 }
 
 .hero__title {
+  max-inline-size: var(--measure-display);
   font-size: var(--fs-3xl);
   line-height: var(--lh-display);
+  text-wrap: balance;
 }
 
 /* The decorative wash must not composite over text, actions, or focus rings. */
@@ -24,6 +26,7 @@
 .hero__subtitle {
   font-size: var(--fs-lg);
   max-width: 34rem;
+  text-wrap: pretty;
 }
 
 .hero__actions {
@@ -43,6 +46,13 @@
   height: 50%;
   background: linear-gradient(180deg, transparent, rgba(var(--color-page-rgb), 0.9));
   pointer-events: none;
+}
+
+.about__intro {
+  max-inline-size: var(--measure-intro);
+  font-size: var(--fs-lg);
+  line-height: 1.7;
+  text-wrap: pretty;
 }
 
 .values {

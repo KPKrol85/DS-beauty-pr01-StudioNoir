@@ -6,7 +6,7 @@
 
 **Analysis date:** 2026-10-10 (Europe/Warsaw)
 
-**Status:** Open — IMP-DESIGN-01A and IMP-DESIGN-01B completed; IMP-DESIGN-02 through IMP-DESIGN-08 remain pending. Original audit evidence below is retained.
+**Status:** Open — IMP-DESIGN-01A, IMP-DESIGN-01B, and IMP-DESIGN-02 completed; IMP-DESIGN-03 through IMP-DESIGN-08 remain pending. Original audit evidence below is retained.
 
 **Scope:** Creative direction, home-page composition, visitor journeys, shared visual system, and proportionate legal-page consistency review.
 
@@ -157,15 +157,9 @@ Priority means implementation value/dependency, not a severity score: **P1** est
 
 ### IMP-DESIGN-02 — Art-direct typography after font repair
 
-- **Status:** Proposed
-- **Priority:** P1
-- **Affected area:** Hero/section display, home introductory copy, captions, and shared utility text.
-- **Evidence:** Source: `--font-display`, `--font-body`, `--fs-2xl`, `--fs-3xl` in `css/tokens.css`; heading rules in `css/base.css`; `.hero__title`, `.section__title`. Runtime: mixed platform fonts on title/subtitle; 900px header is 88px.
-- **Current state:** A functional heading scale already exists, but sampled rendering is largely fallback and section emphasis is uniform.
-- **Proposed improvement:** Following separately approved font repair, tune a distinct hero display, quieter section titles, restrained labels, and readable home-copy measures. Keep the existing serif/sans pairing unless a later licensed alternative is justified.
-- **Expected value:** Recognizable editorial type with predictable Polish text and less competition between headings.
-- **Implementation scope:** Targeted type/measure tokens and consumers in current CSS; align preloads with approved font files/weights as part of the asset prerequisite. Preserve legal hierarchy and body readability.
-- **Acceptance criteria:** Platform-font or glyph inspection confirms intended faces for a representative Polish string including basic Latin, `ąćęłńóśźż`, numbers, and punctuation. Titles/captions do not clip at the five audited widths or at 200% zoom. Header actions fit after font repair; no manual line break compromises mobile wrapping. Existing heading tokens remain the sizing authority.
+- **Status:** COMPLETED — implemented and verified.
+- **Result:** Refined the existing Playfair Display/Inter hierarchy with a fluid 44–72px hero and 15ch measure, quieter 32–40px section/page titles at weight 500, a 60ch About introduction at 18px/1.7, shared utility tracking, and a smaller lightbox caption. Preserved font assets/preloads, Polish copy, natural wrapping, layouts, semantic headings, focus/interaction contracts, and legal prose/table styling.
+- **Verification:** `npm run build`, `npm run test:nav` (18/18), and `git diff --check` passed. Chromium checks covered all six pages at 360/375/768/900/1440px in light/dark themes, with before/after visual review of representative layouts; no document horizontal overflow or JavaScript errors. Actual 200% browser zoom covered home and all three legal pages at 768/900/1440px window widths in both themes, without heading overflow. Verified long Polish heading wrapping, stable header height on scroll, booking selection/confirmation and keyboard focus, lightbox navigation/caption, and keyboard table scrolling. Platform-font inspection confirmed custom Playfair Display and Inter for Latin/Polish letters, digits, and punctuation. Chromium only; no full accessibility audit. At 200% zoom in a short viewport, the fixed contact bar covers the menu theme toggle; comparison with the original CSS confirmed the same pre-existing behavior, left outside this typography task.
 - **Impact:** High
 - **Effort:** Medium
 
