@@ -6,7 +6,7 @@
 
 **Analysis date:** 2026-10-10 (Europe/Warsaw)
 
-**Status:** Open — approved IMP-DESIGN-01A contrast slice completed; IMP-DESIGN-01B and the remaining design proposals are pending. Original audit evidence below is retained.
+**Status:** Open — IMP-DESIGN-01A and IMP-DESIGN-01B completed; IMP-DESIGN-02 through IMP-DESIGN-08 remain pending. Original audit evidence below is retained.
 
 **Scope:** Creative direction, home-page composition, visitor journeys, shared visual system, and proportionate legal-page consistency review.
 
@@ -149,7 +149,7 @@ Priority means implementation value/dependency, not a severity score: **P1** est
 
 ### IMP-DESIGN-01 — Establish paired editorial materials
 
-- **Status:** Open — IMP-DESIGN-01A completed and verified (2026-10-10); IMP-DESIGN-01B pending.
+- **Status:** Completed — IMP-DESIGN-01A and IMP-DESIGN-01B implemented and verified (2026-10-10).
 - **Priority:** P1
 - **Affected area:** Shared surfaces, accents, corners, borders, and elevation in both themes.
 - **Evidence:** Source: `css/tokens.css`, `.value-card`, `.service-card`, `.stylist-card`, `.quote`, `.booking__step`, `.cta` in `css/sections.css`; `.header` and `.pill` in `css/components.css`. Runtime: dark card/header/CTA fills persist in light mode.
@@ -180,6 +180,24 @@ Priority means implementation value/dependency, not a severity score: **P1** est
 - **Verification:** Home, privacy, terms, and cookies in both themes at 360, 375, 768, 900, and 1440px (900px viewport height): 40 combinations and 444 representative samples, with no failed applicable text/boundary/focus targets. Measured component/prose/table geometry matched the baseline, with no document horizontal overflow. Header height remained unchanged when scrolled: 69px at four widths and the pre-existing 88.17px at 900px. Table focus was checked on 30 regions; native ArrowRight/ArrowLeft scrolling passed on all 18 overflowing regions. Booking selection retained its filled ring and `aria-pressed`; unavailable confirmation remained focusable. Menu/lightbox focus and Escape were exercised. Reduced motion was enabled for the measurement matrix. System-preference initialization, theme toggling, and stored preference after reload passed separately. Mobile-bar hover/pressed/focus samples over seven sections at 375×800 met the targets in both themes; the light-theme minima were 7.80:1 text, 3.18:1 border, and 4.39:1 focus. Home/CTA screenshots were visually inspected at 375px, plus home screenshots at 1440px, in both themes.
 - **Project checks:** `npm run build` passed; `npm run test:nav` passed all 18 tests; `git diff --check` passed. Changelog: yes, one user-visible contrast entry in `docs/CHANGELOG.md`.
 - **Boundaries and limitations:** This is a representative component contrast review, not whole-project WCAG certification. Decorative card/pill/table hairlines, the already readable quote and booking-summary surfaces, typography, spacing, radii, responsive breakpoints, HTML/JS contracts, and assets were retained. Other browsers, real touch devices, screen-reader speech, zoom/landscape coverage, complete no-JS booking behavior, external destinations, production PWA/offline behavior, and deployment were not verified. The original audit's separate font, booking, menu, and content findings remain outside scope. IMP-DESIGN-01 stays open for 01B; the design report remains open.
+
+#### IMP-DESIGN-01B — Paired Editorial Materials: completed 2026-10-10
+
+- **Implemented materials:** Added opaque `--color-surface-editorial` (charcoal `#18181e` / warm ivory `#faf8f5`) and neutral decorative `--color-line` (paired foreground channels at 14% / 18%). Renamed the sole-consumer `--color-ink-700` to `--color-surface-interactive`, retaining its 01A values and choice state washes. Reused page/panel RGB, raised glass, accent hairlines, radii, and shadows; reduced `--shadow-md` to 12px/32px elevation for the header, contact bar, and lightbox.
+- **Representative before/after:** Values, stylist shells, quotations, booking steps, and contact fallback now use open backgrounds and fine separators. Services and the booking summary use quiet opaque insets without floating shadows. Informational pills/badges use moderate corners and neutral materials; choice controls retain their empty/filled ring, doubled selected edge, and `aria-pressed`. Primary actions keep champagne fills with tonal hover/focus feedback; pressed/disabled colors from 01A remain. The final CTA replaces its gradient and nested panel with one editorial field. The lightbox uses an opaque theme-paired panel and restrained edge/elevation; footer, legal tables, and prose share neutral hairlines. No HTML or JavaScript changes were needed.
+- **Measurement method:** Installed headless Chromium against local Vite, with temporary probes and screenshots outside the repository. Text contrast used computed opaque foreground colors and actual background pixels after temporarily making target text transparent, sampled at three positions along its first rendered line. This includes translucent/gradient surfaces and backdrop compositing. Focus/control colors were compared with screenshot-sampled adjacent inner/outer backgrounds. Decorative separators were not treated as meaningful control boundaries.
+- **Responsive verification:** Home, privacy, terms, and cookies in both themes at 360, 375, 768, 900, and 1440px, with 900px viewport height: all 40 combinations passed without document horizontal overflow. Sampled component/prose/table widths, heights, and scroll extents matched the saved baseline. Sticky-header height stayed unchanged between rest and scroll, including the existing 88.17px at 900px and 69px elsewhere.
+- **Interaction verification:** Booking selection via Space/Enter, filled ring, focusable unavailable confirmation, enabled confirmation, and native disabled result passed. Lightbox traversal/count, Tab/Shift+Tab wrapping, Escape, and return to the last viewed thumbnail passed at all five widths in both themes; mobile-menu Escape passed below 900px. Reduced-motion content visibility was checked. All 30 legal table regions received keyboard focus; ArrowRight/ArrowLeft scrolling passed in both directions on the 18 overflowing regions. System-preference initialization, theme switching, and stored preference after reload passed separately.
+- **Visual verification:** Before/after screenshots were inspected at 375 and 1440px in both themes, plus representative 375px legal-page header/prose/footer screenshots. An independent visual review also inspected 768px, selected booking states, desktop hover, and lightbox surfaces and returned PASS for the approved material scope. Additional 375×800 checks sampled primary/ghost rest, hover, pressed, and focus states and the mobile contact bar over hero, services, stylists, gallery, booking, final CTA, and footer. Screenshots stayed outside the repository.
+
+| Lowest representative contrast after 01B | Dark | Light | Applicable target |
+| --- | --- | --- | --- |
+| Text (548 target/state measurements, three background positions each) | 5.33:1 | 5.10:1 | 4.5:1 normal / 3:1 large text |
+| Visible focus against adjacent surfaces (140 measurements) | 7.38:1 | 5.35:1 | 3:1 |
+| Meaningful control borders against inner/outer surfaces (76 measurements) | 5.57:1 | 3.26:1 | 3:1 |
+
+- **Project checks and status:** `npm run build` passed, including the CSS custom-property guard; `npm run test:nav` passed all 18 tests; `git diff --check` passed. Sandbox localhost restrictions required rerunning browser/navigation checks in a permitted environment; the results above are from successful runs. Changelog: yes, one shared-material entry in `docs/CHANGELOG.md`. All applicable IMP-DESIGN-01 acceptance criteria are satisfied, so the parent is Completed; the DESIGN report remains Open for IMP-DESIGN-02 through IMP-DESIGN-08.
+- **Boundaries and limitations:** Focused Chromium verification does not establish project-wide WCAG compliance. Other browsers, real touch devices, screen-reader speech, zoom/landscape, complete no-JS booking behavior, external destinations, production PWA/offline behavior, and deployment were not verified. Existing font/asset, booking-copy/state, menu-CTA, modal-isolation, and destination findings remain outside 01B. Typography, assets, copy, pricing, compositions, spacing, breakpoints, storage, and interaction contracts were retained. Changes remain unstaged and uncommitted.
 
 ### IMP-DESIGN-02 — Art-direct typography after font repair
 

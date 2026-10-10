@@ -30,6 +30,7 @@ When an implementation task is defined, apply this policy and state `Changelog: 
 
 ### Changed
 
+- Established paired charcoal/ivory editorial materials: flattened content framing, restrained separators and corners, separated informational labels from selectable controls, replaced the final CTA gradient with a calm surface, and reserved stronger elevation for the shared header, mobile contact bar, and lightbox while preserving the preceding contrast corrections and interaction contracts.
 - Corrected light-theme contrast on cards, booking panels, informational pills, the shared header, and the final CTA; strengthened accent text and control/focus colors, kept unavailable primary-button labels opaque, prevented the hero wash from dimming its content, and increased mobile contact-bar opacity for readable controls over illustrations.
 - Centralized mobile contact-bar clearance in `--mobile-contact-bar-clearance`, shared by mobile body padding and booking-choice scroll margin, preserving the existing breakpoint and safe-area calculation.
 - Centralized Tab/Shift+Tab boundary wrapping in a shared DOM utility used by the mobile navigation and gallery lightbox, preserving their separate focusable-control discovery, open-state checks, and interaction behavior.
