@@ -6,7 +6,7 @@
 
 **Analysis date:** 2026-10-10 (Europe/Warsaw)
 
-**Status:** Open — IMP-DESIGN-01A, IMP-DESIGN-01B, and IMP-DESIGN-02 completed; IMP-DESIGN-03 through IMP-DESIGN-08 remain pending. Original audit evidence below is retained.
+**Status:** Open — IMP-DESIGN-01A, IMP-DESIGN-01B, IMP-DESIGN-02, and IMP-DESIGN-03 completed; IMP-DESIGN-04 through IMP-DESIGN-08 remain pending. Original audit evidence below is retained.
 
 **Scope:** Creative direction, home-page composition, visitor journeys, shared visual system, and proportionate legal-page consistency review.
 
@@ -165,15 +165,9 @@ Priority means implementation value/dependency, not a severity score: **P1** est
 
 ### IMP-DESIGN-03 — Replace placeholder storytelling with a coherent image set
 
-- **Status:** Proposed
-- **Priority:** P1
-- **Affected area:** Hero, three stylist portraits, six gallery images, and associated descriptions.
-- **Evidence:** Source: `assets/img/hero-editorial.svg`, `assets/img/stylist-1.svg`, `assets/img/gallery-1.svg`, and their sibling assets; image alternatives in `index.html`. Runtime: all ten load successfully but remain placeholder sources.
-- **Current state:** Geometric panels stand in for hair, people, and work; descriptive alternatives imply subjects absent from those panels.
-- **Proposed improvement:** Commission or select licensed, visually coherent representative photography: one signature hero, three compatible portraits, and six curated look/detail images. Maintain natural hair color, directional light, and crop consistency; label representative/demo imagery honestly rather than presenting it as verified salon work.
-- **Expected value:** The site can communicate texture, precision, and personality through images.
-- **Implementation scope:** Approved canonical assets and corresponding image markup/metadata only. Provide useful responsive sizes/crops, intrinsic dimensions, hero priority, and lazy loading elsewhere using existing browser capabilities. No sourcing, generation, or asset replacement is authorized now.
-- **Acceptance criteria:** Owner approves rights, demo attribution, subject suitability, and crop/focal points. No embedded “Look”/placeholder text remains in chosen photography. Alternative text describes the actual image. At all audited widths key hair details survive crops, image space is reserved before loading, and mobile does not fetch an unnecessary full-resolution master. Record actual dimensions/file sizes and network results; do not claim an unmeasured performance improvement.
+- **Status:** COMPLETED — implemented and verified.
+- **Result:** Integrated ten approved images with AVIF/WebP selection: hero 720×540/1200×900, portraits/gallery 480×600/800×1000. Added Polish descriptions and AI/demo attribution; preserved identities, order, booking hooks, crops, lazy loading, and lightbox keyboard/focus behavior. Existing `img.src` supplies WebP 800×1000 previews. Responsive hero preload/high priority and four emitted social-image URLs are aligned. PNG originals and the existing hero overlay remain unchanged. Editorial variants are cached on request under worker control; document/shell precache and content-derived versioning remain intact.
+- **Verification:** On 2026-10-10, build and `git diff --check` passed; all 40 variants decoded (5,267–58,018 bytes). Output contains no PNG masters or SVG placeholder references; four social-image paths returned HTTP 200 locally. Chromium passed at 360/375/600/768/900/1440px and 375px DPR 2, including all six previews, navigation, captions, Tab/Escape, and focus return. Crop review and unchanged geometry before/after decoding passed at 375/768/1440px in both system themes. Hero had one request per navigation; 768px DPR 2 selected 1200px AVIF; forced WebP fallback passed. Worker installation cached zero photographs; controlled browsing cached ten selected variants. With preview stopped, home fallback, cached hero, and first preview loaded. Offline requires a previously cached variant; first requests before worker control are not guaranteed offline. Other engines/devices, deployed metadata, performance uplift, and full PWA/accessibility suites were not verified.
 - **Impact:** High
 - **Effort:** Large
 

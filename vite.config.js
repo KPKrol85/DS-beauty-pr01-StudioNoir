@@ -43,19 +43,25 @@ function precacheServiceWorker() {
         if (
           worker?.type !== "chunk" ||
           !worker.code.includes("__STUDIO_NOIR_PRECACHE__") ||
+          !worker.code.includes("__STUDIO_NOIR_ON_DEMAND_IMAGES__") ||
           !worker.code.includes("__STUDIO_NOIR_CACHE_VERSION__")
         ) {
           this.error("Service worker precache placeholders are missing.");
         }
 
         const assets = new Map(publicAssets(resolve(root, "public")));
+        const onDemandImages = new Set();
         for (const [name, output] of Object.entries(bundle)) {
           if (name === "service-worker.js") continue;
           assets.set(name, output.type === "chunk" ? output.code : output.source);
+          // Editorial variants are cached when viewed, not all at worker installation.
+          if (output.type === "asset" && output.originalFileNames.some((path) =>
+            /^assets\/img\/(hero|stylists|gallery)\//.test(path.replaceAll("\\", "/"))
+          )) onDemandImages.add(name);
         }
 
         const names = [...assets.keys()].sort();
-        const precache = names.map((name) => `/${name}`);
+        const precache = names.filter((name) => !onDemandImages.has(name)).map((name) => `/${name}`);
 
         // Report every broken page/fallback contract at once; one cause can break both.
         const problems = [
@@ -76,7 +82,32 @@ function precacheServiceWorker() {
 
         worker.code = worker.code
           .replaceAll("__STUDIO_NOIR_PRECACHE__", JSON.stringify(precache))
+          .replaceAll("__STUDIO_NOIR_ON_DEMAND_IMAGES__", JSON.stringify(
+            [...onDemandImages].sort().map((name) => `/${name}`)
+          ))
           .replaceAll("__STUDIO_NOIR_CACHE_VERSION__", JSON.stringify(hash.digest("hex").slice(0, 16)));
+      },
+    },
+  };
+}
+
+function socialImageUrls() {
+  return {
+    name: "studio-noir-social-image-urls",
+    apply: "build",
+    generateBundle: {
+      order: "post",
+      handler(_options, bundle) {
+        for (const [name, output] of Object.entries(bundle)) {
+          if (!name.endsWith(".html") || output.type !== "asset") continue;
+          const html = String(output.source);
+          const canonical = html.match(/<link rel="canonical" href="([^"]+)"/)?.[1];
+          if (!canonical) continue;
+          // Resolve the final emitted path, after Vite has replaced asset tokens.
+          output.source = html.replace(/(<meta property="og:image" content=")([^"]+)(")/g,
+            (_match, before, path, after) => `${before}${new URL(path, canonical).href}${after}`
+          );
+        }
       },
     },
   };
@@ -124,7 +155,7 @@ function cssCustomPropertyGuard() {
 export default defineConfig({
   base: "/",
   appType: "mpa",
-  plugins: [primaryNavigation(root), cssCustomPropertyGuard(), precacheServiceWorker()],
+  plugins: [primaryNavigation(root), cssCustomPropertyGuard(), socialImageUrls(), precacheServiceWorker()],
   build: {
     outDir: "dist",
     // Keep images/fonts as cacheable files, including the gallery's lightbox sources.

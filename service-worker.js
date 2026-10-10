@@ -3,6 +3,7 @@ import { HOME_DOCUMENT, OFFLINE_DOCUMENT } from "./js/pwa-paths.js";
 // Vite injects the final production URLs and a content-derived cache version.
 const CACHE_NAME = "studio-noir-" + __STUDIO_NOIR_CACHE_VERSION__;
 const ASSETS = __STUDIO_NOIR_PRECACHE__;
+const ON_DEMAND_IMAGES = __STUDIO_NOIR_ON_DEMAND_IMAGES__;
 
 async function handleDocumentRequest(request) {
   try {
@@ -21,7 +22,13 @@ async function handleAssetRequest(request) {
   const cache = await caches.open(CACHE_NAME);
   // Use the same key as precaching: Vary: Origin differs for module/font requests.
   const path = new URL(request.url).pathname;
-  return (await cache.match(path)) || fetch(request);
+  const cached = await cache.match(path);
+  if (cached) return cached;
+  const response = await fetch(request);
+  if (ON_DEMAND_IMAGES.includes(path) && response.ok) {
+    await cache.put(path, response.clone());
+  }
+  return response;
 }
 
 self.addEventListener("install", (event) => {
@@ -51,7 +58,7 @@ self.addEventListener("fetch", (event) => {
 
   if (request.mode === "navigate") {
     event.respondWith(handleDocumentRequest(request));
-  } else if (ASSETS.includes(url.pathname)) {
+  } else if (ASSETS.includes(url.pathname) || ON_DEMAND_IMAGES.includes(url.pathname)) {
     event.respondWith(handleAssetRequest(request));
   }
 });

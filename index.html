@@ -13,7 +13,7 @@
       content="Premium studio fryzjerskie. Nowoczesna estetyka, precyzyjna koloryzacja i świadoma pielęgnacja." />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="https://ds-fashion-pr01-studionoir.netlify.app/" />
-    <meta property="og:image" content="assets/img/hero-editorial.svg" />
+    <meta property="og:image" content="/assets/img/hero/hero-editorial-1200.webp" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Studio Noir — Hair & Style Atelier" />
     <meta
@@ -26,7 +26,14 @@
     <link rel="stylesheet" href="/css/style.css" />
     <link rel="preload" href="/assets/fonts/playfair-display-variable.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/assets/fonts/inter-variable.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="/assets/img/hero-editorial.svg" as="image" />
+    <link
+      rel="preload"
+      href="/assets/img/hero/hero-editorial-1200.avif"
+      as="image"
+      type="image/avif"
+      imagesrcset="/assets/img/hero/hero-editorial-720.avif 720w, /assets/img/hero/hero-editorial-1200.avif 1200w"
+      imagesizes="(min-width: 1245px) 536px, (min-width: 900px) calc(45vw - 24px), 90vw"
+      fetchpriority="high" />
   </head>
   <body class="theme theme--dark">
     <a class="skip-link" href="#main">Przejdź do treści</a>
@@ -80,10 +87,20 @@
             </div>
           </div>
           <div class="hero__visual" data-reveal>
-            <img
-              src="/assets/img/hero-editorial.svg"
-              alt="Redakcyjne ujęcie stylizacji włosów"
-              fetchpriority="high" />
+            <picture>
+              <source
+                type="image/avif"
+                srcset="/assets/img/hero/hero-editorial-720.avif 720w, /assets/img/hero/hero-editorial-1200.avif 1200w"
+                sizes="(min-width: 1245px) 536px, (min-width: 900px) calc(45vw - 24px), 90vw" />
+              <img
+                src="/assets/img/hero/hero-editorial-1200.webp"
+                srcset="/assets/img/hero/hero-editorial-720.webp 720w, /assets/img/hero/hero-editorial-1200.webp 1200w"
+                sizes="(min-width: 1245px) 536px, (min-width: 900px) calc(45vw - 24px), 90vw"
+                alt="Portret kobiety z długimi, falowanymi brązowymi włosami na ciemnym tle"
+                width="1200"
+                height="900"
+                fetchpriority="high" />
+            </picture>
           </div>
         </div>
         <div class="hero__overlay" aria-hidden="true"></div>
@@ -224,12 +241,20 @@
           </div>
           <div class="card-grid">
             <article class="stylist-card">
-              <img
-                src="/assets/img/stylist-1.svg"
-                alt="Portret stylistki Maja"
-                width="800"
-                height="1000"
-                loading="lazy" />
+              <picture>
+                <source
+                  type="image/avif"
+                  srcset="/assets/img/stylists/stylist-1-480.avif 480w, /assets/img/stylists/stylist-1-800.avif 800w"
+                  sizes="(min-width: 1245px) 308px, (min-width: 900px) calc(30vw - 66px), (min-width: 600px) calc(45vw - 62px), calc(90vw - 50px)" />
+                <img
+                  src="/assets/img/stylists/stylist-1-800.webp"
+                  srcset="/assets/img/stylists/stylist-1-480.webp 480w, /assets/img/stylists/stylist-1-800.webp 800w"
+                  sizes="(min-width: 1245px) 308px, (min-width: 900px) calc(30vw - 66px), (min-width: 600px) calc(45vw - 62px), calc(90vw - 50px)"
+                  alt="Portret fikcyjnej stylistki Mai z długimi, falowanymi brązowymi włosami"
+                  width="800"
+                  height="1000"
+                  loading="lazy" />
+              </picture>
               <div class="stylist-card__body">
                 <h3>Maja Lewandowska</h3>
                 <p>Ekspertka koloryzacji</p>
@@ -244,12 +269,20 @@
               </a>
             </article>
             <article class="stylist-card">
-              <img
-                src="/assets/img/stylist-2.svg"
-                alt="Portret stylisty Leon"
-                width="800"
-                height="1000"
-                loading="lazy" />
+              <picture>
+                <source
+                  type="image/avif"
+                  srcset="/assets/img/stylists/stylist-2-480.avif 480w, /assets/img/stylists/stylist-2-800.avif 800w"
+                  sizes="(min-width: 1245px) 308px, (min-width: 900px) calc(30vw - 66px), (min-width: 600px) calc(45vw - 62px), calc(90vw - 50px)" />
+                <img
+                  src="/assets/img/stylists/stylist-2-800.webp"
+                  srcset="/assets/img/stylists/stylist-2-480.webp 480w, /assets/img/stylists/stylist-2-800.webp 800w"
+                  sizes="(min-width: 1245px) 308px, (min-width: 900px) calc(30vw - 66px), (min-width: 600px) calc(45vw - 62px), calc(90vw - 50px)"
+                  alt="Portret fikcyjnego stylisty Leona z krótkimi brązowymi włosami i zarostem"
+                  width="800"
+                  height="1000"
+                  loading="lazy" />
+              </picture>
               <div class="stylist-card__body">
                 <h3>Leon Zawadzki</h3>
                 <p>Fryzjer męski i pielęgnacja</p>
@@ -264,12 +297,20 @@
               </a>
             </article>
             <article class="stylist-card">
-              <img
-                src="/assets/img/stylist-3.svg"
-                alt="Portret stylistki Sofia"
-                width="800"
-                height="1000"
-                loading="lazy" />
+              <picture>
+                <source
+                  type="image/avif"
+                  srcset="/assets/img/stylists/stylist-3-480.avif 480w, /assets/img/stylists/stylist-3-800.avif 800w"
+                  sizes="(min-width: 1245px) 308px, (min-width: 900px) calc(30vw - 66px), (min-width: 600px) calc(45vw - 62px), calc(90vw - 50px)" />
+                <img
+                  src="/assets/img/stylists/stylist-3-800.webp"
+                  srcset="/assets/img/stylists/stylist-3-480.webp 480w, /assets/img/stylists/stylist-3-800.webp 800w"
+                  sizes="(min-width: 1245px) 308px, (min-width: 900px) calc(30vw - 66px), (min-width: 600px) calc(45vw - 62px), calc(90vw - 50px)"
+                  alt="Portret fikcyjnej stylistki Sofii z prostym, ciemnobrązowym bobem"
+                  width="800"
+                  height="1000"
+                  loading="lazy" />
+              </picture>
               <div class="stylist-card__body">
                 <h3>Sofia Verne</h3>
                 <p>Stylizacja redakcyjna</p>
@@ -292,25 +333,104 @@
           <div class="section__header">
             <p class="eyebrow">Galeria</p>
             <h2 class="section__title">Tekstura, światło, ruch.</h2>
+            <p>Obrazy wygenerowane przez AI służą prezentacji fikcyjnego Studio Noir — nie dokumentują realizacji salonu. Dotyczy to także zdjęcia głównego i portretów stylistów.</p>
           </div>
           <div class="gallery" data-gallery>
             <button class="gallery__item" data-lightbox type="button">
-              <img src="/assets/img/gallery-1.svg" alt="Koloryzacja ombre" width="800" height="1000" loading="lazy" />
+              <picture>
+                <source
+                  type="image/avif"
+                  srcset="/assets/img/gallery/gallery-1-480.avif 480w, /assets/img/gallery/gallery-1-800.avif 800w"
+                  sizes="(min-width: 1245px) 363px, (min-width: 900px) calc(30vw - 11px), (min-width: 600px) calc(45vw - 8px), 90vw" />
+                <img
+                  src="/assets/img/gallery/gallery-1-800.webp"
+                  srcset="/assets/img/gallery/gallery-1-480.webp 480w, /assets/img/gallery/gallery-1-800.webp 800w"
+                  sizes="(min-width: 1245px) 363px, (min-width: 900px) calc(30vw - 11px), (min-width: 600px) calc(45vw - 8px), 90vw"
+                  alt="Długie, falowane brązowe włosy z jasnymi pasmami"
+                  width="800"
+                  height="1000"
+                  loading="lazy" />
+              </picture>
             </button>
             <button class="gallery__item" data-lightbox type="button">
-              <img src="/assets/img/gallery-2.svg" alt="Stylizacja wieczorowa" width="800" height="1000" loading="lazy" />
+              <picture>
+                <source
+                  type="image/avif"
+                  srcset="/assets/img/gallery/gallery-2-480.avif 480w, /assets/img/gallery/gallery-2-800.avif 800w"
+                  sizes="(min-width: 1245px) 363px, (min-width: 900px) calc(30vw - 11px), (min-width: 600px) calc(45vw - 8px), 90vw" />
+                <img
+                  src="/assets/img/gallery/gallery-2-800.webp"
+                  srcset="/assets/img/gallery/gallery-2-480.webp 480w, /assets/img/gallery/gallery-2-800.webp 800w"
+                  sizes="(min-width: 1245px) 363px, (min-width: 900px) calc(30vw - 11px), (min-width: 600px) calc(45vw - 8px), 90vw"
+                  alt="Brązowe włosy upięte w luźny, niski kok"
+                  width="800"
+                  height="1000"
+                  loading="lazy" />
+              </picture>
             </button>
             <button class="gallery__item" data-lightbox type="button">
-              <img src="/assets/img/gallery-3.svg" alt="Męskie cięcie" width="800" height="1000" loading="lazy" />
+              <picture>
+                <source
+                  type="image/avif"
+                  srcset="/assets/img/gallery/gallery-3-480.avif 480w, /assets/img/gallery/gallery-3-800.avif 800w"
+                  sizes="(min-width: 1245px) 363px, (min-width: 900px) calc(30vw - 11px), (min-width: 600px) calc(45vw - 8px), 90vw" />
+                <img
+                  src="/assets/img/gallery/gallery-3-800.webp"
+                  srcset="/assets/img/gallery/gallery-3-480.webp 480w, /assets/img/gallery/gallery-3-800.webp 800w"
+                  sizes="(min-width: 1245px) 363px, (min-width: 900px) calc(30vw - 11px), (min-width: 600px) calc(45vw - 8px), 90vw"
+                  alt="Krótkie męskie cięcie z cieniowanymi bokami i teksturą na górze"
+                  width="800"
+                  height="1000"
+                  loading="lazy" />
+              </picture>
             </button>
             <button class="gallery__item" data-lightbox type="button">
-              <img src="/assets/img/gallery-4.svg" alt="Fale glamour" width="800" height="1000" loading="lazy" />
+              <picture>
+                <source
+                  type="image/avif"
+                  srcset="/assets/img/gallery/gallery-4-480.avif 480w, /assets/img/gallery/gallery-4-800.avif 800w"
+                  sizes="(min-width: 1245px) 363px, (min-width: 900px) calc(30vw - 11px), (min-width: 600px) calc(45vw - 8px), 90vw" />
+                <img
+                  src="/assets/img/gallery/gallery-4-800.webp"
+                  srcset="/assets/img/gallery/gallery-4-480.webp 480w, /assets/img/gallery/gallery-4-800.webp 800w"
+                  sizes="(min-width: 1245px) 363px, (min-width: 900px) calc(30vw - 11px), (min-width: 600px) calc(45vw - 8px), 90vw"
+                  alt="Długie, miedziane włosy ułożone w fale"
+                  width="800"
+                  height="1000"
+                  loading="lazy" />
+              </picture>
             </button>
             <button class="gallery__item" data-lightbox type="button">
-              <img src="/assets/img/gallery-5.svg" alt="Pielęgnacja najwyższej jakości" width="800" height="1000" loading="lazy" />
+              <picture>
+                <source
+                  type="image/avif"
+                  srcset="/assets/img/gallery/gallery-5-480.avif 480w, /assets/img/gallery/gallery-5-800.avif 800w"
+                  sizes="(min-width: 1245px) 363px, (min-width: 900px) calc(30vw - 11px), (min-width: 600px) calc(45vw - 8px), 90vw" />
+                <img
+                  src="/assets/img/gallery/gallery-5-800.webp"
+                  srcset="/assets/img/gallery/gallery-5-480.webp 480w, /assets/img/gallery/gallery-5-800.webp 800w"
+                  sizes="(min-width: 1245px) 363px, (min-width: 900px) calc(30vw - 11px), (min-width: 600px) calc(45vw - 8px), 90vw"
+                  alt="Długie, proste ciemnobrązowe włosy widziane z profilu"
+                  width="800"
+                  height="1000"
+                  loading="lazy" />
+              </picture>
             </button>
             <button class="gallery__item" data-lightbox type="button">
-              <img src="/assets/img/gallery-6.svg" alt="Stylizacja redakcyjna" width="800" height="1000" loading="lazy" />
+              <picture>
+                <source
+                  type="image/avif"
+                  srcset="/assets/img/gallery/gallery-6-480.avif 480w, /assets/img/gallery/gallery-6-800.avif 800w"
+                  sizes="(min-width: 1245px) 363px, (min-width: 900px) calc(30vw - 11px), (min-width: 600px) calc(45vw - 8px), 90vw" />
+                <img
+                  src="/assets/img/gallery/gallery-6-800.webp"
+                  srcset="/assets/img/gallery/gallery-6-480.webp 480w, /assets/img/gallery/gallery-6-800.webp 800w"
+                  sizes="(min-width: 1245px) 363px, (min-width: 900px) calc(30vw - 11px), (min-width: 600px) calc(45vw - 8px), 90vw"
+                  alt="Brązowe loki z miedzianymi refleksami i dużą objętością"
+                  width="800"
+                  height="1000"
+                  loading="lazy" />
+              </picture>
             </button>
           </div>
         </div>
