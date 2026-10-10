@@ -461,20 +461,23 @@
     display: none;
   }
 
+  .logo {
+    flex-shrink: 0;
+  }
+
   .nav {
     display: flex;
     align-items: center;
     gap: var(--space-lg);
+    min-width: 0;
   }
 
   .nav__toggle {
     display: none;
   }
 
-  /* The links, call to action, and theme toggle share one row with the brand
-     lockup and leave it no spare width near the breakpoint. Tighter link,
-     group, and button spacing than in the mobile menu keeps the lockup from
-     wrapping further, so the bar holds its height across desktop widths. */
+  /* Full font metrics need more room near the breakpoint. Keep the brand and
+     controls intact and let whole navigation links flow onto a second row. */
   .nav__panel {
     position: static;
     transform: none;
@@ -489,15 +492,27 @@
   .nav__list {
     flex-direction: row;
     gap: var(--space-sm);
+    flex-wrap: wrap;
+    row-gap: var(--space-2xs);
   }
 
   .nav__link {
     font-size: var(--fs-sm);
+    white-space: nowrap;
+    position: relative;
+  }
+
+  /* The section marker must not increase the height of wrapped link rows. */
+  .nav__link.is-active::after {
+    position: absolute;
+    top: 100%;
+    left: 0;
   }
 
   .nav__cta {
     display: flex;
     align-items: center;
+    flex-shrink: 0;
   }
 
   .nav__cta .button {

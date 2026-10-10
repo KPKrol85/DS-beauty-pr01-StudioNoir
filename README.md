@@ -29,7 +29,9 @@ Aktualny zakres:
 ### Stack technologiczny
 
 - **Runtime:** HTML, CSS z natywnymi custom properties (bez preprocesora), moduły ES JavaScript bez bibliotek.
-- **Fonty:** lokalne pliki WOFF2 zadeklarowane w `css/base.css` jako Playfair Display i Inter (grubości 400–700).
+- **Fonty:** dwa pełne, lokalne fonty zmienne WOFF2 zadeklarowane w `css/base.css`: Playfair Display (400–900) i Inter (100–900); strona używa grubości 400–700. Oba obejmują podstawowy alfabet łaciński, polskie znaki, cyfry i interpunkcję treści.
+
+  Playfair Display 1.203 pochodzi z [Google Fonts, commit `8b0a1d0f5983c89bc2b93f1b5fb55f9e252744b5`](https://github.com/google/fonts/tree/8b0a1d0f5983c89bc2b93f1b5fb55f9e252744b5/ofl/playfairdisplay); oryginalny TTF spakowano do WOFF2 bez subsettingu ani zmian glifów, metryk i nazw. Inter 4.001 to niezmieniony `InterVariable.woff2` z [wydania autora `v4.1`](https://github.com/rsms/inter/tree/v4.1/docs/font-files) (oś rozmiaru optycznego 14–32). Oba fonty są na SIL OFL 1.1; pełne noty i licencje w `public/font-licenses/playfair-display-OFL.txt` oraz `public/font-licenses/inter-OFL.txt` trafiają do `dist/font-licenses/` podczas buildu.
 - **Build:** Vite `^8.3.1` (8.3.1 w `package-lock.json`) — zależność deweloperska (`devDependencies`); wejścia buildu konfigurowane przez `build.rolldownOptions`.
 - **Testy:** Playwright — `@playwright/test` `^1.63.0` (1.63.0 w `package-lock.json`), zależność deweloperska używana przez skoncentrowany zestaw testów regresji przeglądarkowej nawigacji.
 - **Środowisko:** Node.js `^20.19.0 || >=22.12.0` (`engines` w `package.json`), npm (`package-lock.json`).
@@ -233,7 +235,7 @@ Opcjonalnie, przed krokiem 5, to samo polecenie bez flagi `--prod` (`npx netlify
 ### Wydajność
 
 - Brak bibliotek i frameworków w kodzie uruchamianym w przeglądarce.
-- Fonty hostowane lokalnie z `font-display: swap`; strona główna i strony prawne wstępnie ładują pięć plików fontów (`rel="preload"`).
+- Fonty hostowane lokalnie z `font-display: swap`; strona główna i strony prawne wstępnie ładują dwa pliki fontów zmiennych (`rel="preload"`) potrzebne dla marki, nagłówków i tekstu początkowego widoku. Pozostałe grubości korzystają z tych samych plików.
 - Obraz hero na stronie głównej jest wstępnie ładowany i ma `fetchpriority="high"`.
 - Obrazy stylistów i galerii mają `loading="lazy"` oraz jawne atrybuty `width` i `height`.
 - Build Vite minifikuje CSS i JS oraz nadaje zasobom w `dist/assets/` nazwy z hashem.
@@ -289,7 +291,9 @@ Current scope:
 ### Tech Stack
 
 - **Runtime:** HTML, CSS with native custom properties (no preprocessor), and dependency-free JavaScript ES modules.
-- **Fonts:** local WOFF2 files declared in `css/base.css` as Playfair Display and Inter (weights 400–700).
+- **Fonts:** two complete, self-hosted variable WOFF2 fonts declared in `css/base.css`: Playfair Display (400–900) and Inter (100–900); the site uses weights 400–700. Both cover basic Latin, Polish characters, numbers, and content punctuation.
+
+  Playfair Display 1.203 comes from [Google Fonts, commit `8b0a1d0f5983c89bc2b93f1b5fb55f9e252744b5`](https://github.com/google/fonts/tree/8b0a1d0f5983c89bc2b93f1b5fb55f9e252744b5/ofl/playfairdisplay); the original TTF was packed into WOFF2 without subsetting or changes to glyphs, metrics, or names. Inter 4.001 is the unchanged `InterVariable.woff2` from [the author's `v4.1` release](https://github.com/rsms/inter/tree/v4.1/docs/font-files) (optical size axis 14–32). Both fonts use SIL OFL 1.1; full notices and licenses in `public/font-licenses/playfair-display-OFL.txt` and `public/font-licenses/inter-OFL.txt` are included in `dist/font-licenses/` during the build.
 - **Build:** Vite `^8.3.1` (8.3.1 in `package-lock.json`) — a development dependency (`devDependencies`); build inputs are configured through `build.rolldownOptions`.
 - **Testing:** Playwright — `@playwright/test` `^1.63.0` (1.63.0 in `package-lock.json`), a development dependency used by the focused browser regression test suite for the navigation.
 - **Environment:** Node.js `^20.19.0 || >=22.12.0` (`engines` in `package.json`), npm (`package-lock.json`).
@@ -493,7 +497,7 @@ Optionally, before step 5, the same command without the `--prod` flag (`npx netl
 ### Performance
 
 - No libraries or frameworks in the browser-side code.
-- Self-hosted fonts with `font-display: swap`; the home page and the legal pages preload five font files (`rel="preload"`).
+- Self-hosted fonts with `font-display: swap`; the home page and the legal pages preload two variable font files (`rel="preload"`) needed for the brand, headings, and text in the initial view. Other weights reuse the same files.
 - The home page hero image is preloaded and uses `fetchpriority="high"`.
 - Stylist and gallery images use `loading="lazy"` and explicit `width` and `height` attributes.
 - The Vite build minifies CSS and JS and gives assets in `dist/assets/` content-hashed filenames.
