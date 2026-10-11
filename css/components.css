@@ -423,29 +423,50 @@
     pointer-events: auto;
   }
 
+  /* A flush bottom bar: the primary action takes the free width, the contact
+     channels keep their label width. Its height (hairline, block padding,
+     control, safe area) stays within --mobile-contact-bar-clearance. */
   .mobile-cta {
     position: fixed;
-    left: var(--space-sm);
-    right: var(--space-sm);
-    bottom: calc(var(--space-sm) + env(safe-area-inset-bottom, 0px));
+    inset-inline: 0;
+    bottom: 0;
     z-index: 180;
     display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
+    grid-template-columns: minmax(0, 1fr) auto auto;
     gap: var(--space-xs);
-    padding: var(--space-xs);
-    border-radius: var(--radius-md);
+    padding: var(--space-xs) var(--space-sm) calc(var(--space-xs) + env(safe-area-inset-bottom, 0px));
     background: var(--color-glass-raised);
     backdrop-filter: blur(14px);
-    border: 1px solid var(--color-line-accent);
-    box-shadow: var(--shadow-md);
+    border-top: 1px solid var(--color-line-accent);
   }
 
+  /* The bar sits outside the content the menu makes inert, so it is hidden
+     while a modal is open; visibility also removes its links from pointer,
+     Tab, and accessibility-tree access until the modal closes. */
+  body:has(.nav__panel.is-open) .mobile-cta,
+  body:has(.lightbox.is-open) .mobile-cta {
+    visibility: hidden;
+  }
+
+  /* Sentence case keeps all three labels on one row at 360px without shrinking
+     type or the 48px targets; uppercase needs about 40px more. */
   .mobile-cta__action {
-    min-height: 2.5rem;
-    padding: 0.55rem 0.6rem;
-    font-size: 0.65rem;
-    letter-spacing: var(--tracking-control);
-    text-align: center;
+    padding: var(--space-xs) var(--space-sm);
+    font-size: var(--fs-xs);
+    text-transform: none;
+    white-space: nowrap;
+  }
+
+  .mobile-cta__action--primary {
+    font-size: var(--fs-sm);
+    font-weight: 600;
+  }
+
+  /* Contact channels: quieter neutral edge and type beside the gold primary. */
+  .mobile-cta__action--secondary {
+    border-color: var(--color-line);
+    color: var(--color-ink-200);
+    font-weight: 400;
   }
 }
 

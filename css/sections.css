@@ -482,7 +482,8 @@
    reserves for that bar (the body padding in css/components.css). */
 @media (max-width: 767px) {
   .booking__options .choice,
-  .booking__action {
+  .booking__action,
+  .booking__fallback-actions .button {
     scroll-margin-bottom: var(--mobile-contact-bar-clearance);
   }
 }
@@ -729,7 +730,8 @@
 
 @media (max-width: 767px) {
   .location__link,
-  .cta__action {
+  .cta__action,
+  .footer__link {
     scroll-margin-bottom: var(--mobile-contact-bar-clearance);
   }
 }
@@ -740,20 +742,82 @@
   box-shadow: inset 0 1px var(--color-line);
 }
 
+/* A quiet close: brand and demo note, then link groups as plain text rows
+   divided by hairlines; no competing action. */
 .footer__inner {
   display: grid;
   gap: var(--space-lg);
 }
 
+.footer__logo {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: var(--fs-xl);
+  line-height: var(--lh-heading);
+}
+
+.footer__tagline {
+  margin: var(--space-2xs) 0 0;
+  font-size: var(--fs-xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+  color: var(--color-gold-300);
+}
+
+.footer__note {
+  max-inline-size: 36ch;
+  margin: var(--space-md) 0 0;
+  font-size: var(--fs-sm);
+  text-wrap: pretty;
+}
+
+.footer__group {
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--color-line);
+}
+
+.footer__label {
+  margin: 0 0 var(--space-2xs);
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
 .footer__links,
 .footer__legal {
   display: grid;
-  gap: var(--space-xs);
+  justify-items: start;
 }
 
-.footer__links .button {
-  justify-self: start;
-  width: fit-content;
+.footer__link {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--size-control);
+  font-size: var(--fs-sm);
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.25em;
+  transition: text-decoration-color 0.2s ease;
+}
+
+.footer__link:focus-visible {
+  text-decoration-color: var(--color-line-accent);
+}
+
+@media (hover: hover) {
+  .footer__link:hover {
+    text-decoration-color: var(--color-line-accent);
+  }
+}
+
+.footer__copyright {
+  margin: 0;
+  padding-top: var(--space-md);
+  border-top: 1px solid var(--color-line);
+  font-size: var(--fs-xs);
+  letter-spacing: var(--tracking-control);
 }
 
 .reveal {
@@ -778,6 +842,22 @@
 }
 
 @media (min-width: 600px) {
+  .footer__inner {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: var(--space-xl);
+  }
+
+  .footer__brand,
+  .footer__copyright {
+    grid-column: 1 / -1;
+  }
+
+  /* Side-by-side groups are separated by the grid gap, not hairlines. */
+  .footer__group {
+    padding-top: 0;
+    border-top: 0;
+  }
+
   .service-list__item {
     grid-template-columns: minmax(0, 1fr) auto;
     column-gap: var(--space-xl);
@@ -945,7 +1025,15 @@
   }
 
   .footer__inner {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    align-items: center;
+    grid-template-columns: minmax(0, 2fr) repeat(2, minmax(0, 1fr));
+    column-gap: var(--space-xl);
+  }
+
+  .footer__brand {
+    grid-column: auto;
+  }
+
+  .footer__copyright {
+    grid-column: 1 / -1;
   }
 }

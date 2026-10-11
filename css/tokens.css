@@ -69,7 +69,9 @@
      scroll states and viewport widths. */
   --size-header: 4.25rem;
 
-  --mobile-contact-bar-clearance: calc(5.25rem + env(safe-area-inset-bottom, 0px));
+  /* The flush mobile contact bar (hairline + two 0.5rem paddings + one control,
+     about 4.1rem) plus room for a focus outline, above the safe area. */
+  --mobile-contact-bar-clearance: calc(4.5rem + env(safe-area-inset-bottom, 0px));
 
   --shadow-sm: 0 6px 18px rgba(0, 0, 0, 0.12);
   --shadow-md: 0 12px 32px rgba(0, 0, 0, 0.18);

@@ -6,7 +6,7 @@
 
 **Analysis date:** 2026-10-10 (Europe/Warsaw)
 
-**Status:** Open — IMP-DESIGN-01A, IMP-DESIGN-01B, IMP-DESIGN-02, and IMP-DESIGN-03 completed; IMP-DESIGN-04 through IMP-DESIGN-08 remain pending. Original audit evidence below is retained.
+**Status:** COMPLETED — IMP-DESIGN-01 through IMP-DESIGN-08 implemented and verified.
 
 **Scope:** Creative direction, home-page composition, visitor journeys, shared visual system, and proportionate legal-page consistency review.
 
@@ -205,15 +205,9 @@ Priority means implementation value/dependency, not a severity score: **P1** est
 
 ### IMP-DESIGN-08 — Create a calm, honest booking and contact finish
 
-- **Status:** Proposed
-- **Priority:** P1
-- **Affected area:** `#booking`, `#testimonials`, `#location`, `#final-cta`, shared footer, and mobile contact emphasis.
-- **Evidence:** Source: `.booking__steps`, `.booking__summary`, `.booking__fallback`, `.testimonials`, `.location`, `.cta`, `.footer`, `.mobile-cta`; static rating/source claims and generic destinations in `index.html`. Runtime: confirmation and stale-label defects; repeated mobile actions and 64px bar.
-- **Current state:** The journey ends in several competing panels/actions; simulated booking and example credibility content lack prominent demo context.
-- **Proposed improvement:** After separate trust/state corrections, compose booking as two visible choices plus a clearly labelled demo summary/action, with contact channels grouped as alternatives. Give one example testimonial more editorial emphasis, with honest provenance/demo labels; keep remaining quotes available. Follow with compact hours/contact details and one restrained final action. Make the mobile bar's main action visually dominant while secondary channels remain accessible.
-- **Expected value:** A legible finish aligned with actual functionality and the premium direction.
-- **Implementation scope:** Split into booking presentation, closing sections, and mobile/footer presentation tasks using existing sources. Shared footer styling carries to legal pages without changing legal text. No backend, date picker, delivery promise, changed storage, removed selection state, or assumed external account.
-- **Acceptance criteria:** Demo status is visible before action and in the result; no interface implies a saved appointment, transmission, callback, or verified reviews without supporting functionality/evidence. Choice indicators, missing-choice hint, summary live region, preselection/focus, and no-JS contact explanation remain. At 360/375×800 selected options, confirmation, and footer can be reached without fixed-bar obstruction. Persistent/contact/section actions have a clear hierarchy; theme/menu/lightbox modal behavior is preserved. External destinations require a separate owner decision and focused verification.
+- **Status:** COMPLETED — implemented and verified.
+- **Result:** Delivered in three slices. 08-A: booking as two choices plus a labelled demo summary/action, with contact channels as alternatives. 08-B: one featured example testimonial with demo provenance, compact location/hours with a demo note, and one restrained final action. 08-C: a flush single-row mobile bar where the gold „Demo rezerwacji” action takes the free width, with quieter „Zadzwoń”/„Instagram” actions; 48px targets, sentence-case labels and accurate accessible names. The bar is hidden via `:has()` while the mobile menu or lightbox is open. The shared footer on the home page and three legal pages now has brand and demo note, social and legal link groups, and a copyright row; the placeholder DM link is no longer a primary button. The mobile clearance token matches the new bar, and footer and booking contact links use it. Preserved destinations, `data-instagram-link`, landmarks, breakpoints and modal JS contracts.
+- **Verification:** `npm run build`, `git diff --check` and `npm run test:nav` (18/18) passed. Chromium (Playwright) checks: 360/375×800 in both themes (no clipped labels or overflow, 65px bar, 72px clearance); menu and lightbox (bar hidden and not hit-testable, Tab stays in the modal, Escape restores bar and focus); real Tab passes with booking selection and demo completion; booking choices, demo action, contact links, location links, final CTA and footer not obstructed; 767/768/899/900/1440px transitions; footer links and order on all four pages; reduced motion. Some tall stylist/gallery focus targets in IMP-DESIGN-05/07 can still meet the bar edge. Real devices, safe-area insets, other browsers, screen readers and external destinations were not verified.
 - **Impact:** High
 - **Effort:** Medium
 
