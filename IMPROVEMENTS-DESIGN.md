@@ -189,15 +189,9 @@ Priority means implementation value/dependency, not a severity score: **P1** est
 
 ### IMP-DESIGN-06 — Clarify base services and signature packages
 
-- **Status:** Proposed
-- **Priority:** P1
-- **Affected area:** `#services`, `#pricing`, `.service-card`, `.pricing__item`.
-- **Evidence:** Source: five base service cards with price pills/preselection versus three differently named package rows in `index.html`; three-column `.card-grid` in `css/layout.css`. Existing mobile pricing named areas and nowrap prices are already implemented.
-- **Current state:** Adjacent offerings repeat price information in different forms without explaining the base-service/package distinction.
-- **Proposed improvement:** Present base services as a concise editorial list with readable descriptions, right-aligned starting prices, and one clearly associated action per row. Introduce Pricing explicitly as signature packages with inclusions and a clear instruction for the demo/contact next step. Preserve existing prices and avoid implying package preselection where none exists.
-- **Expected value:** Easier comparison and a more intentional service-to-action journey.
-- **Implementation scope:** These two sections and styles; preserve all five service hooks and booking options. Package labels/inclusion clarification require owner review; new package selection would be a separate product change.
-- **Acceptance criteria:** A reader can distinguish a base service from a package using visible Polish labels, without inferring it from different prices. Every base service retains working preselection and a no-JS `#booking` link. Prices stay unbroken and descriptions readable on mobile. Package actions, if approved, accurately explain the next step and do not claim to select unsupported values. No prices or package contents are invented.
+- **Status:** COMPLETED — implemented and verified.
+- **Result:** Replaced base-service cards with a responsive editorial list, right-aligned unbroken prices and one booking action per row. Explicitly labelled signature packages and added the approved demo explanation/contact link. Preserved all service/package content, five preselection contracts, booking options and shared grid; kept mobile link focus clear of the contact bar.
+- **Verification:** `npm run build` and `git diff --check` passed. Focused Chromium checks covered 360/375/768/900/1440px in both system themes, section screenshots, overflow, prices, text contrast, keyboard focus, all five service selections/summary/focus transfers, no-JS anchors and reduced/ordinary motion. Other browsers, real devices, full accessibility compliance and deployment were not verified.
 - **Impact:** High
 - **Effort:** Medium
 

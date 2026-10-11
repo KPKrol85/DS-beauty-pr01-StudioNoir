@@ -124,13 +124,40 @@
   margin: 0;
 }
 
-.service-card {
-  padding: var(--space-lg);
-  border: 1px solid transparent;
+.service-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.service-list__item {
   display: grid;
+  grid-template-columns: minmax(0, 1fr);
   gap: var(--space-sm);
-  background: var(--color-surface-editorial);
-  border-radius: var(--radius-sm);
+  padding-block: var(--space-lg);
+  border-top: 1px solid var(--color-line);
+}
+
+.service-list__title {
+  margin-bottom: var(--space-xs);
+}
+
+.service-list__desc {
+  margin: 0;
+  max-inline-size: var(--measure-intro);
+  text-wrap: pretty;
+}
+
+.service-list__price {
+  justify-self: end;
+  text-align: right;
+  white-space: nowrap;
+  font-weight: 600;
+  color: var(--color-gold-300);
+}
+
+.service-list__action {
+  justify-self: end;
 }
 
 .stylists__profiles {
@@ -205,13 +232,6 @@
   color: var(--color-gold-400);
 }
 
-/* Service booking link: sized to its label and kept at its own height at the card
-   foot, so the actions of one grid row line up while card rows stretch. */
-.service-card__action {
-  justify-self: start;
-  align-self: end;
-}
-
 .pricing {
   display: grid;
   gap: var(--space-md);
@@ -245,6 +265,18 @@
   white-space: nowrap;
   font-weight: 600;
   color: var(--color-gold-300);
+}
+
+.pricing__contact {
+  margin-top: var(--space-xl);
+  max-inline-size: var(--measure-intro);
+}
+
+@media (max-width: 767px) {
+  .service-list__action,
+  .pricing__contact .button {
+    scroll-margin-bottom: var(--mobile-contact-bar-clearance);
+  }
 }
 
 .gallery {
@@ -425,6 +457,15 @@
 }
 
 @media (min-width: 600px) {
+  .service-list__item {
+    grid-template-columns: minmax(0, 1fr) auto;
+    column-gap: var(--space-xl);
+  }
+
+  .service-list__body {
+    grid-row: span 2;
+  }
+
   .pricing__item {
     grid-template-areas:
       "title price"
@@ -450,6 +491,15 @@
 }
 
 @media (min-width: 900px) {
+  .service-list__item {
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    align-items: center;
+  }
+
+  .service-list__body {
+    grid-row: auto;
+  }
+
   .about__layout {
     grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
     gap: var(--space-2xl);
