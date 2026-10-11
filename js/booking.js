@@ -46,31 +46,52 @@ export const initBooking = () => {
   const requirement = root.querySelector("[data-booking-requirement]");
   const cta = root.querySelector("[data-booking-cta]");
 
+  const ctaLabel = cta.textContent.trim();
+  const completedLabel = "Demo zakończone";
+
   let selectedService = null;
   let selectedStylist = null;
-  let canConfirm = false;
+  // Set by the demo action; any later selection change clears it.
+  let isDemoComplete = false;
+  let canComplete = false;
 
+  // Every state change renders the summary, hint, and action from the current
+  // selection, so the label and status can never outlive the state they describe.
   const updateSummary = () => {
     summaryService.textContent = selectedService || "—";
     summaryStylist.textContent = selectedStylist || "—";
 
-    canConfirm = Boolean(selectedService && selectedStylist);
-    const status = canConfirm
-      ? "Gotowe do potwierdzenia."
-      : selectedService
-        ? "Wybierz stylistę."
-        : selectedStylist
-          ? "Wybierz usługę."
-          : "Wybierz usługę i stylistę.";
+    canComplete = Boolean(selectedService && selectedStylist) && !isDemoComplete;
+    let status;
+    let hint;
 
-    requirement.textContent = status;
+    if (isDemoComplete) {
+      status = "Demo zakończone — wizyta nie została umówiona, nic nie wysłano ani nie zapisano.";
+      hint = "Zmień usługę lub stylistę, aby powtórzyć demo.";
+    } else if (canComplete) {
+      status = "Wybór kompletny.";
+      hint = "Pokaz kończy się na tej stronie — nic nie zostanie wysłane ani zapisane.";
+    } else if (selectedService) {
+      status = "Brakuje stylisty.";
+      hint = "Wybierz stylistę, aby zakończyć demo.";
+    } else if (selectedStylist) {
+      status = "Brakuje usługi.";
+      hint = "Wybierz usługę, aby zakończyć demo.";
+    } else {
+      status = "Brak wyboru.";
+      hint = "Wybierz usługę i stylistę, aby zakończyć demo.";
+    }
+
     summaryStatus.textContent = status;
-    cta.removeAttribute("disabled");
-    cta.setAttribute("aria-disabled", String(!canConfirm));
+    requirement.textContent = hint;
+    cta.textContent = isDemoComplete ? completedLabel : ctaLabel;
+    // aria-disabled keeps the action focusable, so focus stays on it after the demo.
+    cta.setAttribute("aria-disabled", String(!canComplete));
   };
 
   const handleSelect = (buttons, selectedButton, setter) => {
     setter(selectedButton.textContent);
+    isDemoComplete = false;
     buttons.forEach((btn) => {
       const isSelected = btn === selectedButton;
       btn.classList.toggle("is-selected", isSelected);
@@ -123,12 +144,9 @@ export const initBooking = () => {
   initPreselectLinks("data-booking-preselect-stylist", stylistButtons, "data-booking-stylist", selectStylist);
 
   cta.addEventListener("click", () => {
-    if (!canConfirm) return;
-    summaryStatus.textContent = "Rezerwacja wstępnie zapisana";
-    requirement.textContent = summaryStatus.textContent;
-    cta.textContent = "Wysłano";
-    cta.setAttribute("disabled", "true");
-    cta.removeAttribute("aria-disabled");
+    if (!canComplete) return;
+    isDemoComplete = true;
+    updateSummary();
   });
 
   updateSummary();

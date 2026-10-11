@@ -510,13 +510,19 @@
         <div class="container" data-reveal>
           <div class="section__header">
             <p class="eyebrow">Rezerwacja</p>
-            <h2 class="section__title">Zarezerwuj spokojnie, w trzech krokach.</h2>
+            <h2 class="section__title">Dwa wybory, jedno spokojne podsumowanie.</h2>
+            <p class="booking__intro">
+              Wybierz usługę i stylistę, a podsumowanie uzupełni się na bieżąco. To demonstracja strony
+              portfolio: wybór nie jest nigdzie wysyłany ani zapisywany.
+            </p>
           </div>
           <div class="booking" data-booking>
-            <div class="booking__steps">
-              <div class="booking__step" data-booking-step="1">
-                <h3>Krok 1</h3>
-                <p>Wybierz usługę.</p>
+            <div class="booking__choices">
+              <div class="booking__group" role="group" aria-labelledby="booking-service-title" data-booking-step="1">
+                <h3 class="booking__group-title" id="booking-service-title">
+                  <span class="booking__index" aria-hidden="true">01</span>
+                  Usługa
+                </h3>
                 <div class="booking__options">
                   <button class="choice" data-booking-service="Strzyżenie" type="button" aria-pressed="false">Strzyżenie</button>
                   <button class="choice" data-booking-service="Koloryzacja" type="button" aria-pressed="false">Koloryzacja</button>
@@ -525,42 +531,37 @@
                   <button class="choice" data-booking-service="Pielęgnacja" type="button" aria-pressed="false">Pielęgnacja</button>
                 </div>
               </div>
-              <div class="booking__step" data-booking-step="2">
-                <h3>Krok 2</h3>
-                <p>Wybierz stylistę.</p>
+              <div class="booking__group" role="group" aria-labelledby="booking-stylist-title" data-booking-step="2">
+                <h3 class="booking__group-title" id="booking-stylist-title">
+                  <span class="booking__index" aria-hidden="true">02</span>
+                  Stylista
+                </h3>
                 <div class="booking__options">
                   <button class="choice" data-booking-stylist="Maja" type="button" aria-pressed="false">Maja</button>
                   <button class="choice" data-booking-stylist="Leon" type="button" aria-pressed="false">Leon</button>
                   <button class="choice" data-booking-stylist="Sofia" type="button" aria-pressed="false">Sofia</button>
                 </div>
               </div>
-              <div class="booking__step" data-booking-step="3">
-                <h3>Krok 3</h3>
-                <p>Potwierdź termin.</p>
-                <button class="button button--primary" data-booking-cta type="button" aria-disabled="true" aria-describedby="booking-requirement">
-                  Potwierdź rezerwację
-                </button>
-                <p class="booking__requirement" id="booking-requirement" data-booking-requirement>Wybierz usługę i stylistę.</p>
-                <ul class="booking__microcopy" aria-label="Najważniejsze informacje o rezerwacji">
-                  <li class="pill">Oddzwaniamy do 15 min</li>
-                  <li class="pill">Potwierdzenie SMS/DM</li>
-                  <li class="pill">Brak przedpłaty</li>
-                </ul>
-                <p class="booking__next-step">Po kliknięciu „Potwierdź rezerwację” skontaktujemy się, aby potwierdzić termin.</p>
-              </div>
             </div>
             <div class="booking__side">
-              <aside class="booking__summary" aria-live="polite">
-                <h3>Podsumowanie</h3>
-                <p class="booking__summary-line">Usługa: <span data-summary-service>—</span></p>
-                <p class="booking__summary-line">Stylista: <span data-summary-stylist>—</span></p>
-                <p class="booking__summary-line">Status: <span data-summary-status>Wybierz usługę i stylistę.</span></p>
-              </aside>
-              <aside class="booking__fallback" aria-label="Szybki kontakt w sprawie rezerwacji">
-                <h3>Szybki kontakt</h3>
-                <p>Jeśli wolisz, zarezerwuj wizytę bezpośrednio.</p>
+              <div class="booking__demo" role="group" aria-labelledby="booking-demo-title">
+                <p class="booking__demo-label">Wersja demonstracyjna</p>
+                <h3 class="booking__demo-title" id="booking-demo-title">Podsumowanie wyboru</h3>
+                <div class="booking__summary" aria-live="polite">
+                  <p class="booking__summary-line">Usługa: <span data-summary-service>—</span></p>
+                  <p class="booking__summary-line">Stylista: <span data-summary-stylist>—</span></p>
+                  <p class="booking__summary-line">Status: <span data-summary-status>Brak wyboru.</span></p>
+                </div>
+                <button class="button button--primary booking__action" data-booking-cta type="button" aria-disabled="true" aria-describedby="booking-requirement">
+                  Zakończ demo
+                </button>
+                <p class="booking__requirement" id="booking-requirement" data-booking-requirement>Wybierz usługę i stylistę, aby zakończyć demo.</p>
+              </div>
+              <aside class="booking__fallback" aria-labelledby="booking-fallback-title">
+                <h3 class="booking__fallback-title" id="booking-fallback-title">Kontakt bezpośredni</h3>
+                <p class="booking__fallback-text">Alternatywa dla pokazu — telefon, Instagram lub e-mail.</p>
                 <div class="booking__fallback-actions">
-                  <a class="button button--primary" href="tel:+48600900800" aria-label="Zadzwoń do Studio Noir pod numer +48 600 900 800">
+                  <a class="button button--ghost" href="tel:+48600900800" aria-label="Zadzwoń do Studio Noir pod numer +48 600 900 800">
                     Zadzwoń
                   </a>
                   <a class="button button--ghost" href="https://www.instagram.com/studio.noir/" target="_blank" rel="noreferrer" aria-label="Napisz do Studio Noir na Instagramie">
@@ -573,7 +574,7 @@
               </aside>
               <noscript>
                 <p class="booking__noscript">
-                  Rezerwacja online wymaga JavaScript — skontaktuj się:
+                  Interaktywny pokaz wyboru wymaga JavaScript — skontaktuj się bezpośrednio:
                   <a href="tel:+48600900800" aria-label="Zadzwoń do Studio Noir pod numer +48 600 900 800">Zadzwoń</a>
                   lub
                   <a href="https://www.instagram.com/studio.noir/" target="_blank" rel="noreferrer" aria-label="Napisz do Studio Noir na Instagramie">Instagram</a>.
