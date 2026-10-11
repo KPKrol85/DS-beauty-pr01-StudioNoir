@@ -358,101 +358,149 @@
             <p>Obrazy wygenerowane przez AI służą prezentacji fikcyjnego Studio Noir — nie dokumentują realizacji salonu. Dotyczy to także zdjęcia głównego i portretów stylistów.</p>
           </div>
           <div class="gallery" data-gallery>
-            <button class="gallery__item" data-lightbox type="button">
+            <button class="gallery__item gallery__item--featured" data-lightbox type="button"
+              aria-labelledby="gallery-preview-1 gallery-caption-1">
               <picture>
                 <source
                   type="image/avif"
                   srcset="/assets/img/gallery/gallery-1-480.avif 480w, /assets/img/gallery/gallery-1-800.avif 800w"
-                  sizes="(min-width: 1245px) 363px, (min-width: 900px) calc(30vw - 11px), (min-width: 600px) calc(45vw - 8px), 90vw" />
+                  sizes="(min-width: 1245px) 646.67px, (min-width: 900px) calc(52.5vw - 6.667px), (min-width: 600px) calc(60vw - 5.333px), 90vw" />
                 <img
                   src="/assets/img/gallery/gallery-1-800.webp"
                   srcset="/assets/img/gallery/gallery-1-480.webp 480w, /assets/img/gallery/gallery-1-800.webp 800w"
-                  sizes="(min-width: 1245px) 363px, (min-width: 900px) calc(30vw - 11px), (min-width: 600px) calc(45vw - 8px), 90vw"
+                  sizes="(min-width: 1245px) 646.67px, (min-width: 900px) calc(52.5vw - 6.667px), (min-width: 600px) calc(60vw - 5.333px), 90vw"
                   alt="Długie, falowane brązowe włosy z jasnymi pasmami"
                   width="800"
                   height="1000"
                   loading="lazy" />
               </picture>
+              <span class="gallery__details">
+                <span class="gallery__caption">
+                  <span class="gallery__number" aria-hidden="true">01</span>
+                  <span id="gallery-caption-1">Falowane włosy z jasnymi pasmami</span>
+                </span>
+                <span class="gallery__preview" id="gallery-preview-1">Powiększ <span aria-hidden="true">↗</span></span>
+              </span>
             </button>
-            <button class="gallery__item" data-lightbox type="button">
+            <button class="gallery__item gallery__item--updo" data-lightbox type="button"
+              aria-labelledby="gallery-preview-2 gallery-caption-2">
               <picture>
                 <source
                   type="image/avif"
                   srcset="/assets/img/gallery/gallery-2-480.avif 480w, /assets/img/gallery/gallery-2-800.avif 800w"
-                  sizes="(min-width: 1245px) 363px, (min-width: 900px) calc(30vw - 11px), (min-width: 600px) calc(45vw - 8px), 90vw" />
+                  sizes="(min-width: 1245px) 457.33px, (min-width: 900px) calc(37.5vw - 9.333px), (min-width: 600px) calc(30vw - 10.667px), calc(45vw - 8px)" />
                 <img
                   src="/assets/img/gallery/gallery-2-800.webp"
                   srcset="/assets/img/gallery/gallery-2-480.webp 480w, /assets/img/gallery/gallery-2-800.webp 800w"
-                  sizes="(min-width: 1245px) 363px, (min-width: 900px) calc(30vw - 11px), (min-width: 600px) calc(45vw - 8px), 90vw"
+                  sizes="(min-width: 1245px) 457.33px, (min-width: 900px) calc(37.5vw - 9.333px), (min-width: 600px) calc(30vw - 10.667px), calc(45vw - 8px)"
                   alt="Brązowe włosy upięte w luźny, niski kok"
                   width="800"
                   height="1000"
                   loading="lazy" />
               </picture>
+              <span class="gallery__details">
+                <span class="gallery__caption">
+                  <span class="gallery__number" aria-hidden="true">02</span>
+                  <span id="gallery-caption-2">Niskie upięcie</span>
+                </span>
+                <span class="gallery__preview" id="gallery-preview-2">Powiększ <span aria-hidden="true">↗</span></span>
+              </span>
             </button>
-            <button class="gallery__item" data-lightbox type="button">
+            <button class="gallery__item gallery__item--texture" data-lightbox type="button"
+              aria-labelledby="gallery-preview-3 gallery-caption-3">
               <picture>
                 <source
                   type="image/avif"
                   srcset="/assets/img/gallery/gallery-3-480.avif 480w, /assets/img/gallery/gallery-3-800.avif 800w"
-                  sizes="(min-width: 1245px) 363px, (min-width: 900px) calc(30vw - 11px), (min-width: 600px) calc(45vw - 8px), 90vw" />
+                  sizes="(min-width: 1245px) 457.33px, (min-width: 900px) calc(37.5vw - 9.333px), (min-width: 600px) calc(30vw - 10.667px), calc(45vw - 8px)" />
                 <img
                   src="/assets/img/gallery/gallery-3-800.webp"
                   srcset="/assets/img/gallery/gallery-3-480.webp 480w, /assets/img/gallery/gallery-3-800.webp 800w"
-                  sizes="(min-width: 1245px) 363px, (min-width: 900px) calc(30vw - 11px), (min-width: 600px) calc(45vw - 8px), 90vw"
+                  sizes="(min-width: 1245px) 457.33px, (min-width: 900px) calc(37.5vw - 9.333px), (min-width: 600px) calc(30vw - 10.667px), calc(45vw - 8px)"
                   alt="Krótkie męskie cięcie z cieniowanymi bokami i teksturą na górze"
                   width="800"
                   height="1000"
                   loading="lazy" />
               </picture>
+              <span class="gallery__details">
+                <span class="gallery__caption">
+                  <span class="gallery__number" aria-hidden="true">03</span>
+                  <span id="gallery-caption-3">Krótkie cięcie z teksturą</span>
+                </span>
+                <span class="gallery__preview" id="gallery-preview-3">Powiększ <span aria-hidden="true">↗</span></span>
+              </span>
             </button>
-            <button class="gallery__item" data-lightbox type="button">
+            <button class="gallery__item gallery__item--copper" data-lightbox type="button"
+              aria-labelledby="gallery-preview-4 gallery-caption-4">
               <picture>
                 <source
                   type="image/avif"
                   srcset="/assets/img/gallery/gallery-4-480.avif 480w, /assets/img/gallery/gallery-4-800.avif 800w"
-                  sizes="(min-width: 1245px) 363px, (min-width: 900px) calc(30vw - 11px), (min-width: 600px) calc(45vw - 8px), 90vw" />
+                  sizes="(min-width: 1245px) 362.67px, (min-width: 600px) calc(30vw - 10.667px), calc(45vw - 8px)" />
                 <img
                   src="/assets/img/gallery/gallery-4-800.webp"
                   srcset="/assets/img/gallery/gallery-4-480.webp 480w, /assets/img/gallery/gallery-4-800.webp 800w"
-                  sizes="(min-width: 1245px) 363px, (min-width: 900px) calc(30vw - 11px), (min-width: 600px) calc(45vw - 8px), 90vw"
+                  sizes="(min-width: 1245px) 362.67px, (min-width: 600px) calc(30vw - 10.667px), calc(45vw - 8px)"
                   alt="Długie, miedziane włosy ułożone w fale"
                   width="800"
                   height="1000"
                   loading="lazy" />
               </picture>
+              <span class="gallery__details">
+                <span class="gallery__caption">
+                  <span class="gallery__number" aria-hidden="true">04</span>
+                  <span id="gallery-caption-4">Miedziane fale</span>
+                </span>
+                <span class="gallery__preview" id="gallery-preview-4">Powiększ <span aria-hidden="true">↗</span></span>
+              </span>
             </button>
-            <button class="gallery__item" data-lightbox type="button">
+            <button class="gallery__item gallery__item--sleek" data-lightbox type="button"
+              aria-labelledby="gallery-preview-5 gallery-caption-5">
               <picture>
                 <source
                   type="image/avif"
                   srcset="/assets/img/gallery/gallery-5-480.avif 480w, /assets/img/gallery/gallery-5-800.avif 800w"
-                  sizes="(min-width: 1245px) 363px, (min-width: 900px) calc(30vw - 11px), (min-width: 600px) calc(45vw - 8px), 90vw" />
+                  sizes="(min-width: 1245px) 362.67px, (min-width: 600px) calc(30vw - 10.667px), calc(45vw - 8px)" />
                 <img
                   src="/assets/img/gallery/gallery-5-800.webp"
                   srcset="/assets/img/gallery/gallery-5-480.webp 480w, /assets/img/gallery/gallery-5-800.webp 800w"
-                  sizes="(min-width: 1245px) 363px, (min-width: 900px) calc(30vw - 11px), (min-width: 600px) calc(45vw - 8px), 90vw"
+                  sizes="(min-width: 1245px) 362.67px, (min-width: 600px) calc(30vw - 10.667px), calc(45vw - 8px)"
                   alt="Długie, proste ciemnobrązowe włosy widziane z profilu"
                   width="800"
                   height="1000"
                   loading="lazy" />
               </picture>
+              <span class="gallery__details">
+                <span class="gallery__caption">
+                  <span class="gallery__number" aria-hidden="true">05</span>
+                  <span id="gallery-caption-5">Gładkie, ciemne włosy</span>
+                </span>
+                <span class="gallery__preview" id="gallery-preview-5">Powiększ <span aria-hidden="true">↗</span></span>
+              </span>
             </button>
-            <button class="gallery__item" data-lightbox type="button">
+            <button class="gallery__item gallery__item--curls" data-lightbox type="button"
+              aria-labelledby="gallery-preview-6 gallery-caption-6">
               <picture>
                 <source
                   type="image/avif"
                   srcset="/assets/img/gallery/gallery-6-480.avif 480w, /assets/img/gallery/gallery-6-800.avif 800w"
-                  sizes="(min-width: 1245px) 363px, (min-width: 900px) calc(30vw - 11px), (min-width: 600px) calc(45vw - 8px), 90vw" />
+                  sizes="(min-width: 1245px) 362.67px, (min-width: 600px) calc(30vw - 10.667px), 90vw" />
                 <img
                   src="/assets/img/gallery/gallery-6-800.webp"
                   srcset="/assets/img/gallery/gallery-6-480.webp 480w, /assets/img/gallery/gallery-6-800.webp 800w"
-                  sizes="(min-width: 1245px) 363px, (min-width: 900px) calc(30vw - 11px), (min-width: 600px) calc(45vw - 8px), 90vw"
+                  sizes="(min-width: 1245px) 362.67px, (min-width: 600px) calc(30vw - 10.667px), 90vw"
                   alt="Brązowe loki z miedzianymi refleksami i dużą objętością"
                   width="800"
                   height="1000"
                   loading="lazy" />
               </picture>
+              <span class="gallery__details">
+                <span class="gallery__caption">
+                  <span class="gallery__number" aria-hidden="true">06</span>
+                  <span id="gallery-caption-6">Loki z miedzianymi refleksami</span>
+                </span>
+                <span class="gallery__preview" id="gallery-preview-6">Powiększ <span aria-hidden="true">↗</span></span>
+              </span>
             </button>
           </div>
         </div>

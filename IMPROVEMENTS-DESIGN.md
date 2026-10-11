@@ -197,15 +197,9 @@ Priority means implementation value/dependency, not a severity score: **P1** est
 
 ### IMP-DESIGN-07 — Curate a mixed-scale work gallery
 
-- **Status:** Proposed
-- **Priority:** P2
-- **Affected area:** `#gallery`, `.gallery`, `.gallery__item`, and image/caption presentation.
-- **Evidence:** Source: six equal 4:5 buttons in `index.html` and `css/sections.css`; ordered thumbnail source in `js/lightbox.js`. Runtime: one column at 375px, two at 768px, three at 900/1440px; approximately 2870px section height at 375px.
-- **Current state:** Equal scale and repetitive placeholder panels obscure any editorial sequence or featured work.
-- **Proposed improvement:** Use one featured image and a deliberate sequence of portrait/detail crops on desktop. On mobile, show a featured image followed by compact pairs where details remain legible, with short descriptive captions and a visible preview affordance. Keep all six items accessible without carousel paging.
-- **Expected value:** A stronger work narrative with more balanced mobile pacing.
-- **Implementation scope:** Gallery markup/CSS and 03 asset crops; captions derived from approved image descriptions. Retain native buttons, ordered `data-lightbox` triggers, thumbnail source mapping, and existing dialog behavior. No new gallery library.
-- **Acceptance criteria:** Featured work is distinguishable; crops have documented focal points. All six images remain reachable by pointer and keyboard in DOM order, and captions do not imply unverified client results. Mobile gallery height is compared with the current baseline and reduced through composition without hiding items or making detail unreadable. Opening/traversal/count/close/focus-return behavior stays correct in both themes, including reduced motion.
+- **Status:** COMPLETED — implemented and verified.
+- **Result:** Featured image 01 anchors asymmetric desktop/tablet mosaics; mobile uses paired supporting images and a wider closing image. Added Polish captions and visible preview actions, refined focal points and responsive sizes. Preserved six approved assets, reading order, thumbnail sources/alternatives, AI disclosure, reveal and existing lightbox contracts.
+- **Verification:** `npm run build` and `git diff --check` passed. Chromium checks at 360/375/768/900/1440px in both themes and motion settings confirmed crops, order, overflow, all preview buttons, keyboard navigation, lightbox count/wraparound/Escape/Tab/focus return and matching sizes. AVIF/WebP selection, stable image geometry and text contrast passed. At 375×800, section height fell from 2987.2px to 1973.6px (33.9%). Other browsers, real devices, full accessibility compliance and deployment were not verified.
 - **Impact:** Medium
 - **Effort:** Medium
 
