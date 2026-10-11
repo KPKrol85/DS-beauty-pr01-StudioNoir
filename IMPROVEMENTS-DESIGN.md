@@ -173,15 +173,9 @@ Priority means implementation value/dependency, not a severity score: **P1** est
 
 ### IMP-DESIGN-04 — Compose a signature responsive hero
 
-- **Status:** Proposed
-- **Priority:** P1
-- **Affected area:** `.hero`, `.hero__inner`, `.hero__copy`, `.hero__visual`, `.hero__actions`, `.hero__overlay`.
-- **Evidence:** Source: `index.html`, `css/sections.css`; equal columns from 900px and fixed 8rem/6rem padding. Runtime: 536/536px columns at 1440px; approximately 848px hero at 375×800 and 977px at 768×900.
-- **Current state:** Conventional copy/image split on desktop, large inherited spacing and image-after-actions on narrow screens.
-- **Proposed improvement:** Make the image the dominant editorial anchor with an unequal desktop split and a narrower headline column. Design a compact mobile cover sequence with a deliberate crop and primary action close to its explanatory copy; handle tablet proportions explicitly. Avoid text over busy hair detail and opaque gradients that obscure it.
-- **Expected value:** A memorable first impression connected to the atelier concept, with a clear next step.
-- **Implementation scope:** Hero markup/CSS and approved image variants; preserve `#top`, `#booking`, `#services`, reveal hooks, and header mini-CTA observation. Depends on 02/03; do not expand into a header refactor.
-- **Acceptance criteria:** At 1440px the hero has a clear image/copy hierarchy rather than equal visual weight; at 360/375×800 headline, meaningful imagery, and principal CTA can be understood without traversing a long blank lead-in. At 768/900px neither column becomes a cramped residual layout. Both themes, reduced motion, keyboard focus, and 200% zoom preserve content and action access. No autoplay/video or scroll-driven dependency.
+- **Status:** COMPLETED — implemented and verified.
+- **Result:** Established a photography-led 40/60 desktop hero from 1100px, compact mobile spacing, and a deliberate single-column tablet crop. Synchronized responsive image sizes with preload and kept hero CTA focus clear of the mobile contact bar. Preserved typography, Polish content, approved assets, navigation, reveal, and header observation contracts.
+- **Verification:** `npm run build` and `git diff --check` passed. Chromium checks covered 360/375×800 and 768/900/1440×900, both themes, reduced motion, keyboard CTA navigation, mini-CTA, no-JS, and real 200% browser zoom. Mobile DPR 1/2 selected 720px AVIF; initial loads requested one hero image. Other browsers, real devices, full accessibility compliance, and deployment were not verified.
 - **Impact:** High
 - **Effort:** Medium
 
