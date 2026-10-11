@@ -106,32 +106,41 @@
       </section>
 
       <section class="section" id="about">
-        <div class="container" data-reveal>
-          <div class="section__header">
-            <p class="eyebrow">O studio</p>
-            <h2 class="section__title">Subtelna estetyka, bez kompromisów.</h2>
-          </div>
-          <div class="section__content">
+        <div class="container about__layout" data-reveal>
+          <div class="about__manifesto">
+            <div class="section__header about__header">
+              <p class="eyebrow">O studio</p>
+              <h2 class="section__title">Subtelna estetyka, bez kompromisów.</h2>
+            </div>
             <p class="about__intro">
               Studio Noir powstało z myślą o osobach, które oczekują najwyższej jakości, dyskrecji i
               perfekcyjnego wykończenia. Łączymy rzemiosło z technologią, tworząc styl dopasowany
               do Ciebie — nie do trendu.
             </p>
-            <div class="values">
-              <div class="value-card">
-                <h3 class="value-card__title">Historia</h3>
+          </div>
+          <ol class="about__values" role="list">
+            <li class="about__value">
+              <span class="about__number" aria-hidden="true">01</span>
+              <div>
+                <h3 class="about__value-title">Historia</h3>
                 <p>Atelier założone przez stylistów z doświadczeniem w modzie i branży urody.</p>
               </div>
-              <div class="value-card">
-                <h3 class="value-card__title">Wartości</h3>
+            </li>
+            <li class="about__value">
+              <span class="about__number" aria-hidden="true">02</span>
+              <div>
+                <h3 class="about__value-title">Wartości</h3>
                 <p>Minimalizm, jakość, świadoma koloryzacja i personalizacja.</p>
               </div>
-              <div class="value-card">
-                <h3 class="value-card__title">Filozofia</h3>
+            </li>
+            <li class="about__value">
+              <span class="about__number" aria-hidden="true">03</span>
+              <div>
+                <h3 class="about__value-title">Filozofia</h3>
                 <p>Piękno jako detal — wyważone, nowoczesne, trwałe.</p>
               </div>
-            </div>
-          </div>
+            </li>
+          </ol>
         </div>
       </section>
 
@@ -238,17 +247,17 @@
             <p class="eyebrow">Styliści</p>
             <h2 class="section__title">Osobowości, które budują styl.</h2>
           </div>
-          <div class="card-grid">
+          <div class="stylists__profiles">
             <article class="stylist-card">
               <picture>
                 <source
                   type="image/avif"
                   srcset="/assets/img/stylists/stylist-1-480.avif 480w, /assets/img/stylists/stylist-1-800.avif 800w"
-                  sizes="(min-width: 1245px) 308px, (min-width: 900px) calc(30vw - 66px), (min-width: 600px) calc(45vw - 62px), calc(90vw - 50px)" />
+                  sizes="(min-width: 1245px) calc(373.333px - 1rem), (min-width: 900px) calc(30vw - 1rem), min(32.4vw, 12rem)" />
                 <img
                   src="/assets/img/stylists/stylist-1-800.webp"
                   srcset="/assets/img/stylists/stylist-1-480.webp 480w, /assets/img/stylists/stylist-1-800.webp 800w"
-                  sizes="(min-width: 1245px) 308px, (min-width: 900px) calc(30vw - 66px), (min-width: 600px) calc(45vw - 62px), calc(90vw - 50px)"
+                  sizes="(min-width: 1245px) calc(373.333px - 1rem), (min-width: 900px) calc(30vw - 1rem), min(32.4vw, 12rem)"
                   alt="Portret fikcyjnej stylistki Mai z długimi, falowanymi brązowymi włosami"
                   width="800"
                   height="1000"
@@ -258,25 +267,25 @@
                 <h3>Maja Lewandowska</h3>
                 <p>Ekspertka koloryzacji</p>
                 <span class="badge">Kolor sygnaturowy</span>
+                <a
+                  class="stylist-card__action"
+                  href="#booking"
+                  data-booking-preselect-stylist="Maja"
+                  aria-label="Zarezerwuj wizytę u Mai Lewandowskiej">
+                  Zarezerwuj
+                </a>
               </div>
-              <a
-                class="button button--ghost stylist-card__action"
-                href="#booking"
-                data-booking-preselect-stylist="Maja"
-                aria-label="Zarezerwuj wizytę u Mai Lewandowskiej">
-                Zarezerwuj
-              </a>
             </article>
             <article class="stylist-card">
               <picture>
                 <source
                   type="image/avif"
                   srcset="/assets/img/stylists/stylist-2-480.avif 480w, /assets/img/stylists/stylist-2-800.avif 800w"
-                  sizes="(min-width: 1245px) 308px, (min-width: 900px) calc(30vw - 66px), (min-width: 600px) calc(45vw - 62px), calc(90vw - 50px)" />
+                  sizes="(min-width: 1245px) calc(373.333px - 1rem), (min-width: 900px) calc(30vw - 1rem), min(32.4vw, 12rem)" />
                 <img
                   src="/assets/img/stylists/stylist-2-800.webp"
                   srcset="/assets/img/stylists/stylist-2-480.webp 480w, /assets/img/stylists/stylist-2-800.webp 800w"
-                  sizes="(min-width: 1245px) 308px, (min-width: 900px) calc(30vw - 66px), (min-width: 600px) calc(45vw - 62px), calc(90vw - 50px)"
+                  sizes="(min-width: 1245px) calc(373.333px - 1rem), (min-width: 900px) calc(30vw - 1rem), min(32.4vw, 12rem)"
                   alt="Portret fikcyjnego stylisty Leona z krótkimi brązowymi włosami i zarostem"
                   width="800"
                   height="1000"
@@ -286,25 +295,25 @@
                 <h3>Leon Zawadzki</h3>
                 <p>Fryzjer męski i pielęgnacja</p>
                 <span class="badge">Precyzyjne strzyżenie</span>
+                <a
+                  class="stylist-card__action"
+                  href="#booking"
+                  data-booking-preselect-stylist="Leon"
+                  aria-label="Zarezerwuj wizytę u Leona Zawadzkiego">
+                  Zarezerwuj
+                </a>
               </div>
-              <a
-                class="button button--ghost stylist-card__action"
-                href="#booking"
-                data-booking-preselect-stylist="Leon"
-                aria-label="Zarezerwuj wizytę u Leona Zawadzkiego">
-                Zarezerwuj
-              </a>
             </article>
             <article class="stylist-card">
               <picture>
                 <source
                   type="image/avif"
                   srcset="/assets/img/stylists/stylist-3-480.avif 480w, /assets/img/stylists/stylist-3-800.avif 800w"
-                  sizes="(min-width: 1245px) 308px, (min-width: 900px) calc(30vw - 66px), (min-width: 600px) calc(45vw - 62px), calc(90vw - 50px)" />
+                  sizes="(min-width: 1245px) calc(373.333px - 1rem), (min-width: 900px) calc(30vw - 1rem), min(32.4vw, 12rem)" />
                 <img
                   src="/assets/img/stylists/stylist-3-800.webp"
                   srcset="/assets/img/stylists/stylist-3-480.webp 480w, /assets/img/stylists/stylist-3-800.webp 800w"
-                  sizes="(min-width: 1245px) 308px, (min-width: 900px) calc(30vw - 66px), (min-width: 600px) calc(45vw - 62px), calc(90vw - 50px)"
+                  sizes="(min-width: 1245px) calc(373.333px - 1rem), (min-width: 900px) calc(30vw - 1rem), min(32.4vw, 12rem)"
                   alt="Portret fikcyjnej stylistki Sofii z prostym, ciemnobrązowym bobem"
                   width="800"
                   height="1000"
@@ -314,14 +323,14 @@
                 <h3>Sofia Verne</h3>
                 <p>Stylizacja redakcyjna</p>
                 <span class="badge">Pokazowe wykończenie</span>
+                <a
+                  class="stylist-card__action"
+                  href="#booking"
+                  data-booking-preselect-stylist="Sofia"
+                  aria-label="Zarezerwuj wizytę u Sofii Verne">
+                  Zarezerwuj
+                </a>
               </div>
-              <a
-                class="button button--ghost stylist-card__action"
-                href="#booking"
-                data-booking-preselect-stylist="Sofia"
-                aria-label="Zarezerwuj wizytę u Sofii Verne">
-                Zarezerwuj
-              </a>
             </article>
           </div>
         </div>

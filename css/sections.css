@@ -76,40 +76,77 @@
   }
 }
 
+.about__layout {
+  display: grid;
+  gap: var(--space-xl);
+  align-items: start;
+}
+
+.about__header {
+  margin-bottom: var(--space-lg);
+}
+
 .about__intro {
   max-inline-size: var(--measure-intro);
   font-size: var(--fs-lg);
   line-height: 1.7;
   text-wrap: pretty;
+  margin-bottom: 0;
 }
 
-.values {
+.about__values {
   display: grid;
-  gap: var(--space-lg);
+  margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
-.value-card {
-  padding: var(--space-lg);
-  border: 1px solid transparent;
-  border-top-color: var(--color-line);
+.about__value {
+  display: grid;
+  grid-template-columns: 2.5rem minmax(0, 1fr);
+  gap: var(--space-md);
+  padding-block: var(--space-lg);
+  border-top: 1px solid var(--color-line);
 }
 
-.service-card,
-.stylist-card {
+.about__number {
+  font-family: var(--font-display);
+  font-size: var(--fs-xl);
+  line-height: var(--lh-heading);
+  color: var(--color-gold-300);
+}
+
+.about__value-title {
+  margin-bottom: var(--space-xs);
+}
+
+.about__value p {
+  margin: 0;
+}
+
+.service-card {
   padding: var(--space-lg);
   border: 1px solid transparent;
   display: grid;
   gap: var(--space-sm);
-}
-
-/* Services are quiet insets; the team shell stays open around the portrait. */
-.service-card {
   background: var(--color-surface-editorial);
   border-radius: var(--radius-sm);
 }
 
+.stylists__profiles {
+  display: grid;
+  gap: var(--space-xl);
+}
+
 .stylist-card {
-  border-bottom-color: var(--color-line);
+  display: grid;
+  grid-template-columns: min(36%, 12rem) minmax(0, 1fr);
+  gap: var(--space-md);
+  align-items: start;
+}
+
+.stylist-card picture {
+  display: block;
 }
 
 .stylist-card img {
@@ -123,12 +160,54 @@
 .stylist-card__body {
   display: grid;
   gap: var(--space-xs);
+  align-self: stretch;
+  align-content: start;
+  overflow-wrap: anywhere;
 }
 
-/* Card booking link: sized to its label and kept at its own height at the card
-   foot, so the actions of one grid row line up while card rows stretch. */
-.service-card__action,
+.stylist-card__body h3,
+.stylist-card__body p {
+  margin: 0;
+}
+
+.stylist-card__body .badge {
+  justify-self: start;
+  padding: 0;
+  background: transparent;
+}
+
 .stylist-card__action {
+  display: inline-flex;
+  align-items: center;
+  justify-self: start;
+  min-height: var(--size-control);
+  margin-top: var(--space-2xs);
+  padding-block: var(--space-xs);
+  color: var(--color-gold-300);
+  font-size: var(--fs-sm);
+  font-weight: 500;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.2em;
+}
+
+.stylist-card__action:focus-visible {
+  text-decoration-thickness: 2px;
+}
+
+@media (hover: hover) {
+  .stylist-card__action:hover {
+    text-decoration-thickness: 2px;
+  }
+}
+
+.stylist-card__action:active {
+  color: var(--color-gold-400);
+}
+
+/* Service booking link: sized to its label and kept at its own height at the card
+   foot, so the actions of one grid row line up while card rows stretch. */
+.service-card__action {
   justify-self: start;
   align-self: end;
 }
@@ -346,10 +425,6 @@
 }
 
 @media (min-width: 600px) {
-  .values {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-
   .pricing__item {
     grid-template-areas:
       "title price"
@@ -375,6 +450,21 @@
 }
 
 @media (min-width: 900px) {
+  .about__layout {
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    gap: var(--space-2xl);
+  }
+
+  .stylists__profiles {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: var(--space-lg);
+  }
+
+  .stylist-card {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto 1fr;
+  }
+
   .gallery {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }

@@ -181,15 +181,9 @@ Priority means implementation value/dependency, not a severity score: **P1** est
 
 ### IMP-DESIGN-05 — Give the studio and team distinct editorial compositions
 
-- **Status:** Proposed
-- **Priority:** P2
-- **Affected area:** `#about` and `#stylists`.
-- **Evidence:** Source: `.values`, `.value-card`, `.card-grid`, `.stylist-card` in `index.html`, `css/layout.css`, `css/sections.css`. Runtime: three equal stylist columns on desktop and three full portrait cards stacked on mobile.
-- **Current state:** The studio philosophy and people both rely on repeated framed blocks despite serving different storytelling roles.
-- **Proposed improvement:** Present About as a measured introduction with a slim values column or numbered editorial notes. Present the team as portraits with open captions, specialty, and a discrete booking link instead of nested image/card framing. Keep all three stylists equally discoverable; do not invent experience claims or biographies.
-- **Expected value:** More distinct section rhythm and stronger connection between visual identity and people.
-- **Implementation scope:** These two sections only, current CSS, and 03 portraits; preserve order, names, data preselection values, and `#about`/`#stylists`. This is a new composition goal, not a repeat of completed About gap normalization.
-- **Acceptance criteria:** About copy has an intentional readable measure; values are visibly separated without three identical card shells. Every stylist retains portrait, name, specialty, and accessible booking action at all five widths. DOM reading order matches visual order; keyboard/card preselection continues to select and focus the corresponding option. Deliver About and team as separate reviewable slices if needed.
+- **Status:** COMPLETED — implemented and verified.
+- **Result:** Composed About as a 60/40 manifesto with numbered notes from 900px, stacked below. Replaced team card framing with three equal open portraits from 900px and compact portrait/details profiles below. Preserved Polish copy, heading order, intro measure, 4:5 assets, labels, reveal and booking contracts; synchronized portrait sizes. Services and shared layout remain unchanged.
+- **Verification:** `npm run build` and `git diff --check` passed. Focused Chromium checks covered 360/375/768/900/1440px in both themes, keyboard focus, all three booking selections/focus transfers, no-JS anchors, system themes, reduced motion, and real 200% browser zoom without section overflow. Measured portrait widths matched sizes; DPR 2 AVIF/WebP fallback and Services style/geometry comparison passed. Other browsers, real devices, full accessibility compliance, and deployment were not verified.
 - **Impact:** Medium
 - **Effort:** Medium
 
