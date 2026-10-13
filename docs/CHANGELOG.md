@@ -51,6 +51,7 @@ When an implementation task is defined, apply this policy and state `Changelog: 
 - Documented manual Netlify CLI deployment of the locally built `dist/` as the canonical release path, preceded by a clean working tree, `npm ci`, `npm run build`, and production preview checks.
 - Consolidated agent instructions into `AGENTS.md` as the single canonical contract for all coding agents, later reduced to concise scope, source-ownership, verification, and delivery guardrails; `CLAUDE.md` only imports it.
 - Added a "Kontakt" entry to the main navigation on the home and legal pages, leading to the studio location section alongside the existing "Rezerwacja" link.
+- Standardized the brand name as "Studio Noir — Hair & Style" across page metadata, header and footer branding, the PWA manifest, and the README, and aligned related home-page and footer copy with studio-focused Polish wording.
 
 ### Build and Tooling
 

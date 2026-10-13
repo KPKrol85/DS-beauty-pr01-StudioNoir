@@ -4,7 +4,7 @@
 
 ### Przegląd projektu
 
-Studio Noir — Hair & Style Atelier to statyczna, polskojęzyczna strona internetowa studia fryzjerskiego, przygotowana w ramach KP_Code Digital Studio. Strona główna (`index.html`) ma układ jednostronicowy z nawigacją kotwicową: hero, O studio, Usługi, Cennik, Styliści, Galeria, Rezerwacja, Opinie, Lokalizacja i końcowe CTA. Uzupełniają ją strony polityki prywatności, regulaminu, polityki cookies, strona offline oraz strona 404.
+Studio Noir — Hair & Style to statyczna, polskojęzyczna strona internetowa studia fryzjerskiego, przygotowana w ramach KP_Code Digital Studio. Strona główna (`index.html`) ma układ jednostronicowy z nawigacją kotwicową: hero, O studio, Usługi, Cennik, Styliści, Galeria, Rezerwacja, Opinie, Lokalizacja i końcowe CTA. Uzupełniają ją strony polityki prywatności, regulaminu, polityki cookies, strona offline oraz strona 404.
 
 Projekt jest budowany przez Vite jako aplikacja wielostronicowa (MPA). Kod działający w przeglądarce to HTML, CSS i moduły JavaScript bez frameworków i bez zależności runtime.
 
@@ -271,7 +271,7 @@ Opcjonalnie, przed krokiem 5, to samo polecenie bez flagi `--prod` (`npx netlify
 
 ### Project Overview
 
-Studio Noir — Hair & Style Atelier is a static, Polish-language website for a hair studio, created within KP_Code Digital Studio. The home page (`index.html`) uses a one-page layout with anchor navigation: hero, about, services, pricing, stylists, gallery, booking, testimonials, location, and a closing call to action. It is complemented by privacy policy, terms, and cookie policy pages, an offline page, and a 404 page.
+Studio Noir — Hair & Style is a static, Polish-language website for a hair studio, created within KP_Code Digital Studio. The home page (`index.html`) uses a one-page layout with anchor navigation: hero, about, services, pricing, stylists, gallery, booking, testimonials, location, and a closing call to action. It is complemented by privacy policy, terms, and cookie policy pages, an offline page, and a 404 page.
 
 The project is built with Vite as a multi-page application (MPA). The browser-side code consists of HTML, CSS, and JavaScript modules without frameworks or runtime dependencies.
 

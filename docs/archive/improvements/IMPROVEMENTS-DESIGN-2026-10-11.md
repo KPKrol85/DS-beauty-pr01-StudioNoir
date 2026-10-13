@@ -14,7 +14,7 @@
 
 ## Overview
 
-Eight design improvements were completed, establishing the **Noir Editorial Atelier** direction for Studio Noir.
+Eight design improvements were completed, establishing the **Noir Editorial** direction for Studio Noir.
 
 The work introduced a consistent charcoal/ivory visual system, refined typography, editorial photography, responsive section compositions, clearer service presentation, and a redesigned booking/contact journey.
 
