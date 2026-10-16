@@ -53,6 +53,7 @@ When an implementation task is defined, apply this policy and state `Changelog: 
 - Added a "Kontakt" entry to the main navigation on the home and legal pages, leading to the studio location section alongside the existing "Rezerwacja" link.
 - The "Umów wizytę" CTA in the open mobile navigation now closes the menu like the section links, releasing the scroll lock and `inert` page content and returning focus to the menu toggle before its native `#booking` or `/index.html#booking` navigation; the theme toggle still leaves the menu open.
 - Standardized the brand name as "Studio Noir — Hair & Style" across page metadata, header and footer branding, the PWA manifest, and the README, and aligned related home-page and footer copy with studio-focused Polish wording.
+- Stylist booking links and gallery thumbnails reached with Tab below 768px now scroll clear of the fixed mobile contact bar through `--mobile-contact-bar-clearance`, so a focused stylist link is no longer hidden behind the bar.
 
 ### Build and Tooling
 

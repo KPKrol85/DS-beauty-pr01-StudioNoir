@@ -232,6 +232,12 @@
   color: var(--color-gold-400);
 }
 
+@media (max-width: 767px) {
+  .stylist-card__action {
+    scroll-margin-bottom: var(--mobile-contact-bar-clearance);
+  }
+}
+
 .pricing {
   display: grid;
   gap: var(--space-md);
@@ -382,6 +388,12 @@
   .gallery__item:hover .gallery__preview {
     text-decoration: underline;
     text-underline-offset: var(--space-2xs);
+  }
+}
+
+@media (max-width: 767px) {
+  .gallery__item {
+    scroll-margin-bottom: var(--mobile-contact-bar-clearance);
   }
 }
 
