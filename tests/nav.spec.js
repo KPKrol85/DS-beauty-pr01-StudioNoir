@@ -209,6 +209,57 @@ test.describe("primary navigation state contract", () => {
     await expect(page).toHaveURL(/#services$/);
   });
 
+  test("mobile booking CTA closes the menu on the home page; the theme toggle keeps it open", async ({ page }) => {
+    await page.setViewportSize(MOBILE);
+    await page.goto("/");
+    const nav = getNav(page);
+    const dialog = nav.landmark.getByRole("dialog");
+
+    await nav.toggle.click();
+    await expectMobileMenuOpen(nav);
+
+    const themeToggle = dialog.getByRole("button", { name: /^Tryb/ });
+    const themeLabel = await themeToggle.textContent();
+    await themeToggle.click();
+    await expect(themeToggle).not.toHaveText(themeLabel);
+    await expectMobileMenuOpen(nav);
+    await expect(themeToggle).toBeFocused();
+
+    const cta = dialog.getByRole("link", { name: "Umów wizytę" });
+    await expect(cta).toHaveAttribute("href", "#booking");
+    await cta.focus();
+    await page.keyboard.press("Enter");
+
+    await expectMobileMenuClosed(nav);
+    await expect(page).toHaveURL(/\/#booking$/);
+    const booking = page.locator('main section[id="booking"]');
+    await expect(booking).toBeInViewport();
+
+    // Focus does not stay in the hidden panel; keyboard order resumes at the booking section.
+    await expect(nav.panel.locator(":focus")).toHaveCount(0);
+    await page.keyboard.press("Tab");
+    await expect(booking.locator(":focus")).toHaveCount(1);
+  });
+
+  for (const route of ["/privacy.html", "/terms.html", "/cookies.html"]) {
+    test(`${route}: mobile booking CTA leaves the menu for the home booking section`, async ({ page }) => {
+      await page.setViewportSize(MOBILE);
+      await page.goto(route);
+      const nav = getNav(page);
+
+      await nav.toggle.click();
+      await expectMobileMenuOpen(nav);
+
+      const cta = nav.landmark.getByRole("dialog").getByRole("link", { name: "Umów wizytę" });
+      await expect(cta).toHaveAttribute("href", "/index.html#booking");
+      await cta.click();
+
+      await expect(page).toHaveURL(/\/index\.html#booking$/);
+      await expectMobileMenuClosed(nav);
+      await expect(page.locator('main section[id="booking"]')).toBeInViewport();
+    });
+  }
+
   test("widening an open mobile menu to the desktop layout clears the mobile state", async ({ page }) => {
     await page.setViewportSize(MOBILE);
     await page.goto("/");

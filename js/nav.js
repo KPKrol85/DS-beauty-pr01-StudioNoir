@@ -72,8 +72,10 @@ export const initNav = () => {
     }
   });
 
+  // Navigation links, including the booking CTA, close the menu and keep their
+  // native navigation; action buttons such as the theme toggle leave it open.
   panel.addEventListener("click", (event) => {
-    if (isOpen && event.target.closest(".nav__link")) {
+    if (isOpen && event.target.closest(".nav__link, .nav__cta a[href]")) {
       closeMenu();
     }
   });
