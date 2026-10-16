@@ -296,10 +296,35 @@
   gap: var(--space-md);
 }
 
+/* The brand symbol is the gold artwork used as an alpha mask, so a single
+   element takes the theme's gold token instead of a fixed SVG fill. */
+.brand-symbol {
+  display: block;
+  aspect-ratio: 1;
+  background-color: var(--color-gold-400);
+  -webkit-mask: url("../assets/logo/studio-noir-mark-gold.svg") center / contain no-repeat;
+  mask: url("../assets/logo/studio-noir-mark-gold.svg") center / contain no-repeat;
+}
+
+@media (forced-colors: active) {
+  .brand-symbol {
+    forced-color-adjust: none;
+    background-color: CanvasText;
+  }
+}
+
+/* Symbol beside the two-line wordmark; it spans both text rows. */
 .logo {
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-2xs);
+  display: grid;
+  grid-template-columns: auto auto;
+  align-items: center;
+  column-gap: var(--space-sm);
+  row-gap: var(--space-2xs);
+}
+
+.logo__symbol {
+  grid-row: span 2;
+  inline-size: 2.5rem;
 }
 
 .logo__mark {
@@ -471,9 +496,25 @@
 }
 
 /* Below 414px the mark alone sits beside the mini CTA and nav toggle; the
-   header keeps its height through --size-header. */
+   header keeps its height through --size-header. A compact symbol keeps the
+   wordmark on one line at 360px; narrower screens drop the symbol. */
 @media (max-width: 413px) {
+  .logo {
+    column-gap: var(--space-xs);
+    row-gap: 0;
+  }
+
+  .logo__symbol {
+    inline-size: 1.75rem;
+  }
+
   .logo__sub {
+    display: none;
+  }
+}
+
+@media (max-width: 359px) {
+  .logo__symbol {
     display: none;
   }
 }
