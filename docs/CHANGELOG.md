@@ -55,6 +55,7 @@ When an implementation task is defined, apply this policy and state `Changelog: 
 - Standardized the brand name as "Studio Noir — Hair & Style" across page metadata, header and footer branding, the PWA manifest, and the README, and aligned related home-page and footer copy with studio-focused Polish wording.
 - Stylist booking links and gallery thumbnails reached with Tab below 768px now scroll clear of the fixed mobile contact bar through `--mobile-contact-bar-clearance`, so a focused stylist link is no longer hidden behind the bar.
 - Redesigned the home and legal page footers as a four-column layout (brand, "Nawigacja" section links, "Informacje" legal links with `aria-current="page"`, and "Kontakt" with the address, a map-link panel, and `tel:`/`mailto:` links), followed by a social row and a "© 2026 KP_Code Digital Studio" copyright line. The columns collapse to two below 1100px and to one below 600px. Instagram and Facebook appear as labelled, non-interactive icons until profile destinations are approved, replacing the footer's placeholder `[username]`, Instagram, and Facebook links.
+- The footer "Nawigacja" links on the home and legal pages are now rendered at build time from the same seven entries as the header navigation through a separate `<!-- studio-noir:footer-navigation -->` insertion point, replacing four hand-maintained copies; the rendered markup is unchanged, and a missing, duplicated, or misplaced footer marker fails the build.
 
 ### Build and Tooling
 

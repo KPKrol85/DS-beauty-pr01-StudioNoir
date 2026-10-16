@@ -17,7 +17,9 @@ test.describe("primary navigation without browser JavaScript", () => {
       const prefix = route === "/" || route === "/index.html" ? "" : "/index.html";
       const response = await page.goto(route);
       expect(response.ok()).toBe(true);
-      expect(await response.text()).not.toContain("studio-noir:primary-navigation");
+      const html = await response.text();
+      expect(html).not.toContain("studio-noir:primary-navigation");
+      expect(html).not.toContain("studio-noir:footer-navigation");
 
       const links = page.getByRole("navigation", { name: "Główna" }).getByRole("list").getByRole("link");
       await expect(links).toHaveText(NAV_LINKS);
@@ -26,6 +28,30 @@ test.describe("primary navigation without browser JavaScript", () => {
       for (const [index, section] of NAV_SECTIONS.entries()) {
         await page.goto(route);
         await expect(links.nth(index)).toHaveAttribute("href", `${prefix}#${section}`);
+        await links.nth(index).click();
+        await expect(page).toHaveURL(new URL(`${prefix || route}#${section}`, response.url()).href);
+        await expect(page.locator(`main section[id="${section}"]`)).toBeInViewport();
+      }
+    });
+
+    test(`${route}: footer links mirror the header entries and destinations`, async ({ page }) => {
+      const prefix = route === "/" || route === "/index.html" ? "" : "/index.html";
+      const response = await page.goto(route);
+      expect(response.ok()).toBe(true);
+
+      const entries = (links) =>
+        links.evaluateAll((nodes) => nodes.map((node) => [node.textContent, node.getAttribute("href")]));
+      const headerLinks = page.getByRole("navigation", { name: "Główna" }).getByRole("list").getByRole("link");
+      const footerNav = page.getByRole("navigation", { name: "Nawigacja" });
+      const links = footerNav.getByRole("list").getByRole("link");
+
+      await expect(footerNav.locator(".footer__list > li > .footer__link")).toHaveCount(7);
+      await expect(links).toHaveText(NAV_LINKS);
+      expect(await entries(links)).toEqual(NAV_LINKS.map((label, index) => [label, `${prefix}#${NAV_SECTIONS[index]}`]));
+      expect(await entries(links)).toEqual(await entries(headerLinks));
+
+      for (const [index, section] of NAV_SECTIONS.entries()) {
+        await page.goto(route);
         await links.nth(index).click();
         await expect(page).toHaveURL(new URL(`${prefix || route}#${section}`, response.url()).href);
         await expect(page.locator(`main section[id="${section}"]`)).toBeInViewport();
