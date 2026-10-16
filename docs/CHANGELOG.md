@@ -54,6 +54,7 @@ When an implementation task is defined, apply this policy and state `Changelog: 
 - The "Umów wizytę" CTA in the open mobile navigation now closes the menu like the section links, releasing the scroll lock and `inert` page content and returning focus to the menu toggle before its native `#booking` or `/index.html#booking` navigation; the theme toggle still leaves the menu open.
 - Standardized the brand name as "Studio Noir — Hair & Style" across page metadata, header and footer branding, the PWA manifest, and the README, and aligned related home-page and footer copy with studio-focused Polish wording.
 - Stylist booking links and gallery thumbnails reached with Tab below 768px now scroll clear of the fixed mobile contact bar through `--mobile-contact-bar-clearance`, so a focused stylist link is no longer hidden behind the bar.
+- Redesigned the home and legal page footers as a four-column layout (brand, "Nawigacja" section links, "Informacje" legal links with `aria-current="page"`, and "Kontakt" with the address, a map-link panel, and `tel:`/`mailto:` links), followed by a social row and a "© 2026 KP_Code Digital Studio" copyright line. The columns collapse to two below 1100px and to one below 600px. Instagram and Facebook appear as labelled, non-interactive icons until profile destinations are approved, replacing the footer's placeholder `[username]`, Instagram, and Facebook links.
 
 ### Build and Tooling
 

@@ -308,29 +308,82 @@
     </main>
 
     <footer class="footer">
-      <div class="container footer__inner">
-        <div class="footer__brand">
-          <p class="footer__logo">Studio Noir</p>
-          <p class="footer__tagline">Hair &amp; Style</p>
-          <p class="footer__note">Fikcyjne studio fryzjerskie przygotowane jako demonstracja. Kanały społecznościowe są przykładowe.</p>
-        </div>
-        <div class="footer__group">
-          <p class="footer__label">Media społecznościowe</p>
-          <div class="footer__links">
-            <a class="footer__link" href="https://www.instagram.com/direct/t/[username]" target="_blank" rel="noreferrer" aria-label="Napisz wiadomość DM do Studio Noir na Instagramie">Napisz DM</a>
-            <a class="footer__link" href="https://www.instagram.com/studio.noir/" target="_blank" rel="noreferrer" data-instagram-link>Instagram</a>
-            <a class="footer__link" href="https://www.facebook.com" target="_blank" rel="noreferrer">Facebook</a>
+      <div class="container">
+        <div class="footer__columns">
+          <div class="footer__brand">
+            <p class="footer__logo">Studio Noir</p>
+            <p class="footer__tagline">Hair &amp; Style</p>
+            <p class="footer__note">Strzyżenie, koloryzacja i stylizacja w duchu redakcyjnym. Fikcyjne studio fryzjerskie przygotowane jako demonstracja.</p>
+          </div>
+          <nav class="footer__group" aria-labelledby="footer-navigation-title">
+            <h2 class="footer__heading" id="footer-navigation-title">Nawigacja</h2>
+            <ul class="footer__list">
+              <li><a class="footer__link" href="/index.html#about">O nas</a></li>
+              <li><a class="footer__link" href="/index.html#services">Usługi</a></li>
+              <li><a class="footer__link" href="/index.html#pricing">Cennik</a></li>
+              <li><a class="footer__link" href="/index.html#stylists">Styliści</a></li>
+              <li><a class="footer__link" href="/index.html#gallery">Galeria</a></li>
+              <li><a class="footer__link" href="/index.html#booking">Rezerwacja</a></li>
+              <li><a class="footer__link" href="/index.html#location">Kontakt</a></li>
+            </ul>
+          </nav>
+          <nav class="footer__group" aria-labelledby="footer-information-title">
+            <h2 class="footer__heading" id="footer-information-title">Informacje</h2>
+            <ul class="footer__list">
+              <li><a class="footer__link" href="/privacy.html">Polityka prywatności</a></li>
+              <li><a class="footer__link" href="/terms.html">Regulamin</a></li>
+              <li><a class="footer__link" href="/cookies.html" aria-current="page">Polityka cookies</a></li>
+            </ul>
+          </nav>
+          <div class="footer__group">
+            <h2 class="footer__heading">Kontakt</h2>
+            <address class="footer__contact">
+              <p class="footer__address">ul. Nowoczesna 12<br />00-123 Warszawa</p>
+              <a class="footer__map" href="https://maps.google.com" target="_blank" rel="noreferrer">
+                <span class="footer__map-tile" aria-hidden="true">
+                  <svg class="footer__map-pin" viewBox="0 0 24 24" focusable="false">
+                    <path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0c0 5.4-6.5 11-6.5 11Z" />
+                    <circle cx="12" cy="10" r="2.25" />
+                  </svg>
+                </span>
+                <span class="footer__map-text">
+                  <span class="footer__map-place">Warszawa, Mokotów</span>
+                  <span class="footer__map-action">Otwórz Mapy Google <span aria-hidden="true">↗</span></span>
+                </span>
+              </a>
+              <dl class="footer__channels">
+                <div class="footer__channel">
+                  <dt>Telefon</dt>
+                  <dd><a class="footer__link" href="tel:+48600900800">+48 600 900 800</a></dd>
+                </div>
+                <div class="footer__channel">
+                  <dt>E-mail</dt>
+                  <dd><a class="footer__link" href="mailto:kontakt@studionoir.pl">kontakt@studionoir.pl</a></dd>
+                </div>
+              </dl>
+            </address>
           </div>
         </div>
-        <div class="footer__group">
-          <p class="footer__label">Informacje prawne</p>
-          <div class="footer__legal">
-            <a class="footer__link" href="/privacy.html">Polityka prywatności</a>
-            <a class="footer__link" href="/terms.html">Regulamin</a>
-            <a class="footer__link" href="/cookies.html">Polityka cookies</a>
-          </div>
+        <div class="footer__social">
+          <p class="footer__social-title" id="footer-social-title">Media społecznościowe</p>
+          <ul class="footer__social-list" role="list" aria-labelledby="footer-social-title">
+            <li>
+              <svg class="footer__social-icon" viewBox="0 0 24 24" role="img" aria-label="Instagram" focusable="false">
+                <rect x="3.5" y="3.5" width="17" height="17" rx="5" />
+                <circle cx="12" cy="12" r="4" />
+                <circle class="footer__social-dot" cx="16.9" cy="7.1" r="0.9" />
+              </svg>
+            </li>
+            <li>
+              <svg class="footer__social-icon" viewBox="0 0 24 24" role="img" aria-label="Facebook" focusable="false">
+                <circle cx="12" cy="12" r="8.5" />
+                <path d="M15 8h-1.25a2.25 2.25 0 0 0-2.25 2.25V20.5M9.5 13h5" />
+              </svg>
+            </li>
+          </ul>
+          <p class="footer__social-note">Kanały społecznościowe są przykładowe.</p>
         </div>
-        <p class="footer__copyright">© 2026 Studio Noir</p>
+        <p class="footer__copyright"><span class="footer__copyright-part">© 2026 KP_Code Digital Studio |</span> <span class="footer__copyright-part">Wszelkie prawa zastrzeżone.</span></p>
       </div>
     </footer>
 

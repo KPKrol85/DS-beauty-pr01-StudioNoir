@@ -743,61 +743,71 @@
 @media (max-width: 767px) {
   .location__link,
   .cta__action,
-  .footer__link {
+  .footer__link,
+  .footer__map {
     scroll-margin-bottom: var(--mobile-contact-bar-clearance);
   }
 }
 
 .footer {
-  padding: var(--space-2xl) 0;
+  padding: var(--space-3xl) 0 var(--space-xl);
   background: var(--color-ink-800);
   box-shadow: inset 0 1px var(--color-line);
 }
 
-/* A quiet close: brand and demo note, then link groups as plain text rows
-   divided by hairlines; no competing action. */
-.footer__inner {
+/* A composed close: the brand lockup leads three labelled columns; hairlines
+   then set apart the social row and the copyright line. */
+.footer__columns {
   display: grid;
-  gap: var(--space-lg);
+  gap: var(--space-2xl);
 }
 
 .footer__logo {
   margin: 0;
   font-family: var(--font-display);
-  font-size: var(--fs-xl);
-  line-height: var(--lh-heading);
+  font-size: var(--fs-2xl);
+  font-weight: 500;
+  line-height: var(--lh-display);
+  letter-spacing: -0.015em;
+  color: var(--color-ink-100);
 }
 
 .footer__tagline {
-  margin: var(--space-2xs) 0 0;
+  margin: var(--space-xs) 0 0;
   font-size: var(--fs-xs);
+  font-weight: 500;
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
   color: var(--color-gold-300);
 }
 
 .footer__note {
-  max-inline-size: 36ch;
-  margin: var(--space-md) 0 0;
+  max-inline-size: 32ch;
+  margin: var(--space-lg) 0 0;
   font-size: var(--fs-sm);
+  line-height: 1.7;
   text-wrap: pretty;
 }
 
-.footer__group {
-  padding-top: var(--space-md);
-  border-top: 1px solid var(--color-line);
-}
-
-.footer__label {
-  margin: 0 0 var(--space-2xs);
+/* Column titles share the eyebrow treatment; the 48px link rows below them
+   supply their own leading. */
+.footer__heading,
+.footer__social-title {
+  margin: 0;
+  font-family: var(--font-body);
   font-size: var(--fs-xs);
   font-weight: 500;
+  line-height: var(--lh-heading);
   letter-spacing: var(--tracking-label);
   text-transform: uppercase;
+  color: var(--color-gold-300);
 }
 
-.footer__links,
-.footer__legal {
+.footer__heading {
+  margin-bottom: var(--space-xs);
+}
+
+.footer__list {
   display: grid;
   justify-items: start;
 }
@@ -810,26 +820,192 @@
   text-decoration: underline;
   text-decoration-color: transparent;
   text-decoration-thickness: 1px;
-  text-underline-offset: 0.25em;
-  transition: text-decoration-color 0.2s ease;
+  text-underline-offset: 0.3em;
+  transition: color 0.2s ease, text-decoration-color 0.2s ease;
 }
 
-.footer__link:focus-visible {
+.footer__link:focus-visible,
+.footer__link[aria-current="page"] {
+  color: var(--color-ink-100);
   text-decoration-color: var(--color-line-accent);
 }
 
 @media (hover: hover) {
   .footer__link:hover {
+    color: var(--color-ink-100);
     text-decoration-color: var(--color-line-accent);
   }
 }
 
+.footer__contact {
+  display: grid;
+  justify-items: start;
+  gap: var(--space-md);
+  font-style: normal;
+}
+
+.footer__address {
+  margin: var(--space-sm) 0 0;
+  font-size: var(--fs-sm);
+  line-height: 1.7;
+  color: var(--color-ink-100);
+}
+
+/* A map-link panel, not a map: the tile's even grid is a cartographic motif
+   with no geography, and the panel opens the location section's map link. */
+.footer__map {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: center;
+  gap: var(--space-sm);
+  inline-size: min(100%, 17rem);
+  padding: var(--space-xs) var(--space-md) var(--space-xs) var(--space-xs);
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface-editorial);
+  transition: border-color 0.2s ease;
+}
+
+.footer__map-tile {
+  display: grid;
+  place-items: center;
+  inline-size: 3.25rem;
+  aspect-ratio: 1;
+  border-radius: calc(var(--radius-sm) / 2);
+  background-color: var(--color-ink-900);
+  background-image:
+    linear-gradient(var(--color-line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--color-line) 1px, transparent 1px);
+  background-position: center;
+  background-size: 0.8125rem 0.8125rem;
+  color: var(--color-gold-300);
+}
+
+.footer__map-pin {
+  inline-size: 1.5rem;
+  block-size: 1.5rem;
+  fill: var(--color-ink-900);
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linejoin: round;
+}
+
+.footer__map-text {
+  display: grid;
+  gap: 0.125rem;
+  min-inline-size: 0;
+}
+
+.footer__map-place {
+  font-size: var(--fs-sm);
+  color: var(--color-ink-100);
+}
+
+.footer__map-action {
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  letter-spacing: var(--tracking-control);
+  color: var(--color-gold-300);
+  text-decoration: underline;
+  text-decoration-color: transparent;
+  text-underline-offset: 0.3em;
+  transition: text-decoration-color 0.2s ease;
+}
+
+.footer__map:focus-visible {
+  border-color: var(--color-line-accent);
+}
+
+.footer__map:focus-visible .footer__map-action {
+  text-decoration-color: currentColor;
+}
+
+@media (hover: hover) {
+  .footer__map:hover {
+    border-color: var(--color-line-accent);
+  }
+
+  .footer__map:hover .footer__map-action {
+    text-decoration-color: currentColor;
+  }
+}
+
+.footer__channels {
+  display: grid;
+  margin: 0;
+}
+
+.footer__channel {
+  display: grid;
+  grid-template-columns: 4.5rem minmax(0, 1fr);
+  align-items: baseline;
+  gap: var(--space-sm);
+}
+
+.footer__channel dt {
+  font-size: var(--fs-xs);
+  letter-spacing: var(--tracking-label);
+  text-transform: uppercase;
+}
+
+.footer__channel dd {
+  margin: 0;
+  min-inline-size: 0;
+  overflow-wrap: anywhere;
+}
+
+/* The profiles have no approved destinations yet, so the icons are labelled
+   images without links, hover states, or pointer affordances. */
+.footer__social {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-sm) var(--space-lg);
+  margin-top: var(--space-2xl);
+  padding-block: var(--space-lg);
+  border-top: 1px solid var(--color-line);
+}
+
+.footer__social-list {
+  display: flex;
+  gap: var(--space-md);
+}
+
+.footer__social-icon {
+  display: block;
+  inline-size: 1.375rem;
+  block-size: 1.375rem;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  color: var(--color-ink-100);
+}
+
+.footer__social-dot {
+  fill: currentColor;
+  stroke: none;
+}
+
+.footer__social-note {
+  flex-basis: 100%;
+  margin: 0;
+  font-size: var(--fs-xs);
+  letter-spacing: var(--tracking-control);
+}
+
 .footer__copyright {
   margin: 0;
-  padding-top: var(--space-md);
+  padding-top: var(--space-lg);
   border-top: 1px solid var(--color-line);
   font-size: var(--fs-xs);
   letter-spacing: var(--tracking-control);
+}
+
+/* On narrow screens the line breaks only after the separator. */
+.footer__copyright-part {
+  white-space: nowrap;
 }
 
 .reveal {
@@ -854,20 +1030,15 @@
 }
 
 @media (min-width: 600px) {
-  .footer__inner {
+  .footer__columns {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     column-gap: var(--space-xl);
   }
 
-  .footer__brand,
-  .footer__copyright {
-    grid-column: 1 / -1;
-  }
-
-  /* Side-by-side groups are separated by the grid gap, not hairlines. */
-  .footer__group {
-    padding-top: 0;
-    border-top: 0;
+  /* The note closes the social row on the far side once it fits beside the icons. */
+  .footer__social-note {
+    flex-basis: auto;
+    margin-inline-start: auto;
   }
 
   .service-list__item {
@@ -1035,17 +1206,13 @@
   .location {
     column-gap: var(--space-3xl);
   }
+}
 
-  .footer__inner {
-    grid-template-columns: minmax(0, 2fr) repeat(2, minmax(0, 1fr));
-    column-gap: var(--space-xl);
-  }
-
-  .footer__brand {
-    grid-column: auto;
-  }
-
-  .footer__copyright {
-    grid-column: 1 / -1;
+/* Four columns need about 1100px: below it the e-mail address and the map
+   panel's label would break inside the contact column. The brand and contact
+   columns carry the widest content. */
+@media (min-width: 1100px) {
+  .footer__columns {
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1.4fr);
   }
 }
