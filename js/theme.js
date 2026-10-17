@@ -29,7 +29,8 @@ export const initTheme = () => {
   const applyTheme = (theme) => {
     document.body.classList.toggle("theme--light", theme === "light");
     document.body.classList.toggle("theme--dark", theme === "dark");
-    toggle.textContent = theme === "light" ? "Tryb ciemny" : "Tryb jasny";
+    // The icon-only control names the action it performs; CSS draws its icon.
+    toggle.setAttribute("aria-label", theme === "light" ? "Włącz tryb ciemny" : "Włącz tryb jasny");
   };
 
   const setTheme = (theme) => {

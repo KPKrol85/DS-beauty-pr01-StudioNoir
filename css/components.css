@@ -412,6 +412,113 @@
   gap: var(--space-sm);
 }
 
+/* Header booking link: a quiet outlined control beside the navigation, kept
+   apart from the filled .button--primary used by page-level calls to action. */
+.header__booking {
+  border-color: var(--color-gold-300);
+  border-radius: var(--radius-sm);
+  color: var(--color-gold-300);
+  transition: background-color 0.2s ease;
+}
+
+.header__booking:focus-visible {
+  background-color: var(--color-state-hover);
+}
+
+@media (hover: hover) {
+  .header__booking:hover {
+    background-color: var(--color-state-hover);
+  }
+}
+
+.header__booking:active {
+  background-color: var(--color-state-active);
+}
+
+/* Icon-only theme switch. The supplied sun and moon artwork are alpha masks on
+   the two pseudo-elements, drawn in the text color and stacked in one fixed
+   box; the icon for the available action is shown, so switching animates
+   opacity and rotation only and never resizes the control. */
+.theme-toggle {
+  display: inline-grid;
+  place-items: center;
+  justify-self: center;
+  flex-shrink: 0;
+  inline-size: var(--size-control);
+  block-size: var(--size-control);
+  padding: 0;
+  border: 1px solid var(--color-line-accent);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-gold-300);
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.theme-toggle::before,
+.theme-toggle::after {
+  content: "";
+  grid-area: 1 / 1;
+  inline-size: 1.25rem;
+  aspect-ratio: 1;
+  background-color: currentColor;
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+.theme-toggle::before {
+  -webkit-mask: url("../assets/icons/sun.svg") center / contain no-repeat;
+  mask: url("../assets/icons/sun.svg") center / contain no-repeat;
+}
+
+.theme-toggle::after {
+  -webkit-mask: url("../assets/icons/moon.svg") center / contain no-repeat;
+  mask: url("../assets/icons/moon.svg") center / contain no-repeat;
+  opacity: 0;
+  transform: rotate(-90deg) scale(0.6);
+}
+
+.theme--light .theme-toggle::before {
+  opacity: 0;
+  transform: rotate(90deg) scale(0.6);
+}
+
+.theme--light .theme-toggle::after {
+  opacity: 1;
+  transform: none;
+}
+
+.theme-toggle:focus-visible {
+  border-color: var(--color-gold-300);
+  background-color: var(--color-state-hover);
+}
+
+@media (hover: hover) {
+  .theme-toggle:hover {
+    border-color: var(--color-gold-300);
+    background-color: var(--color-state-hover);
+  }
+}
+
+.theme-toggle:active {
+  background-color: var(--color-state-active);
+}
+
+/* The global reduced-motion rule matches elements only, not pseudo-elements. */
+@media (prefers-reduced-motion: reduce) {
+  .theme-toggle::before,
+  .theme-toggle::after {
+    transition: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .theme-toggle::before,
+  .theme-toggle::after {
+    forced-color-adjust: none;
+    background-color: ButtonText;
+  }
+}
+
 .mobile-cta {
   display: none;
 }

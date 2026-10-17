@@ -196,7 +196,7 @@ const expectDesktopNavigation = async (nav) => {
   await expect(nav.landmark).toBeVisible();
   await expect(nav.landmark.getByRole("list").getByRole("link")).toHaveText(NAV_LINKS);
   await expect(nav.landmark.getByRole("link", { name: "Umów wizytę" })).toBeVisible();
-  await expect(nav.landmark.getByRole("button", { name: /^Tryb/ })).toBeVisible();
+  await expect(nav.landmark.getByRole("button", { name: /^Włącz tryb/ })).toBeVisible();
 };
 
 test.describe("primary navigation state contract", () => {
@@ -213,7 +213,7 @@ test.describe("primary navigation state contract", () => {
 
     const dialog = nav.landmark.getByRole("dialog");
     const firstFocusable = dialog.getByRole("link", { name: "O nas" });
-    const lastFocusable = dialog.getByRole("button", { name: /^Tryb/ });
+    const lastFocusable = dialog.getByRole("button", { name: /^Włącz tryb/ });
     await expect(firstFocusable).toBeFocused();
 
     await lastFocusable.focus();
@@ -244,10 +244,10 @@ test.describe("primary navigation state contract", () => {
     await nav.toggle.click();
     await expectMobileMenuOpen(nav);
 
-    const themeToggle = dialog.getByRole("button", { name: /^Tryb/ });
-    const themeLabel = await themeToggle.textContent();
+    const themeToggle = dialog.getByRole("button", { name: /^Włącz tryb/ });
+    const themeLabel = await themeToggle.getAttribute("aria-label");
     await themeToggle.click();
-    await expect(themeToggle).not.toHaveText(themeLabel);
+    await expect(themeToggle).not.toHaveAttribute("aria-label", themeLabel);
     await expectMobileMenuOpen(nav);
     await expect(themeToggle).toBeFocused();
 
@@ -301,7 +301,7 @@ test.describe("primary navigation state contract", () => {
     await expectDesktopNavigation(nav);
 
     // Keyboard order is no longer trapped: Tab leaves the navigation for the page content.
-    await nav.landmark.getByRole("button", { name: /^Tryb/ }).focus();
+    await nav.landmark.getByRole("button", { name: /^Włącz tryb/ }).focus();
     await page.keyboard.press("Tab");
     await expect(nav.main.locator(":focus")).toHaveCount(1);
   });
