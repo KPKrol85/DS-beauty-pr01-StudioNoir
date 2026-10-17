@@ -1,10 +1,16 @@
+
 {
   "name": "studio-noir",
   "version": "1.0.0",
-  "description": "A premium hair studio demonstration website built with Vite, vanilla HTML, CSS, and JavaScript.",
   "private": true,
+  "description": "A premium hair studio demonstration website built with Vite, vanilla HTML, CSS, and JavaScript.",
   "author": "Kamil Król — KP_Code Digital Studio",
   "license": "SEE LICENSE IN LICENSE.md",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/KPKrol85/DS-beauty-pr01-StudioNoir.git"
+  },
+  "homepage": "https://ds-beauty-pr01-studionoir.netlify.app/",
   "type": "module",
   "engines": {
     "node": "^20.19.0 || >=22.12.0"
