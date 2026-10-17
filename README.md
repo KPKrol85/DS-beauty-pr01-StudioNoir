@@ -222,10 +222,10 @@ Opcjonalnie, przed krokiem 5, to samo polecenie bez flagi `--prod` (`npx netlify
 ### SEO
 
 - Strona główna i strony prawne mają własne `<title>`, `meta description` oraz metadane Open Graph i Twitter Card.
-- `link rel="canonical"` i `og:url` wskazują adresy w domenie `https://ds-fashion-pr01-studionoir.netlify.app/`.
+- `link rel="canonical"` i `og:url` wskazują adresy w domenie `https://ds-beauty-pr01-studionoir.netlify.app/`.
 - `og:image` na stronie głównej i stronach prawnych wskazuje wariant WebP obrazu hero (1200 px). Źródłowy HTML używa ścieżki od katalogu głównego; podczas buildu plugin `studio-noir-social-image-urls` zamienia ją na adres absolutny wyznaczony względem adresu canonical danej strony, z nazwą pliku z hashem.
 - `public/robots.txt` zezwala na indeksowanie całej witryny i wskazuje mapę strony; `public/sitemap.xml` zawiera wyłącznie adres strony głównej.
-- `robots.txt` i `sitemap.xml` używają domeny `https://ds-fashion-pr01-studionoir.netlify.app/`, zgodnej z domeną w adresach canonical.
+- `robots.txt` i `sitemap.xml` używają domeny `https://ds-beauty-pr01-studionoir.netlify.app/`, zgodnej z domeną w adresach canonical.
 
 ### PWA i obsługa offline
 
@@ -489,10 +489,10 @@ Optionally, before step 5, the same command without the `--prod` flag (`npx netl
 ### SEO
 
 - The home page and the legal pages have their own `<title>`, `meta description`, and Open Graph and Twitter Card metadata.
-- `link rel="canonical"` and `og:url` point to URLs on the `https://ds-fashion-pr01-studionoir.netlify.app/` domain.
+- `link rel="canonical"` and `og:url` point to URLs on the `https://ds-beauty-pr01-studionoir.netlify.app/` domain.
 - `og:image` on the home page and the legal pages points to the 1200 px WebP variant of the hero image. The source HTML uses a root-relative path; during the build, the `studio-noir-social-image-urls` plugin replaces it with an absolute URL resolved against the page's canonical URL, using the hashed filename.
 - `public/robots.txt` allows indexing of the whole site and references the sitemap; `public/sitemap.xml` lists only the home page URL.
-- `robots.txt` and `sitemap.xml` use the `https://ds-fashion-pr01-studionoir.netlify.app/` domain, consistent with the domain used in the canonical URLs.
+- `robots.txt` and `sitemap.xml` use the `https://ds-beauty-pr01-studionoir.netlify.app/` domain, consistent with the domain used in the canonical URLs.
 
 ### PWA and Offline Support
 

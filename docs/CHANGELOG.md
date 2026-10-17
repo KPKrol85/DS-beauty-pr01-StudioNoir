@@ -30,6 +30,7 @@ When an implementation task is defined, apply this policy and state `Changelog: 
 
 ### Changed
 
+- Migrated the production URL to `https://ds-beauty-pr01-studionoir.netlify.app/` across canonical and Open Graph metadata, the terms page, SEO files, and the README, preserving existing URL paths.
 - Replaced the ten SVG placeholders in the hero, stylist, and gallery sections with editorial photography delivered as responsive AVIF/WebP variants, with a matching hero preload and build-time absolute `og:image` URLs.
 - Recomposed the home page in the Noir Editorial direction: an asymmetric photography-led hero, a 60/40 About layout, open stylist portrait profiles, a priced service list separated from signature packages, a mixed-scale gallery with Polish captions, a featured fictional testimonial, and shared brand/social/legal footers on the home and legal pages. Booking preselection, lightbox, navigation, and theme contracts were preserved.
 - The mobile contact bar now gives the booking demo primary emphasis with 48px targets and is hidden while the navigation panel or gallery lightbox is open, removing its links from pointer, Tab, and accessibility-tree access.
