@@ -849,11 +849,27 @@
   font-style: normal;
 }
 
-.footer__address {
+/* The postal address and the author's attribution read as one block; the
+   contact grid's gap keeps it apart from the map panel below. */
+.footer__address-block {
   margin: var(--space-sm) 0 0;
+}
+
+.footer__address {
+  margin: 0;
   font-size: var(--fs-sm);
   line-height: 1.7;
   color: var(--color-ink-100);
+}
+
+/* The project author's attribution follows the postal address; the grid keeps
+   its two lines apart at every column width. */
+.footer__attribution {
+  display: grid;
+  margin: var(--space-2xs) 0 0;
+  font-size: var(--fs-xs);
+  line-height: 1.6;
+  color: var(--color-ink-200);
 }
 
 /* A map-link panel, not a map: the tile's even grid is a cartographic motif

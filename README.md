@@ -13,6 +13,7 @@ Aktualny zakres:
 - rezerwacja jest demonstracją działającą wyłącznie po stronie przeglądarki — akcja „Zakończ demo” zmienia jedynie status w interfejsie; wybór nie jest nigdzie wysyłany ani zapisywany i nie tworzy wizyty;
 - obrazy w `assets/img/` (hero, styliści, galeria) to demonstracyjne obrazy wygenerowane przez AI na potrzeby fikcyjnego Studio Noir — informuje o tym sekcja Galeria na stronie głównej; nie dokumentują realizacji rzeczywistego salonu. Oryginały PNG są przechowywane obok responsywnych wariantów AVIF i WebP, a strony odwołują się wyłącznie do wariantów;
 - `privacy.html`, `terms.html` i `cookies.html` zawierają treści prawne i informacyjne opracowane dla demonstracyjnego serwisu Studio Noir; nie stanowią gotowej dokumentacji prawnej dla rzeczywistego salonu.
+- dane kontaktowe publikowane w sekcji Lokalizacja, w stopkach, w dokumentach prawnych i w alternatywnych kanałach kontaktu należą do autora projektu (KP_Code Digital Studio) i nie są danymi działającego salonu fryzjerskiego; godziny otwarcia pozostają przykładem demonstracyjnym.
 
 ### Kluczowe funkcje
 
@@ -280,6 +281,7 @@ Current scope:
 - booking is a demonstration that runs entirely in the browser — the "Zakończ demo" action only changes the status shown in the interface; the selection is not sent or stored anywhere and no appointment is created;
 - the images in `assets/img/` (hero, stylists, gallery) are AI-generated demonstration images created for the fictional Studio Noir — the Gallery section on the home page states this; they do not document the work of a real salon. The original PNG files are kept alongside responsive AVIF and WebP variants, and the pages reference only the variants;
 - `privacy.html`, `terms.html`, and `cookies.html` contain legal and informational content written for the Studio Noir demonstration site; they are not ready-to-use legal documentation for a real salon.
+- the contact details published in the location section, the footers, the legal documents, and the alternative contact channels belong to the project author (KP_Code Digital Studio) and are not those of an operating hair salon; the opening hours remain a demonstration example.
 
 ### Key Features
 
