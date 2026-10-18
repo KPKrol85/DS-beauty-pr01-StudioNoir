@@ -65,6 +65,7 @@ When an implementation task is defined, apply this policy and state `Changelog: 
 
 - The booking fallback now offers telephone and e-mail only, with Instagram removed from its actions and from the `<noscript>` alternative, and both contact actions and the demo action adopt the header control's 8px rectangle instead of the pill shape. The unavailable and completed demo states ("Demo zakończone") drop the filled gold appearance for a quiet interactive surface with a hairline edge and readable label, keeping the visible focus outline without the primary fill or lift. Booking destinations, accessible names, and the focusable `aria-disabled` behavior are unchanged.
 - The "Powiększ" label on the six home-page gallery items now ends with a decorative magnifier-plus icon (`assets/icons/look.svg` as a CSS mask in the theme's gold token) instead of the `↗` arrow and no longer shows an underline at rest; hover and `:focus-visible` add a 1px accent underline beneath the text and scale only the icon to 110%, with the scale dropped under reduced motion. Accessible names, the visible focus outline, and the lightbox behavior are unchanged.
+- Replaced the home-page gallery introduction, which disclosed the AI-generated nature of the images, with editorial Polish copy about the hairstyle inspirations shown; the README still documents the images as AI-generated demonstration assets.
 
 ### Build and Tooling
 
