@@ -710,6 +710,25 @@
   }
 }
 
+/* Phone and e-mail follow the footer links: hidden underline at rest, a
+   subtle accent line on hover and keyboard focus. */
+.location__contact .location__link {
+  text-decoration-color: transparent;
+  transition: text-decoration-color 0.2s ease;
+}
+
+.location__contact .location__link:focus-visible {
+  text-decoration-color: var(--color-line-accent);
+  text-decoration-thickness: 1px;
+}
+
+@media (hover: hover) {
+  .location__contact .location__link:hover {
+    text-decoration-color: var(--color-line-accent);
+    text-decoration-thickness: 1px;
+  }
+}
+
 .location__map {
   display: inline-flex;
   align-items: center;
