@@ -959,8 +959,6 @@
   overflow-wrap: anywhere;
 }
 
-/* The profiles have no approved destinations yet, so the icons are labelled
-   images without links, hover states, or pointer affordances. */
 .footer__social {
   display: flex;
   flex-wrap: wrap;
@@ -973,16 +971,44 @@
 
 .footer__social-list {
   display: flex;
-  gap: var(--space-md);
+  gap: var(--space-2xs);
 }
 
-/* The supplied artwork is used as alpha masks, so every mark takes the footer
-   ink token in both themes regardless of its exported fill. */
+/* Each profile link is a fixed 48px target around the smaller mark, so the
+   hover and focus washes change colour only and never shift the row. */
+.footer__social-link {
+  display: grid;
+  place-items: center;
+  inline-size: var(--size-control);
+  block-size: var(--size-control);
+  border-radius: var(--radius-sm);
+  color: var(--color-ink-100);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.footer__social-link:focus-visible {
+  background-color: var(--color-state-hover);
+  color: var(--color-gold-300);
+}
+
+@media (hover: hover) {
+  .footer__social-link:hover {
+    background-color: var(--color-state-hover);
+    color: var(--color-gold-300);
+  }
+}
+
+.footer__social-link:active {
+  background-color: var(--color-state-active);
+}
+
+/* The supplied artwork is used as alpha masks, so every mark takes the link
+   colour in both themes regardless of its exported fill. */
 .footer__social-icon {
   display: block;
   inline-size: 1.375rem;
   block-size: 1.375rem;
-  background-color: var(--color-ink-100);
+  background-color: currentColor;
   -webkit-mask: var(--footer-social-icon) center / contain no-repeat;
   mask: var(--footer-social-icon) center / contain no-repeat;
 }
@@ -1006,15 +1032,8 @@
 @media (forced-colors: active) {
   .footer__social-icon {
     forced-color-adjust: none;
-    background-color: CanvasText;
+    background-color: LinkText;
   }
-}
-
-.footer__social-note {
-  flex-basis: 100%;
-  margin: 0;
-  font-size: var(--fs-xs);
-  letter-spacing: var(--tracking-control);
 }
 
 .footer__copyright {
@@ -1055,12 +1074,6 @@
   .footer__columns {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     column-gap: var(--space-xl);
-  }
-
-  /* The note closes the social row on the far side once it fits beside the icons. */
-  .footer__social-note {
-    flex-basis: auto;
-    margin-inline-start: auto;
   }
 
   .service-list__item {
