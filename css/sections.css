@@ -740,6 +740,45 @@
   color: var(--color-gold-300);
 }
 
+/* The map link joins the contact links: no underline at rest, an accent line
+   on hover and keyboard focus, with only the arrow easing to the right. */
+.location__map {
+  text-decoration-color: transparent;
+  transition: text-decoration-color 0.2s ease;
+}
+
+.location__map > span {
+  transition: transform 0.2s ease;
+}
+
+.location__map:focus-visible {
+  text-decoration-color: var(--color-line-accent);
+  text-decoration-thickness: 1px;
+}
+
+.location__map:focus-visible > span {
+  transform: translateX(3px);
+}
+
+@media (hover: hover) {
+  .location__map:hover {
+    text-decoration-color: var(--color-line-accent);
+    text-decoration-thickness: 1px;
+  }
+
+  .location__map:hover > span {
+    transform: translateX(3px);
+  }
+}
+
+/* Only the arrow's travel is dropped; the underline and focus ring remain. */
+@media (prefers-reduced-motion: reduce) {
+  .location__map:focus-visible > span,
+  .location__map:hover > span {
+    transform: none;
+  }
+}
+
 /* A quiet closing invitation: section-title scale, one primary action. */
 .cta {
   display: grid;
