@@ -34,14 +34,16 @@ The font license files are stored in `public/font-licenses/` and copied to `dist
 
 ## Third-party names and marks
 
-The Studio Noir footer contains illustrative Instagram and Facebook icons implemented as inline SVG elements in the HTML documents.
+The Studio Noir footer contains illustrative Instagram, Facebook, GitHub, and X icons. They are rendered from the SVG files listed below, applied as CSS alpha masks in [`css/sections.css`](css/sections.css) and drawn in the footer text color.
 
 These names and logos are trademarks of their respective owners and are used solely to identify the corresponding services. No affiliation, sponsorship, or endorsement is implied.
 
-The social-media graphics are currently non-interactive examples. This index does not establish an upstream source or a separate license for their inline SVG artwork.
+The social-media graphics are currently non-interactive examples. The upstream source and license of the SVG artwork have not been verified, and this index does not establish either.
 
-- **Instagram:** Name and visual identity associated with Meta Platforms
-- **Facebook:** Name and visual identity associated with Meta Platforms
-- **Implementation:** Inline SVG elements in the footer of the home and legal pages
+- **Instagram:** [`assets/icons/instagram.svg`](assets/icons/instagram.svg) — name and visual identity associated with Meta Platforms
+- **Facebook:** [`assets/icons/facebook.svg`](assets/icons/facebook.svg) — name and visual identity associated with Meta Platforms
+- **GitHub:** [`assets/icons/github.svg`](assets/icons/github.svg) — name and visual identity associated with GitHub, Inc.
+- **X:** [`assets/icons/X.svg`](assets/icons/X.svg) — name and visual identity associated with X Corp.; the X glyph is cut out of the circular background as a single shape so the mark remains legible as a mask
+- **Implementation:** Non-interactive `role="img"` elements with accessible names in the footer of the home and legal pages
 
 The applicable trademark rights remain with their respective owners.

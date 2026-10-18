@@ -59,6 +59,7 @@ When an implementation task is defined, apply this policy and state `Changelog: 
 - The footer "Nawigacja" links on the home and legal pages are now rendered at build time from the same seven entries as the header navigation through a separate `<!-- studio-noir:footer-navigation -->` insertion point, replacing four hand-maintained copies; the rendered markup is unchanged, and a missing, duplicated, or misplaced footer marker fails the build.
 - The header and footer on the home and legal pages now show the Studio Noir monogram symbol beside the existing HTML wordmark and above the footer brand name. The decorative, `aria-hidden` symbol is drawn from `assets/logo/studio-noir-mark-gold.svg` as a CSS mask in the theme's gold token, so it follows the light/dark theme; link names, header height, and footer layout are unchanged.
 - Replaced the text theme toggle on the home and legal pages with a 48px icon-only button that cross-fades the supplied sun and moon icons (CSS masks in the theme's gold token, instant under reduced motion) and exposes its action as `Włącz tryb jasny` / `Włącz tryb ciemny`; the header "Umów wizytę" CTA and the home mini CTA now use a refined outlined gold style with an 8px radius. Theme classes, the `studio-noir-theme` storage key, and booking destinations are unchanged.
+- Replaced the footer inline Instagram and Facebook SVGs with masked Instagram, Facebook, GitHub, and X icon assets drawn in the theme ink color, keeping them non-interactive labelled images on the home and legal pages.
 
 ### Build and Tooling
 

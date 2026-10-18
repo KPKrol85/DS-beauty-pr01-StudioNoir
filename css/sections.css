@@ -976,21 +976,38 @@
   gap: var(--space-md);
 }
 
+/* The supplied artwork is used as alpha masks, so every mark takes the footer
+   ink token in both themes regardless of its exported fill. */
 .footer__social-icon {
   display: block;
   inline-size: 1.375rem;
   block-size: 1.375rem;
-  fill: none;
-  stroke: currentColor;
-  stroke-width: 1.5;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  color: var(--color-ink-100);
+  background-color: var(--color-ink-100);
+  -webkit-mask: var(--footer-social-icon) center / contain no-repeat;
+  mask: var(--footer-social-icon) center / contain no-repeat;
 }
 
-.footer__social-dot {
-  fill: currentColor;
-  stroke: none;
+.footer__social-icon--instagram {
+  --footer-social-icon: url("../assets/icons/instagram.svg");
+}
+
+.footer__social-icon--facebook {
+  --footer-social-icon: url("../assets/icons/facebook.svg");
+}
+
+.footer__social-icon--github {
+  --footer-social-icon: url("../assets/icons/github.svg");
+}
+
+.footer__social-icon--x {
+  --footer-social-icon: url("../assets/icons/X.svg");
+}
+
+@media (forced-colors: active) {
+  .footer__social-icon {
+    forced-color-adjust: none;
+    background-color: CanvasText;
+  }
 }
 
 .footer__social-note {
