@@ -377,17 +377,46 @@
   font-size: var(--fs-xs);
   line-height: 1.5;
   letter-spacing: var(--tracking-control);
+  text-decoration: underline 1px transparent;
+  text-underline-offset: var(--space-2xs);
+  transition: text-decoration-color 0.2s ease;
+}
+
+/* The supplied magnifier is an alpha mask in the label's gold. It is empty,
+   so the underline stays on the text, and only its scale changes. */
+.gallery__preview-icon {
+  flex: none;
+  inline-size: 1rem;
+  block-size: 1rem;
+  background-color: currentColor;
+  -webkit-mask: url("../assets/icons/look.svg") center / contain no-repeat;
+  mask: url("../assets/icons/look.svg") center / contain no-repeat;
+  transition: transform 0.2s ease;
 }
 
 .gallery__item:focus-visible .gallery__preview {
-  text-decoration: underline;
-  text-underline-offset: var(--space-2xs);
+  text-decoration-color: var(--color-line-accent);
+}
+
+.gallery__item:focus-visible .gallery__preview-icon {
+  transform: scale(1.1);
 }
 
 @media (hover: hover) {
   .gallery__item:hover .gallery__preview {
-    text-decoration: underline;
-    text-underline-offset: var(--space-2xs);
+    text-decoration-color: var(--color-line-accent);
+  }
+
+  .gallery__item:hover .gallery__preview-icon {
+    transform: scale(1.1);
+  }
+}
+
+/* Only the magnifier's scale is dropped; the underline and focus ring remain. */
+@media (prefers-reduced-motion: reduce) {
+  .gallery__item:focus-visible .gallery__preview-icon,
+  .gallery__item:hover .gallery__preview-icon {
+    transform: none;
   }
 }
 

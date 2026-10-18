@@ -32,6 +32,15 @@ Both font families are self-hosted as variable WOFF2 files and declared in [`css
 
 The font license files are stored in `public/font-licenses/` and copied to `dist/font-licenses/` during the production build.
 
+## Icons
+
+### Gallery magnifier
+
+- **File:** [`assets/icons/look.svg`](assets/icons/look.svg)
+- **Source:** Exported from Figma using the Iconstack icon library
+- **Implementation:** Decorative, `aria-hidden` magnifier-plus icon in the "Powiększ" preview label of the six home-page gallery items, applied as a CSS alpha mask in [`css/sections.css`](css/sections.css) and drawn in the theme's gold token
+- **Unverified:** The original author, copyright holder, upstream license, and redistribution terms have not been verified, and this index does not establish any of them.
+
 ## Third-party names and marks
 
 The Studio Noir footer contains Instagram, Facebook, GitHub, and X icons that link to the corresponding KP_Code profiles. They are rendered from the SVG files listed below, applied as CSS alpha masks in [`css/sections.css`](css/sections.css) and drawn in the footer text color.
