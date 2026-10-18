@@ -489,6 +489,29 @@
   font-size: var(--fs-sm);
 }
 
+/* The demo action adopts the header control's rectangle instead of the pill
+   used by page-level calls to action, and keeps its primary gold fill only
+   while the demo can be completed. */
+.booking__action {
+  border-radius: var(--radius-sm);
+}
+
+/* Unavailable and completed states step back to a quiet interactive surface
+   with a hairline edge, so "Demo zakończone" no longer outweighs the choices
+   it summarizes while its label stays fully opaque. */
+.booking__action[aria-disabled="true"] {
+  border-color: var(--color-line);
+  background-color: var(--color-surface-interactive);
+  color: var(--color-ink-200);
+}
+
+/* Focus on the unavailable action stays visible through the shared outline
+   alone: neither the primary fill nor its lift returns. */
+.booking__action[aria-disabled="true"]:focus-visible {
+  transform: none;
+  background-color: var(--color-surface-interactive);
+}
+
 /* Below 768px the fixed quick-contact bar covers the viewport bottom: a choice
    or the demo action scrolled into view keeps clear of the space the page
    reserves for that bar (the body padding in css/components.css). */
@@ -519,6 +542,14 @@
 .booking__fallback-actions {
   display: grid;
   gap: var(--space-sm);
+}
+
+/* Telephone and e-mail follow the header booking control: the same 8px
+   rectangle and gold edge at the shared 48px control height. The hover, focus,
+   and press washes come from .button--ghost. */
+.booking__fallback-actions .button {
+  border-radius: var(--radius-sm);
+  color: var(--color-gold-300);
 }
 
 .booking__noscript {
