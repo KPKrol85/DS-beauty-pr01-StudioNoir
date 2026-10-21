@@ -55,6 +55,9 @@ Aktualny zakres:
 ├── .gitignore
 ├── .gitattributes
 ├── .editorconfig
+├── .github/
+│   └── workflows/
+│       └── ci.yml          # workflow CI GitHub Actions (build i testy nawigacji)
 ├── AGENTS.md               # wspólne instrukcje agentów
 ├── CLAUDE.md               # odwołanie do AGENTS.md dla Claude Code
 ├── LICENSE.md
@@ -168,6 +171,17 @@ Dobór kontroli:
 | Pozostałe skrypty w `js/` (np. rezerwacja, lightbox, motyw) — bez testów automatycznych | `npm run build`, ręczna kontrola w `npm run dev`, `git diff --check` |
 | Wyłącznie dokumentacja | `git diff --check` |
 
+### Ciągła integracja (CI)
+
+Workflow GitHub Actions `.github/workflows/ci.yml` uruchamia się przy pushu do `main` i dla pull requestów kierowanych do `main`. Jedno zadanie na `ubuntu-latest` z Node.js 22 wykonuje kolejno:
+
+1. `npm ci`;
+2. `npm run build` — build produkcyjny z kontrolami opisanymi w sekcji [Weryfikacja zmian](#weryfikacja-zmian);
+3. `npx playwright install --with-deps chromium` — Chromium wraz z wymaganymi zależnościami systemowymi;
+4. `npm run test:nav` — testy nawigacji na dedykowanym serwerze Vite dev (port 5183).
+
+Błąd któregokolwiek kroku przerywa zadanie i oznacza przebieg jako nieudany. Workflow ma wyłącznie uprawnienie `contents: read`, a nowszy przebieg dla tej samej gałęzi lub pull requesta anuluje poprzedni, jeszcze trwający. CI tylko weryfikuje zmiany: nie modyfikuje repozytorium i nie wdraża witryny — wydanie produkcyjne pozostaje ręczną publikacją przez Netlify CLI, opisaną w sekcji [Wdrożenie](#wdrożenie).
+
 ### Build produkcyjny
 
 `npm run build` tworzy w `dist/`:
@@ -188,7 +202,7 @@ Repozytorium zawiera konfigurację Netlify:
 - `netlify.toml` — polecenie buildu `npm run build`, katalog publikacji `dist` oraz nagłówek `Cache-Control: no-cache` dla `/service-worker.js`;
 - `public/_redirects` — reguła `/* /404.html 404`: istniejące pliki mają pierwszeństwo, a brakujące adresy zwracają `404.html` ze statusem 404.
 
-Pliki te są konfiguracją repozytorium, a nie mechanizmem wydania: nie publikują niczego, a sama konfiguracja nie potwierdza aktywnego wdrożenia. Repozytorium nie zawiera workflow CI/CD.
+Pliki te są konfiguracją repozytorium, a nie mechanizmem wydania: nie publikują niczego, a sama konfiguracja nie potwierdza aktywnego wdrożenia. Repozytorium nie zawiera workflow wdrożeniowego — workflow CI w GitHub Actions tylko weryfikuje zmiany i niczego nie publikuje.
 
 Wydanie produkcyjne przygotowuje się w tej kolejności:
 
@@ -323,6 +337,9 @@ Current scope:
 ├── .gitignore
 ├── .gitattributes
 ├── .editorconfig
+├── .github/
+│   └── workflows/
+│       └── ci.yml          # GitHub Actions CI workflow (build and navigation tests)
 ├── AGENTS.md               # shared agent instructions
 ├── CLAUDE.md               # AGENTS.md reference for Claude Code
 ├── LICENSE.md
@@ -436,6 +453,17 @@ Choosing checks:
 | Other scripts in `js/` (e.g. booking, lightbox, theme) — no automated tests | `npm run build`, manual check in `npm run dev`, `git diff --check` |
 | Documentation only | `git diff --check` |
 
+### Continuous Integration (CI)
+
+The GitHub Actions workflow `.github/workflows/ci.yml` runs on pushes to `main` and on pull requests targeting `main`. A single job on `ubuntu-latest` with Node.js 22 runs, in order:
+
+1. `npm ci`;
+2. `npm run build` — the production build with the checks listed under [Change Verification](#change-verification);
+3. `npx playwright install --with-deps chromium` — Chromium with its required system dependencies;
+4. `npm run test:nav` — the navigation tests against the dedicated Vite dev server (port 5183).
+
+A failure in any step stops the job and marks the run as failed. The workflow has only the `contents: read` permission, and a newer run for the same branch or pull request cancels a superseded run still in progress. CI only validates changes: it does not modify the repository or deploy the site — production releases remain a manual Netlify CLI publish, as described under [Deployment](#deployment).
+
 ### Production Build
 
 `npm run build` produces the following in `dist/`:
@@ -456,7 +484,7 @@ The repository includes Netlify configuration:
 - `netlify.toml` — build command `npm run build`, publish directory `dist`, and a `Cache-Control: no-cache` header for `/service-worker.js`;
 - `public/_redirects` — the rule `/* /404.html 404`: existing files take precedence, and missing URLs return `404.html` with a 404 status.
 
-These files are repository configuration, not the release mechanism: they do not publish anything by themselves, and the configuration alone does not confirm an active deployment. The repository contains no CI/CD workflow.
+These files are repository configuration, not the release mechanism: they do not publish anything by themselves, and the configuration alone does not confirm an active deployment. The repository contains no deployment workflow — the GitHub Actions CI workflow only validates changes and publishes nothing.
 
 A production release is prepared in this order:
 
