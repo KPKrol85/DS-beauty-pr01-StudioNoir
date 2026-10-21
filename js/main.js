@@ -5,6 +5,7 @@ import { initLightbox } from "./lightbox.js";
 import { initBooking } from "./booking.js";
 import { initTheme } from "./theme.js";
 import { initMobileCta } from "./mobile-cta.js";
+import { initBackToTop } from "./back-to-top.js";
 
 const init = () => {
   initHeader();
@@ -14,6 +15,7 @@ const init = () => {
   initBooking();
   initTheme();
   initMobileCta();
+  initBackToTop();
 };
 
 if (document.readyState === "loading") {

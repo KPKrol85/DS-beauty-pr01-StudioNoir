@@ -41,6 +41,13 @@ The font license files are stored in `public/font-licenses/` and copied to `dist
 - **Implementation:** Decorative, `aria-hidden` magnifier-plus icon in the "Powiększ" preview label of the six home-page gallery items, applied as a CSS alpha mask in [`css/sections.css`](css/sections.css) and drawn in the theme's gold token
 - **Unverified:** The original author, copyright holder, upstream license, and redistribution terms have not been verified, and this index does not establish any of them.
 
+### Back-to-top chevron
+
+- **File:** [`assets/icons/chevron-up.svg`](assets/icons/chevron-up.svg)
+- **Source:** Exported from Figma using the Iconstack icon library
+- **Implementation:** Decorative, `aria-hidden` upward chevron in the "Wróć na górę" button on the home and legal pages, applied as a CSS alpha mask in [`css/components.css`](css/components.css) and drawn in the theme's gold token
+- **Unverified:** The original author, copyright holder, upstream license, and redistribution terms have not been verified, and this index does not establish any of them.
+
 ## Third-party names and marks
 
 The Studio Noir footer contains Instagram, Facebook, GitHub, and X icons that link to the corresponding KP_Code profiles. They are rendered from the SVG files listed below, applied as CSS alpha masks in [`css/sections.css`](css/sections.css) and drawn in the footer text color.

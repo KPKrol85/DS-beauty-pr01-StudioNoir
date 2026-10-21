@@ -758,3 +758,106 @@
 .lightbox__navigation .button {
   padding-inline: var(--space-sm);
 }
+
+/* Icon-only return to the page start, shown by js/back-to-top.js only while
+   the footer's copyright line is in view. Hidden, visibility also removes it
+   from pointer, Tab, and accessibility-tree access; it switches only after
+   the fade-out. The state wash layers over the raised glass, as on .choice. */
+.back-to-top {
+  --back-to-top-offset: clamp(var(--space-md), 2.5vw, var(--space-xl));
+  --back-to-top-wash: transparent;
+  position: fixed;
+  right: calc(var(--back-to-top-offset) + env(safe-area-inset-right, 0px));
+  bottom: calc(var(--back-to-top-offset) + env(safe-area-inset-bottom, 0px));
+  /* The mobile contact bar's floating layer, below the lightbox. */
+  z-index: 180;
+  display: grid;
+  place-items: center;
+  inline-size: var(--size-control);
+  block-size: var(--size-control);
+  padding: 0;
+  border: 1px solid var(--color-line-accent);
+  border-radius: var(--radius-sm);
+  background: linear-gradient(var(--back-to-top-wash), var(--back-to-top-wash)) var(--color-glass-raised);
+  backdrop-filter: blur(14px);
+  box-shadow: var(--shadow-sm);
+  color: var(--color-gold-300);
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.2s ease, visibility 0s linear 0.2s, border-color 0.2s ease;
+}
+
+.back-to-top.is-visible {
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition-delay: 0s;
+}
+
+/* Like the mobile contact bar, the control sits outside the content the menu
+   makes inert, so it is hidden while a modal is open. */
+body:has(.nav__panel.is-open) .back-to-top,
+body:has(.lightbox.is-open) .back-to-top {
+  visibility: hidden;
+}
+
+/* The exported chevron spans 30 of its 48 units, so a 2rem mask box draws a
+   20px chevron with a 1px stroke that matches the hairline border. */
+.back-to-top__icon {
+  inline-size: 2rem;
+  aspect-ratio: 1;
+  background-color: currentColor;
+  -webkit-mask: url("../assets/icons/chevron-up.svg") center / contain no-repeat;
+  mask: url("../assets/icons/chevron-up.svg") center / contain no-repeat;
+  transition: transform 0.2s ease;
+}
+
+/* Only the chevron moves; the 48px box never shifts. */
+.back-to-top:focus-visible {
+  --back-to-top-wash: var(--color-state-hover);
+  border-color: var(--color-gold-300);
+}
+
+.back-to-top:focus-visible .back-to-top__icon {
+  transform: translateY(-2px);
+}
+
+@media (hover: hover) {
+  .back-to-top:hover {
+    --back-to-top-wash: var(--color-state-hover);
+    border-color: var(--color-gold-300);
+  }
+
+  .back-to-top:hover .back-to-top__icon {
+    transform: translateY(-2px);
+  }
+}
+
+.back-to-top:active {
+  --back-to-top-wash: var(--color-state-active);
+}
+
+/* Below 768px the home page's fixed contact bar holds the bottom edge, so the
+   control rises above it; pages without the bar keep the corner offset. */
+@media (max-width: 767px) {
+  body:has(.mobile-cta) .back-to-top {
+    bottom: calc(var(--mobile-contact-bar-clearance) + var(--space-xs));
+  }
+}
+
+/* Only the chevron's travel is dropped; the wash, border, and focus ring remain. */
+@media (prefers-reduced-motion: reduce) {
+  .back-to-top:focus-visible .back-to-top__icon,
+  .back-to-top:hover .back-to-top__icon {
+    transform: none;
+  }
+}
+
+@media (forced-colors: active) {
+  .back-to-top__icon {
+    forced-color-adjust: none;
+    background-color: ButtonText;
+  }
+}
