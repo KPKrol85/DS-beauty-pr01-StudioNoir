@@ -79,9 +79,16 @@ const initHeaderMiniCta = () => {
 
   if (!miniCta || !hero) return;
 
+  // The link is inert from the moment it starts to hide; CSS visibility
+  // follows only after the fade-out.
+  const setVisible = (visible) => {
+    miniCta.classList.toggle('is-visible', visible);
+    miniCta.inert = !visible;
+  };
+
   if (!('IntersectionObserver' in window)) {
     const onScroll = () => {
-      miniCta.classList.toggle('is-visible', window.scrollY > hero.offsetHeight * 0.6);
+      setVisible(window.scrollY > hero.offsetHeight * 0.6);
     };
 
     onScroll();
@@ -92,7 +99,7 @@ const initHeaderMiniCta = () => {
 
   const observer = new IntersectionObserver(
     ([entry]) => {
-      miniCta.classList.toggle('is-visible', !entry.isIntersecting);
+      setVisible(!entry.isIntersecting);
     },
     { threshold: 0.15 }
   );

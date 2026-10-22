@@ -535,7 +535,9 @@
   }
 
   /* Compact .button: smallest type-scale size, one-line label, and the
-     component's own tracking and state transitions. */
+     component's own tracking and state transitions. Hidden, visibility also
+     removes it from pointer, Tab, and accessibility-tree access; it switches
+     only after the fade-out, while js/header.js keeps the link inert. */
   .header__mini-cta {
     display: inline-flex;
     margin-left: auto;
@@ -544,15 +546,18 @@
     white-space: nowrap;
     min-height: 2.25rem;
     opacity: 0;
+    visibility: hidden;
     transform: translateY(-0.35rem);
     pointer-events: none;
-    transition: opacity 0.25s ease, transform 0.25s ease, background-color 0.2s ease;
+    transition: opacity 0.25s ease, transform 0.25s ease, visibility 0s linear 0.25s, background-color 0.2s ease;
   }
 
   .header__mini-cta.is-visible {
     opacity: 1;
+    visibility: visible;
     transform: translateY(0);
     pointer-events: auto;
+    transition-delay: 0s;
   }
 
   /* A flush bottom bar: the primary action takes the free width, the contact

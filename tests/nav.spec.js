@@ -316,3 +316,45 @@ test.describe("primary navigation state contract", () => {
     await expectDesktopNavigation(nav);
   });
 });
+
+test.describe("mobile header booking link", () => {
+  test("is skipped by Tab over the hero and reachable with a visible focus outline after it", async ({ page }) => {
+    await page.setViewportSize(MOBILE);
+    await page.goto("/");
+    const header = page.locator("[data-header]");
+    const logo = header.getByRole("link", { name: "Studio Noir" });
+    const miniCta = page.locator("[data-header-mini-cta]");
+    // The closed menu panel is aria-hidden, so only the header link can match.
+    const exposedCta = header.getByRole("link", { name: "Umów wizytę" });
+
+    await expect(page.locator(".hero")).toBeInViewport();
+    await expect(miniCta).toHaveJSProperty("inert", true);
+    await expect(miniCta).toHaveCSS("visibility", "hidden");
+    await expect(exposedCta).toHaveCount(0);
+
+    await logo.focus();
+    await page.keyboard.press("Tab");
+    await expect(getNav(page).toggle).toBeFocused();
+
+    await page.evaluate(() => {
+      const hero = document.querySelector(".hero");
+      window.scrollTo({ top: hero.offsetTop + hero.offsetHeight + 1, behavior: "instant" });
+    });
+    await expect(miniCta).toHaveClass(/\bis-visible\b/);
+    await expect(miniCta).toHaveJSProperty("inert", false);
+    await expect(exposedCta).toHaveCount(1);
+    await expect(miniCta).toHaveCSS("opacity", "1");
+
+    await logo.focus();
+    await page.keyboard.press("Tab");
+    await expect(exposedCta).toBeFocused();
+    expect(await miniCta.evaluate((link) => link.matches(":focus-visible"))).toBe(true);
+    await expect(miniCta).toHaveCSS("outline-style", "solid");
+    await expect(miniCta).toHaveCSS("outline-width", "2px");
+
+    await expect(miniCta).toHaveAttribute("href", "#booking");
+    await page.keyboard.press("Enter");
+    await expect(page).toHaveURL(/\/#booking$/);
+    await expect(page.locator('main section[id="booking"]')).toBeInViewport();
+  });
+});

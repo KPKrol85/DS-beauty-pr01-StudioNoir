@@ -27,12 +27,12 @@ Completed improvement cycles (UI, quality, workflow, UX, technical, design) are 
 
 **Goal:** Ensure that content hidden or not yet revealed is never reachable by keyboard while invisible, and that revealed content becomes visible on every viewport.
 
-- [ ] **PH1-01 — Remove the hidden mobile header booking link from the focus order**
+- [x] **PH1-01 — Remove the hidden mobile header booking link from the focus order**
   - **Priority:** High
-  - [ ] below 768 px, remove `.header__mini-cta` from pointer, Tab, and accessibility-tree access while it lacks `.is-visible`, following the `visibility` pattern used by `.mobile-cta` and `.back-to-top`
-  - [ ] keep the existing fade and slide transition when the link appears and disappears
-  - [ ] keep the `IntersectionObserver` and scroll-fallback toggling in `js/header.js` and the `display: none` behavior from 768 px unchanged
-  - [ ] add one focused keyboard regression check to a CI-run spec: at a mobile width with the hero in view, Tab moves from the logo past the hidden link; after the hero leaves the viewport, the link is reachable and its focus outline is visible
+  - [x] below 768 px, remove `.header__mini-cta` from pointer, Tab, and accessibility-tree access while it lacks `.is-visible`, following the `visibility` pattern used by `.mobile-cta` and `.back-to-top`
+  - [x] keep the existing fade and slide transition when the link appears and disappears
+  - [x] keep the `IntersectionObserver` and scroll-fallback toggling in `js/header.js` and the `display: none` behavior from 768 px unchanged
+  - [x] add one focused keyboard regression check to a CI-run spec: at a mobile width with the hero in view, Tab moves from the logo past the hidden link; after the hero leaves the viewport, the link is reachable and its focus outline is visible
   - **Completion condition:** at widths below 768 px, the hidden header booking link is never a Tab stop or an exposed accessibility node, and the visible link remains reachable.
   - **Source:** `daily-AUDIT.md` — P1-01
 
