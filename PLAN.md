@@ -36,12 +36,14 @@ Completed improvement cycles (UI, quality, workflow, UX, technical, design) are 
   - **Completion condition:** at widths below 768 px, the hidden header booking link is never a Tab stop or an exposed accessibility node, and the visible link remains reachable.
   - **Source:** `daily-AUDIT.md` — P1-01
 
-- [ ] **PH1-02 — Make section reveal independent of container height**
+- [x] **PH1-02 — Make section reveal independent of container height**
   - **Priority:** High
-  - [ ] reproduce in a browser on short viewports (landscape phone and the 320×256 CSS px reflow case) whether tall `[data-reveal]` containers, such as booking and testimonials, remain at `opacity: 0` after scrolling through them
-  - [ ] if reproduced, change the reveal trigger in `js/reveal.js` so a container is revealed once it enters the viewport, regardless of its height relative to the viewport
-  - [ ] preserve the reduced-motion, missing-observer, observer-failure, and print fallbacks
-  - [ ] add one focused browser check at a short viewport confirming that every `[data-reveal]` element is visible after it is scrolled into view
+  - [x] reproduce in a browser on short viewports (landscape phone and the 320×256 CSS px reflow case) whether tall `[data-reveal]` containers, such as booking and testimonials, remain at `opacity: 0` after scrolling through them
+  - **Reproduction (2026-10-22, Chrome 155):** reproduced at 320×256 for the gallery, booking, and testimonials containers, which are more than five viewport heights tall and stay at `opacity: 0` after scrolling through the page; not reproduced at 667×375. `tests/reveal.spec.js` failed at 320×256 before the correction.
+  - [x] if reproduced, change the reveal trigger in `js/reveal.js` so a container is revealed once it enters the viewport, regardless of its height relative to the viewport
+  - [x] preserve the reduced-motion, missing-observer, observer-failure, and print fallbacks
+  - [x] add one focused browser check at a short viewport confirming that every `[data-reveal]` element is visible after it is scrolled into view
+  - **Verification (2026-10-22, Chrome 155):** with the observer threshold lowered from 0.2 to 0, `tests/reveal.spec.js` passes at 667×375 and 320×256 for all 11 elements; focused checks confirmed the fade and slide transition and the four fallbacks, and `tests/nav.spec.js` and `npm run build` pass. The spec is not yet run by an npm script or CI.
   - **Completion condition:** no `[data-reveal]` element remains transparent after entering the viewport at any tested viewport height; when the risk is not reproducible, the browser result is recorded and the trigger stays unchanged.
   - **Source:** `daily-AUDIT.md` — P1-02
 
