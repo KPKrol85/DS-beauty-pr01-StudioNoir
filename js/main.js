@@ -4,7 +4,6 @@ import { initNav } from "./nav.js";
 import { initLightbox } from "./lightbox.js";
 import { initBooking } from "./booking.js";
 import { initTheme } from "./theme.js";
-import { initMobileCta } from "./mobile-cta.js";
 import { initBackToTop } from "./back-to-top.js";
 
 const init = () => {
@@ -14,7 +13,6 @@ const init = () => {
   initLightbox();
   initBooking();
   initTheme();
-  initMobileCta();
   initBackToTop();
 };
 

@@ -49,7 +49,7 @@ Completed improvement cycles (UI, quality, workflow, UX, technical, design) are 
 
 ## Phase 2 — Theme and contact-action correctness
 
-**Goal:** Align first-paint theme rendering and the Instagram contact action with their declared behavior.
+**Goal:** Align first-paint theme rendering with its declared behavior and remove the mismatched Instagram action from the mobile contact bar.
 
 - [x] **PH2-01 — Apply the selected theme before first paint**
   - **Priority:** Medium
@@ -62,15 +62,17 @@ Completed improvement cycles (UI, quality, workflow, UX, technical, design) are 
   - **Completion condition:** the stored or system theme is active on first paint on all four content pages, and native UI follows the selected theme.
   - **Source:** `daily-AUDIT.md` — P2-01
 
-- [ ] **PH2-02 — Align the Instagram contact-bar action with its accessible name**
+- [x] **PH2-02 — Simplify the mobile contact bar to booking demo and telephone**
   - **Priority:** Medium
-  - [ ] confirm the intended destination: direct message, as stated by the accessible name "Instagram – napisz do KP_Code" and the `ig.me` fallback, or profile, as targeted by the static `href` and the `instagram://user` app link
-  - [ ] make the app attempt, the fallback, the `href` set by `js/mobile-cta.js`, and the accessible name in `index.html` describe the same destination, keeping the handle in `js/config.js`
-  - [ ] keep modified clicks and non-primary clicks as plain links
-  - [ ] update the `data-instagram-link` description in both README languages
-  - [ ] verify on iOS Safari and Android Chrome, with and without the Instagram app installed; record the limitation if devices are unavailable
-  - **Completion condition:** activating the contact-bar Instagram action leads to the destination its accessible name announces, without an invalid-address error before the fallback.
-  - **Source:** `daily-AUDIT.md` — P2-04
+  - **Decision (2026-10-23):** the project owner replaced the original direction, repairing the Instagram app deep link to match its accessible name, with removing the Instagram action from the bar. The Instagram app-opening checks on iOS Safari and Android Chrome were therefore not performed.
+  - [x] remove the Instagram link from `.mobile-cta` in `index.html`, keeping the "Szybki kontakt" landmark, the "Demo rezerwacji" link to `#booking`, the "Zadzwoń" `tel:` link, and their accessible names
+  - [x] change the `.mobile-cta` grid in `css/components.css` to two columns, the flexible primary booking action and the label-width telephone action, keeping spacing, type, 48px targets, safe-area padding, `--mobile-contact-bar-clearance`, and the hidden state while the navigation panel or lightbox is open
+  - [x] remove `js/mobile-cta.js`, `js/config.js`, and the `initMobileCta` initializer in `js/main.js`, leaving no `data-instagram-link`, `instagram://`, or `ig.me` reference in the source; the footer Instagram profile links stay unchanged
+  - [x] update the mobile-bar description, the `data-instagram-link` notes, and the project structure in both README languages
+  - [x] extend `tests/mobile-contact-bar.spec.js` with the two-action contract: link count, destinations, and accessible names; one-row layout without horizontal overflow and with 48px targets at 320, 375, and 767 px; hidden bar at 768 and 1280 px; Tab order and focus ring; unavailability while the navigation dialog or lightbox is open; and the footer Instagram links on all four content pages
+  - **Verification (2026-10-23, Chrome 155):** `tests/mobile-contact-bar.spec.js` passes all 14 tests, including the existing focus-clearance checks at 375×812 and 320×400; a layout probe confirmed a single 65px row within the 72px clearance and no horizontal overflow at 320, 375, and 767 px in the dark and light themes; `tests/nav.spec.js` and `npm run build` pass. Run on the installed Google Chrome through a temporary channel override, because the Chromium build expected by Playwright 1.63 is not installed; the spec is not yet run by an npm script or CI.
+  - **Completion condition:** below 768 px, the mobile bar contains exactly the booking demo and telephone actions with no Instagram deep-link logic; from 768 px it remains hidden.
+  - **Source:** `daily-AUDIT.md` — P2-04; the mismatch between the Instagram action's accessible name and its destination is eliminated by removing the action.
 
 ## Phase 3 — Verification, styling, and documentation contracts
 

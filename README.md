@@ -20,10 +20,9 @@ Aktualny zakres:
 - Nawigacja kotwicowa z oznaczaniem aktywnej sekcji (`IntersectionObserver`, `aria-current`) i stanem nagłówka po przewinięciu — `js/header.js`.
 - Menu mobilne (poniżej 900 px) w panelu dialogowym z pułapką fokusu, zamykaniem klawiszem Escape i blokadą przewijania strony — `js/nav.js`.
 - Galeria z podglądem zdjęć w lightboxie — `js/lightbox.js`.
-- Demonstracyjny widżet rezerwacji z dwoma wyborami (usługa i stylista), podsumowaniem aktualizowanym na bieżąco i akcją „Zakończ demo” — `js/booking.js`. Zakończenie demo zmienia jedynie status i etykietę przycisku: nic nie jest wysyłane ani zapisywane i nie powstaje żadna wizyta. Zmiana usługi lub stylisty po zakończeniu demo resetuje ten stan. Linki w kartach usług i stylistów (`data-booking-preselect-service`, `data-booking-preselect-stylist`) wstępnie zaznaczają odpowiednią opcję i przenoszą do niej fokus; bez JavaScript lub przy kliknięciu z klawiszem modyfikującym działają jak zwykłe linki do `#booking`. Sekcję uzupełniają alternatywne kanały kontaktu (telefon, Instagram, e-mail) i komunikat `<noscript>`.
+- Demonstracyjny widżet rezerwacji z dwoma wyborami (usługa i stylista), podsumowaniem aktualizowanym na bieżąco i akcją „Zakończ demo” — `js/booking.js`. Zakończenie demo zmienia jedynie status i etykietę przycisku: nic nie jest wysyłane ani zapisywane i nie powstaje żadna wizyta. Zmiana usługi lub stylisty po zakończeniu demo resetuje ten stan. Linki w kartach usług i stylistów (`data-booking-preselect-service`, `data-booking-preselect-stylist`) wstępnie zaznaczają odpowiednią opcję i przenoszą do niej fokus; bez JavaScript lub przy kliknięciu z klawiszem modyfikującym działają jak zwykłe linki do `#booking`. Sekcję uzupełniają alternatywne kanały kontaktu (telefon, e-mail) i komunikat `<noscript>`.
 - Przełącznik motywu ciemnego i jasnego z zapamiętaniem motywu; motyw początkowy wynika z zapisanej wartości lub preferencji systemowej (szczegóły w sekcji [Dane i trwałość stanu](#dane-i-trwałość-stanu)) — `js/theme.js`.
-- Poniżej 768 px: stały pasek szybkiego kontaktu u dołu ekranu (`nav` z etykietą „Szybki kontakt”) z główną akcją „Demo rezerwacji” (link do `#booking`) oraz drugorzędnymi linkami „Zadzwoń” i „Instagram”. Gdy otwarte jest menu mobilne lub lightbox, pasek jest ukryty (`visibility: hidden`) i niedostępny dla wskaźnika, klawisza Tab i technologii asystujących. Niezależnie od paska nagłówek zawiera kompaktowy przycisk „Umów wizytę”, widoczny po opuszczeniu sekcji hero — `js/header.js`.
-- Linki oznaczone `data-instagram-link` próbują otworzyć aplikację Instagram (`instagram://`), a jeśli strona pozostaje widoczna po 900 ms, przechodzą do wiadomości przez `ig.me` — `js/mobile-cta.js`, konfiguracja w `js/config.js`.
+- Poniżej 768 px: stały pasek szybkiego kontaktu u dołu ekranu (`nav` z etykietą „Szybki kontakt”) z główną akcją „Demo rezerwacji” (link do `#booking`) oraz drugorzędnym linkiem „Zadzwoń” (`tel:`); obie akcje są zwykłymi linkami bez obsługi JavaScript. Gdy otwarte jest menu mobilne lub lightbox, pasek jest ukryty (`visibility: hidden`) i niedostępny dla wskaźnika, klawisza Tab i technologii asystujących. Niezależnie od paska nagłówek zawiera kompaktowy przycisk „Umów wizytę”, widoczny po opuszczeniu sekcji hero — `js/header.js`.
 - Animacje pojawiania się sekcji — `js/reveal.js`.
 - Własna strona 404 oraz strona offline serwowana przez service worker.
 
@@ -85,7 +84,6 @@ Aktualny zakres:
 │   └── sections.css
 ├── js/
 │   ├── main.js             # punkt wejścia JS, rejestracja service workera
-│   ├── config.js
 │   ├── header.js
 │   ├── nav.js
 │   ├── wrap-tab-focus.js
@@ -93,8 +91,7 @@ Aktualny zakres:
 │   ├── reveal.js
 │   ├── lightbox.js
 │   ├── booking.js
-│   ├── theme.js
-│   └── mobile-cta.js
+│   └── theme.js
 ├── public/
 │   ├── _redirects
 │   ├── manifest.webmanifest
@@ -275,7 +272,6 @@ Opcjonalnie, przed krokiem 5, to samo polecenie bez flagi `--prod` (`npx netlify
 - `.gitignore` wyklucza wyniki buildu, zależności i lokalne artefakty. `.gitattributes` określa LF dla tekstowych źródeł i konfiguracji oraz traktuje fonty i obrazy rastrowe jako binarne. `.editorconfig` ustala UTF-8, LF, wcięcia po dwie spacje i końcowy znak nowej linii; zachowuje końcowe spacje w Markdown.
 - Nowa strona HTML wymaga dodania wejścia w `build.rolldownOptions.input` w `vite.config.js`; brak wejścia dla strony w katalogu głównym przerywa build. Nowe strony i nowe pliki w `public/` trafiają do listy precache automatycznie, a nowe warianty obrazów z `assets/img/hero/`, `assets/img/stylists/` i `assets/img/gallery/` używane przez strony — na listę obrazów na żądanie.
 - Wersji cache ani list cache nie zmienia się ręcznie; znaczniki `__STUDIO_NOIR_PRECACHE__`, `__STUDIO_NOIR_ON_DEMAND_IMAGES__` i `__STUDIO_NOIR_CACHE_VERSION__` muszą pozostać w `service-worker.js`.
-- Uchwyt konta Instagram używany przez linki `data-instagram-link` jest zdefiniowany w `js/config.js`.
 - Historia zmian jest prowadzona w [docs/CHANGELOG.md](docs/CHANGELOG.md).
 - Cykl raportu usprawnień:
   - Aktywny raport (np. `IMPROVEMENTS-WORKFLOW.md`) znajduje się w katalogu głównym repozytorium do czasu rozstrzygnięcia wszystkich jego pozycji.
@@ -302,10 +298,9 @@ Current scope:
 - Anchor navigation with active-section highlighting (`IntersectionObserver`, `aria-current`) and a scrolled header state — `js/header.js`.
 - Mobile menu (below 900 px) in a dialog panel with a focus trap, Escape-key closing, and page scroll locking — `js/nav.js`.
 - Gallery with a lightbox image preview — `js/lightbox.js`.
-- Demonstration booking widget with two selections (service and stylist), a live summary, and a "Zakończ demo" action — `js/booking.js`. Completing the demo only changes the status and the button label: nothing is sent or stored and no appointment is created. Changing the service or stylist after completion resets that state. Links in the service and stylist cards (`data-booking-preselect-service`, `data-booking-preselect-stylist`) preselect the matching option and move focus to it; without JavaScript, or on a modifier-key click, they behave as ordinary links to `#booking`. The section also offers alternative contact channels (phone, Instagram, email) and a `<noscript>` message.
+- Demonstration booking widget with two selections (service and stylist), a live summary, and a "Zakończ demo" action — `js/booking.js`. Completing the demo only changes the status and the button label: nothing is sent or stored and no appointment is created. Changing the service or stylist after completion resets that state. Links in the service and stylist cards (`data-booking-preselect-service`, `data-booking-preselect-stylist`) preselect the matching option and move focus to it; without JavaScript, or on a modifier-key click, they behave as ordinary links to `#booking`. The section also offers alternative contact channels (phone, email) and a `<noscript>` message.
 - Dark and light theme toggle that remembers the theme; the initial theme comes from the stored value or the system preference (details under [Data and State Persistence](#data-and-state-persistence)) — `js/theme.js`.
-- Below 768 px: a fixed quick-contact bar at the bottom of the screen (a `nav` labelled "Szybki kontakt") with a primary "Demo rezerwacji" action (a link to `#booking`) and secondary "Zadzwoń" and "Instagram" links. While the mobile menu or the lightbox is open, the bar is hidden (`visibility: hidden`) and unavailable to pointer, Tab, and assistive-technology access. Separately, the header contains a compact "Umów wizytę" button that appears once the hero section leaves the viewport — `js/header.js`.
-- Links marked with `data-instagram-link` attempt to open the Instagram app (`instagram://`) and, if the page is still visible after 900 ms, fall back to direct messaging via `ig.me` — `js/mobile-cta.js`, configured in `js/config.js`.
+- Below 768 px: a fixed quick-contact bar at the bottom of the screen (a `nav` labelled "Szybki kontakt") with a primary "Demo rezerwacji" action (a link to `#booking`) and a secondary "Zadzwoń" link (`tel:`); both actions are plain links without JavaScript handling. While the mobile menu or the lightbox is open, the bar is hidden (`visibility: hidden`) and unavailable to pointer, Tab, and assistive-technology access. Separately, the header contains a compact "Umów wizytę" button that appears once the hero section leaves the viewport — `js/header.js`.
 - Section reveal animations — `js/reveal.js`.
 - Custom 404 page and an offline page served by the service worker.
 
@@ -367,7 +362,6 @@ Current scope:
 │   └── sections.css
 ├── js/
 │   ├── main.js             # JS entry point, service worker registration
-│   ├── config.js
 │   ├── header.js
 │   ├── nav.js
 │   ├── wrap-tab-focus.js
@@ -375,8 +369,7 @@ Current scope:
 │   ├── reveal.js
 │   ├── lightbox.js
 │   ├── booking.js
-│   ├── theme.js
-│   └── mobile-cta.js
+│   └── theme.js
 ├── public/
 │   ├── _redirects
 │   ├── manifest.webmanifest
@@ -557,7 +550,6 @@ Optionally, before step 5, the same command without the `--prod` flag (`npx netl
 - `.gitignore` excludes build output, dependencies, and local artifacts. `.gitattributes` sets LF for text sources and configuration and treats fonts and raster images as binary. `.editorconfig` sets UTF-8, LF, two-space indentation, and a final newline; it preserves trailing spaces in Markdown.
 - A new HTML page requires a new entry in `build.rolldownOptions.input` in `vite.config.js`; a root-level page without an entry fails the build. New pages and new files in `public/` are added to the precache list automatically, and new image variants from `assets/img/hero/`, `assets/img/stylists/`, and `assets/img/gallery/` used by the pages are added to the on-demand image list.
 - The cache version and cache lists are never changed manually; the `__STUDIO_NOIR_PRECACHE__`, `__STUDIO_NOIR_ON_DEMAND_IMAGES__`, and `__STUDIO_NOIR_CACHE_VERSION__` markers must remain in `service-worker.js`.
-- The Instagram handle used by `data-instagram-link` links is defined in `js/config.js`.
 - The change history is kept in [docs/CHANGELOG.md](docs/CHANGELOG.md).
 - Improvement-report lifecycle:
   - An active report (for example `IMPROVEMENTS-WORKFLOW.md`) stays in the repository root until all of its items are resolved.

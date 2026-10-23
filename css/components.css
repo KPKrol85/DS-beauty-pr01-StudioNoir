@@ -560,8 +560,8 @@
     transition-delay: 0s;
   }
 
-  /* A flush bottom bar: the primary action takes the free width, the contact
-     channels keep their label width. Its height (hairline, block padding,
+  /* A flush bottom bar: the primary action takes the free width, the telephone
+     action keeps its label width. Its height (hairline, block padding,
      control, safe area) stays within --mobile-contact-bar-clearance. */
   .mobile-cta {
     position: fixed;
@@ -569,7 +569,7 @@
     bottom: 0;
     z-index: 180;
     display: grid;
-    grid-template-columns: minmax(0, 1fr) auto auto;
+    grid-template-columns: minmax(0, 1fr) auto;
     gap: var(--space-xs);
     padding: var(--space-xs) var(--space-sm) calc(var(--space-xs) + env(safe-area-inset-bottom, 0px));
     background: var(--color-glass-raised);
@@ -585,8 +585,8 @@
     visibility: hidden;
   }
 
-  /* Sentence case keeps all three labels on one row at 360px without shrinking
-     type or the 48px targets; uppercase needs about 40px more. */
+  /* Sentence case keeps both labels on one row at 320px without shrinking
+     type or the 48px targets. */
   .mobile-cta__action {
     padding: var(--space-xs) var(--space-sm);
     font-size: var(--fs-xs);
@@ -599,7 +599,7 @@
     font-weight: 600;
   }
 
-  /* Contact channels: quieter neutral edge and type beside the gold primary. */
+  /* Telephone action: quieter neutral edge and type beside the gold primary. */
   .mobile-cta__action--secondary {
     border-color: var(--color-line);
     color: var(--color-ink-200);
