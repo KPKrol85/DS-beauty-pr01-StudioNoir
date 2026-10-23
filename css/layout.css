@@ -27,20 +27,3 @@
   letter-spacing: -0.015em;
   text-wrap: balance;
 }
-
-.card-grid {
-  display: grid;
-  gap: var(--space-lg);
-}
-
-@media (min-width: 600px) {
-  .card-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-}
-
-@media (min-width: 900px) {
-  .card-grid {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
-}

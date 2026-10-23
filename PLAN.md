@@ -87,11 +87,12 @@ Completed improvement cycles (UI, quality, workflow, UX, technical, design) are 
   - **Completion condition:** CI fails when stylist or gallery focus clearance above the fixed contact bar regresses.
   - **Source:** `daily-AUDIT.md` — P2-02
 
-- [ ] **PH3-02 — Remove unused breakpoint tokens and the unused grid utility**
+- [x] **PH3-02 — Remove unused breakpoint tokens and the unused grid utility**
   - **Priority:** Low
-  - [ ] remove `--break-sm`, `--break-md`, and `--break-lg` from `css/tokens.css`
-  - [ ] remove the `.card-grid` rules from `css/layout.css`
-  - [ ] confirm that no CSS, JS, or HTML source references the removed names and that `npm run build` passes its CSS custom-property guard
+  - [x] remove `--break-sm`, `--break-md`, and `--break-lg` from `css/tokens.css`
+  - [x] remove the `.card-grid` rules from `css/layout.css`
+  - [x] confirm that no CSS, JS, or HTML source references the removed names and that `npm run build` passes its CSS custom-property guard
+  - **Verification (2026-10-23, Chrome 155):** a source search finds no CSS, JS, or HTML reference to the removed names; `npm run build` passes, including the CSS custom-property guard; `npm run test:nav` (28 tests) and `git diff --check` pass. `js/nav.js` (`(min-width: 900px)`) and `css/components.css` are unchanged, so the 900 px sync comment stays accurate. Run on the installed Google Chrome through a temporary channel override, because the Chromium build expected by Playwright 1.63 is not installed.
   - **Completion condition:** the stylesheets no longer declare breakpoint tokens or utilities that no media query or markup uses; the 900 px sync comment between `js/nav.js` and `css/components.css` remains accurate.
   - **Source:** `daily-AUDIT.md` — P2-05
 
