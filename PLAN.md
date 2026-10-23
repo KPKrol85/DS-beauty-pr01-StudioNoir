@@ -109,10 +109,15 @@ Completed improvement cycles (UI, quality, workflow, UX, technical, design) are 
 
 ## Optional future improvements
 
-- [ ] **O-01 — Render the remaining shared footer content at build time**
+- [x] **O-01 — Render the remaining shared footer content at build time**
   - **Value:** extending the `build/primary-navigation.js` transform pattern to the footer contact block, legal links, social links, and back-to-top button would remove four-way drift risk for public contact data in `index.html`, `privacy.html`, `terms.html`, and `cookies.html`.
-  - **Scope boundary:** non-blocking; the four footers are currently identical apart from `aria-current`, and the README documents the current split.
+  - **Result:** `build/shared-footer.js` is the single source of the footer and the back-to-top button that follows it, rendered into one `<!-- studio-noir:shared-footer -->` marker per content page; each legal page marks its own "Informacje" link with `aria-current="page"`, the home page none. It runs as a `pre` HTML transform registered before `primaryNavigation()`, which fills the footer "Nawigacja" list unchanged; `404.html` and `offline.html` are unaffected.
+  - **Verification (2026-10-23, Chrome 155):** `npm run build` output and the dev-server responses for all seven pages are byte-identical to the pre-change baseline. In a scratch copy, missing and duplicated markers and reversed plugin order fail `vite build`, and a missing marker returns an error from the dev server; malformed, misplaced, leftover-markup, and unsupported-page cases are rejected by the transform. `npm run test:nav` (28), `npm run test:mobile-contact-bar` (14), a temporary probe of footer structure, links, `aria-current`, unique IDs, and back-to-top visibility, focus hand-off, and reduced motion on the four pages, and `git diff --check` pass; run on the installed Google Chrome through a temporary channel override, because the Chromium build expected by Playwright 1.63 is not installed.
 
 - [ ] **O-02 — Add focused browser checks for non-navigation interactions**
   - **Value:** small Playwright checks for booking preselection and `aria-*` state, lightbox focus return, back-to-top focus hand-off, and theme persistence would protect contracts that are currently verified manually.
   - **Scope boundary:** non-blocking; proportionate only if these interactions continue to change.
+
+- [ ] **O-03 — Render the shared header at build time**
+  - **Value:** centralizing the header and mobile navigation structure duplicated in `index.html`, `privacy.html`, `terms.html`, and `cookies.html`, following the `build/shared-footer.js` pattern, would remove the last four-way copy of shared page chrome.
+  - **Scope boundary:** non-blocking; must preserve page-sensitive destinations (home `#section` versus legal `/index.html#section`), the home-only compact "Umów wizytę" booking CTA, and the `build/primary-navigation.js` insertion point.
