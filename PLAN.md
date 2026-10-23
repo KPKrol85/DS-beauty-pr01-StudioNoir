@@ -51,13 +51,14 @@ Completed improvement cycles (UI, quality, workflow, UX, technical, design) are 
 
 **Goal:** Align first-paint theme rendering and the Instagram contact action with their declared behavior.
 
-- [ ] **PH2-01 — Apply the selected theme before first paint**
+- [x] **PH2-01 — Apply the selected theme before first paint**
   - **Priority:** Medium
-  - [ ] resolve the stored `studio-noir-theme` value or the system preference before the first paint on `index.html`, `privacy.html`, `terms.html`, and `cookies.html`, instead of only when the deferred `/js/main.js` module runs
-  - [ ] keep the storage key, accepted values, and stored-then-system fallback order consistent with `js/theme.js`
-  - [ ] tie `color-scheme` to the active theme class instead of the fixed `light dark` declaration on `:root` in `css/tokens.css`
-  - [ ] preserve the current behavior when `localStorage` is unavailable, blocked, or holds an invalid value, and the toggle's accessible names
-  - [ ] verify in a browser that a stored light theme and a light system preference render without a dark-to-light repaint on the home and legal pages
+  - [x] resolve the stored `studio-noir-theme` value or the system preference before the first paint on `index.html`, `privacy.html`, `terms.html`, and `cookies.html`, instead of only when the deferred `/js/main.js` module runs
+  - [x] keep the storage key, accepted values, and stored-then-system fallback order consistent with `js/theme.js`
+  - [x] tie `color-scheme` to the active theme class instead of the fixed `light dark` declaration on `:root` in `css/tokens.css`
+  - [x] preserve the current behavior when `localStorage` is unavailable, blocked, or holds an invalid value, and the toggle's accessible names
+  - [x] verify in a browser that a stored light theme and a light system preference render without a dark-to-light repaint on the home and legal pages
+  - **Verification (2026-10-23, Chrome 155):** with `/js/main.js` held until parsing finished, `tests/theme-first-paint.spec.js` confirms the theme class, `color-scheme`, body colors, and `theme-color` on all four pages for stored, system, invalid, and blocked-storage cases, with no opposite theme ever on `<html>`, followed by toggle, label, and persistence checks; it fails on a page without the bootstrap. A temporary check of the `vite preview` build confirmed the same early state; `tests/nav.spec.js` and `npm run build` pass. The spec is not yet run by an npm script or CI.
   - **Completion condition:** the stored or system theme is active on first paint on all four content pages, and native UI follows the selected theme.
   - **Source:** `daily-AUDIT.md` — P2-01
 
