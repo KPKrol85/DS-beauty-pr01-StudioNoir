@@ -84,3 +84,4 @@ When an implementation task is defined, apply this policy and state `Changelog: 
 - Expanded `.gitignore` to exclude build output, dependencies, test and coverage artifacts, and local editor, agent, and environment files.
 - Added Netlify configuration (`netlify.toml`) with the build command, the `dist` publish directory, and a no-cache header for the service worker.
 - Added a GitHub Actions CI workflow (`.github/workflows/ci.yml`) that runs `npm ci`, `npm run build`, and the Chromium `npm run test:nav` suite on Node.js 22 for pushes and pull requests targeting `main`, with read-only repository permissions and cancellation of superseded runs; it deploys nothing, and production releases remain a manual Netlify CLI publish.
+- Added the `npm run test:mobile-contact-bar` script for `tests/mobile-contact-bar.spec.js`; CI now runs it after the navigation tests, so a regression in the two-action contact bar or in stylist and gallery focus clearance above it fails the job.

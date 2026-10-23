@@ -78,11 +78,12 @@ Completed improvement cycles (UI, quality, workflow, UX, technical, design) are 
 
 **Goal:** Keep automated checks, design tokens, and the README aligned with the current implementation.
 
-- [ ] **PH3-01 — Run the mobile contact-bar regression spec through a project script and CI**
+- [x] **PH3-01 — Run the mobile contact-bar regression spec through a project script and CI**
   - **Priority:** Medium
-  - [ ] expose `tests/mobile-contact-bar.spec.js` through an npm script in `package.json`, keeping `test:nav` scoped to navigation
-  - [ ] run the new script in `.github/workflows/ci.yml` after the existing navigation tests
-  - [ ] confirm that the spec passes against the current `--mobile-contact-bar-clearance` scroll margins
+  - [x] expose `tests/mobile-contact-bar.spec.js` through an npm script in `package.json`, keeping `test:nav` scoped to navigation
+  - [x] run the new script in `.github/workflows/ci.yml` after the existing navigation tests
+  - [x] confirm that the spec passes against the current `--mobile-contact-bar-clearance` scroll margins
+  - **Verification (2026-10-23, Chrome 155):** `npm run test:mobile-contact-bar` passes all 14 tests, including the focus-clearance checks at 375×812 and 320×400; in a temporary copy without the stylist and gallery `scroll-margin-bottom` rules, both focus-clearance tests fail and the script exits with code 1. `npm run test:nav` (28 tests), `npm run build`, and `git diff --check` pass. Run on the installed Google Chrome through a temporary channel override, because the Chromium build expected by Playwright 1.63 is not installed; the GitHub Actions run has not yet occurred.
   - **Completion condition:** CI fails when stylist or gallery focus clearance above the fixed contact bar regresses.
   - **Source:** `daily-AUDIT.md` — P2-02
 
