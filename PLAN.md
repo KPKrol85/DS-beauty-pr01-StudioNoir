@@ -96,13 +96,14 @@ Completed improvement cycles (UI, quality, workflow, UX, technical, design) are 
   - **Completion condition:** the stylesheets no longer declare breakpoint tokens or utilities that no media query or markup uses; the 900 px sync comment between `js/nav.js` and `css/components.css` remains accurate.
   - **Source:** `daily-AUDIT.md` — P2-05
 
-- [ ] **PH3-03 — Synchronize the README with the current modules and tests**
+- [x] **PH3-03 — Synchronize the README with the current modules and tests**
   - **Priority:** Medium
   - **Depends on:** `PH3-01`
-  - [ ] add `js/back-to-top.js` and `tests/mobile-contact-bar.spec.js` to the project structure in both README languages
-  - [ ] describe the back-to-top control, including its visibility trigger and the keyboard focus hand-off to the skip link, in the features and accessibility sections
-  - [ ] document the new test script in the development, verification, and CI sections, and route contact-bar clearance and back-to-top changes in the verification table
-  - [ ] include any regression checks added by `PH1-01` and `PH1-02` in the description of the test suites
+  - [x] add `js/back-to-top.js` and `tests/mobile-contact-bar.spec.js` to the project structure in both README languages
+  - [x] describe the back-to-top control, including its visibility trigger and the keyboard focus hand-off to the skip link, in the features and accessibility sections
+  - [x] document the new test script in the development, verification, and CI sections, and route contact-bar clearance and back-to-top changes in the verification table
+  - [x] include any regression checks added by `PH1-01` and `PH1-02` in the description of the test suites
+  - **Verification (2026-10-23):** both README languages were compared against the files in `js/` and `tests/`, the `package.json` scripts, the `.github/workflows/ci.yml` steps, `js/back-to-top.js` with its styles, and the assertions of all four specs; both project trees list every module and spec, `tests/reveal.spec.js` and `tests/theme-first-paint.spec.js` are documented as direct Playwright runs outside CI, and back-to-top is routed to manual checks. `git diff --check` passes. Documentation only: no build or browser test was run, so the documented commands were not executed.
   - **Completion condition:** the PL and EN README sections list every current `js/` module and test spec and state which command verifies each contract.
   - **Source:** `daily-AUDIT.md` — P2-03
 
