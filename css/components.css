@@ -339,20 +339,68 @@
 }
 
 .nav__toggle {
+  /* Keep the close control above its fullscreen sibling without moving it. */
+  position: relative;
+  z-index: 1;
+  width: var(--size-control);
+  height: var(--size-control);
   border: 1px solid var(--color-gold-400);
   border-radius: var(--radius-sm);
   background: transparent;
-  padding: 0.5rem;
-  display: inline-flex;
-  flex-direction: column;
-  gap: 0.3rem;
+  padding: var(--space-xs);
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
 }
 
 .nav__toggle-line {
-  width: 1.5rem;
+  grid-area: 1 / 1;
+  width: var(--space-lg);
   height: 2px;
   background: var(--color-ink-200);
   display: block;
+  transition: transform 0.28s ease-in-out, opacity 0.28s ease-in-out;
+}
+
+.nav__toggle-line:first-child {
+  transform: translateY(calc(var(--space-sm) / -2));
+}
+
+.nav__toggle-line:last-child {
+  transform: translateY(calc(var(--space-sm) / 2));
+}
+
+.nav__toggle[aria-expanded="true"] .nav__toggle-line:first-child {
+  transform: rotate(45deg);
+}
+
+.nav__toggle[aria-expanded="true"] .nav__toggle-line:nth-child(2) {
+  opacity: 0;
+}
+
+.nav__toggle[aria-expanded="true"] .nav__toggle-line:last-child {
+  transform: rotate(-45deg);
+}
+
+.nav__toggle:focus-visible {
+  background-color: var(--color-state-hover);
+}
+
+@media (hover: hover) {
+  .nav__toggle:hover {
+    background-color: var(--color-state-hover);
+  }
+}
+
+.nav__toggle:active {
+  background-color: var(--color-state-active);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav__toggle-line {
+    transition: none;
+  }
 }
 
 .nav__panel {

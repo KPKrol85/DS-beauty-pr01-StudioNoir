@@ -22,8 +22,9 @@ const setOptionalAttribute = (element, name, value) => {
 export const initNav = () => {
   const toggle = document.querySelector("[data-nav-toggle]");
   const panel = document.querySelector("[data-nav-panel]");
+  const dialog = document.querySelector("[data-nav-dialog]");
   const pageContent = document.querySelector("[data-page-content]");
-  if (!toggle || !panel) return;
+  if (!toggle || !panel || !dialog) return;
 
   const desktopViewport = window.matchMedia(DESKTOP_QUERY);
   let isOpen = false;
@@ -38,15 +39,17 @@ export const initNav = () => {
     if (pageContent) pageContent.inert = locked;
   };
 
-  // All panel semantics derive from the viewport and the open state, so a
-  // breakpoint change cannot leave mobile-only state on the desktop navigation.
+  // The open dialog includes both the panel and its visible close control.
+  // Desktop navigation and the closed mobile toggle retain their normal roles.
   const render = () => {
     const isDesktop = desktopViewport.matches;
 
     toggle.setAttribute("aria-expanded", String(isOpen));
+    toggle.setAttribute("aria-label", isOpen ? "Zamknij menu" : "Otwórz menu");
     panel.classList.toggle("is-open", isOpen);
-    setOptionalAttribute(panel, "role", isDesktop ? null : "dialog");
-    setOptionalAttribute(panel, "aria-modal", isDesktop ? null : "true");
+    setOptionalAttribute(dialog, "role", isOpen ? "dialog" : null);
+    setOptionalAttribute(dialog, "aria-modal", isOpen ? "true" : null);
+    setOptionalAttribute(dialog, "aria-label", isOpen ? "Menu główne" : null);
     setOptionalAttribute(panel, "aria-hidden", isDesktop || isOpen ? null : "true");
     setPageLocked(isOpen);
   };
@@ -88,7 +91,7 @@ export const initNav = () => {
     }
 
     if (event.key === "Tab") {
-      const focusables = getFocusableElements(panel);
+      const focusables = getFocusableElements(dialog);
       wrapTabFocus(event, focusables);
     }
   });

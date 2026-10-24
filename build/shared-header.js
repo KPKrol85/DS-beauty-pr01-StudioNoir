@@ -56,22 +56,26 @@ function renderHeader(page) {
           <span class="logo__sub">Hair &amp; Style</span>
         </a>${miniCta}
         <nav class="nav" aria-label="Główna" data-nav>
-          <button
-            class="nav__toggle"
-            data-nav-toggle
-            aria-expanded="false"
-            aria-controls="primary-menu"
-            aria-label="Otwórz menu">
-            <span class="nav__toggle-line"></span>
-            <span class="nav__toggle-line"></span>
-          </button>
-          <div class="nav__panel" id="primary-menu" data-nav-panel>
-            <ul class="nav__list">
-              <!-- studio-noir:primary-navigation -->
-            </ul>
-            <div class="nav__cta">
-              <a class="button header__booking" href="${prefix}#booking">Umów wizytę</a>
-              <button class="theme-toggle" data-theme-toggle type="button" aria-label="Przełącz motyw kolorystyczny"></button>
+          <div data-nav-dialog>
+            <button
+              class="nav__toggle"
+              type="button"
+              data-nav-toggle
+              aria-expanded="false"
+              aria-controls="primary-menu"
+              aria-label="Otwórz menu">
+              <span class="nav__toggle-line" aria-hidden="true"></span>
+              <span class="nav__toggle-line" aria-hidden="true"></span>
+              <span class="nav__toggle-line" aria-hidden="true"></span>
+            </button>
+            <div class="nav__panel" id="primary-menu" data-nav-panel>
+              <ul class="nav__list">
+                <!-- studio-noir:primary-navigation -->
+              </ul>
+              <div class="nav__cta">
+                <a class="button header__booking" href="${prefix}#booking">Umów wizytę</a>
+                <button class="theme-toggle" data-theme-toggle type="button" aria-label="Przełącz motyw kolorystyczny"></button>
+              </div>
             </div>
           </div>
         </nav>

@@ -64,6 +64,7 @@ const getNav = (page) => ({
   landmark: page.getByRole("navigation", { name: "Główna" }),
   toggle: page.locator("[data-nav-toggle]"),
   panel: page.locator("[data-nav-panel]"),
+  dialog: page.locator("[data-nav-dialog]"),
   main: page.locator("[data-page-content]"),
   body: page.locator("body"),
 });
@@ -166,6 +167,9 @@ const expectPageUnlocked = async (nav) => {
 
 const expectMobileMenuClosed = async (nav) => {
   await expect(nav.toggle).toHaveAttribute("aria-expanded", "false");
+  await expect(nav.toggle).toHaveAccessibleName("Otwórz menu");
+  await expect(nav.dialog).not.toHaveAttribute("role");
+  await expect(nav.dialog).not.toHaveAttribute("aria-modal");
   await expect(nav.panel).not.toHaveClass(/\bis-open\b/);
   await expect(nav.panel).toHaveAttribute("aria-hidden", "true");
   await expect(nav.panel).toBeHidden();
@@ -176,10 +180,12 @@ const expectMobileMenuOpen = async (nav) => {
   const dialog = nav.landmark.getByRole("dialog");
 
   await expect(nav.toggle).toHaveAttribute("aria-expanded", "true");
+  await expect(dialog.getByRole("button", { name: "Zamknij menu", expanded: true })).toHaveCount(1);
   await expect(nav.panel).toHaveClass(/\bis-open\b/);
   await expect(nav.panel).not.toHaveAttribute("aria-hidden");
   await expect(dialog).toBeVisible();
   await expect(dialog).toHaveAttribute("aria-modal", "true");
+  await expect(dialog).toHaveAccessibleName("Menu główne");
   await expect(nav.main).toHaveJSProperty("inert", true);
   await expect(nav.body).toHaveCSS("overflow", "hidden");
 };
@@ -191,6 +197,10 @@ const expectDesktopNavigation = async (nav) => {
   await expect(nav.panel).not.toHaveAttribute("aria-hidden");
   await expect(nav.panel).not.toHaveAttribute("role");
   await expect(nav.panel).not.toHaveAttribute("aria-modal");
+  await expect(nav.dialog).not.toHaveAttribute("role");
+  await expect(nav.dialog).not.toHaveAttribute("aria-modal");
+  await expect(nav.toggle).toHaveAttribute("aria-label", "Otwórz menu");
+  await expect(nav.landmark.getByRole("button", { name: "Otwórz menu" })).toHaveCount(0);
 
   // Role queries skip anything hidden from assistive technology.
   await expect(nav.landmark).toBeVisible();
@@ -212,13 +222,19 @@ test.describe("primary navigation state contract", () => {
     await expectMobileMenuOpen(nav);
 
     const dialog = nav.landmark.getByRole("dialog");
-    const firstFocusable = dialog.getByRole("link", { name: "O nas" });
+    const firstLink = dialog.getByRole("link", { name: "O nas" });
     const lastFocusable = dialog.getByRole("button", { name: /^Włącz tryb/ });
-    await expect(firstFocusable).toBeFocused();
+    await expect(firstLink).toBeFocused();
 
     await lastFocusable.focus();
     await page.keyboard.press("Tab");
-    await expect(firstFocusable).toBeFocused();
+    await expect(nav.toggle).toBeFocused();
+
+    await page.keyboard.press("Tab");
+    await expect(firstLink).toBeFocused();
+
+    await page.keyboard.press("Shift+Tab");
+    await expect(nav.toggle).toBeFocused();
 
     await page.keyboard.press("Shift+Tab");
     await expect(lastFocusable).toBeFocused();
@@ -233,6 +249,39 @@ test.describe("primary navigation state contract", () => {
     await dialog.getByRole("link", { name: "Usługi" }).click();
     await expectMobileMenuClosed(nav);
     await expect(page).toHaveURL(/#services$/);
+  });
+
+  test("the visible close control works by pointer and keyboard inside the modal", async ({ page }) => {
+    await page.setViewportSize(MOBILE);
+    await page.goto("/");
+    const nav = getNav(page);
+    const lines = nav.toggle.locator(".nav__toggle-line");
+
+    await expect(lines).toHaveCount(3);
+    await expect(nav.toggle).toHaveAttribute("aria-controls", "primary-menu");
+    const target = await nav.toggle.boundingBox();
+    expect(target.width).toBeGreaterThanOrEqual(48);
+    expect(target.height).toBeGreaterThanOrEqual(48);
+
+    await nav.toggle.click();
+    await expectMobileMenuOpen(nav);
+    // A real click must reach the toggle above the fullscreen panel.
+    await nav.landmark.getByRole("dialog").getByRole("button", { name: "Zamknij menu" }).click();
+    await expectMobileMenuClosed(nav);
+    await expect(nav.toggle).toBeFocused();
+
+    for (const key of ["Enter", "Space"]) {
+      await page.keyboard.press(key);
+      await expectMobileMenuOpen(nav);
+      await page.keyboard.press("Shift+Tab");
+      await expect(nav.toggle).toBeFocused();
+      expect(await nav.toggle.evaluate((button) => button.matches(":focus-visible"))).toBe(true);
+      await expect(nav.toggle).toHaveCSS("outline-style", "solid");
+      await expect(nav.toggle).toHaveCSS("outline-width", "2px");
+      await page.keyboard.press(key);
+      await expectMobileMenuClosed(nav);
+      await expect(nav.toggle).toBeFocused();
+    }
   });
 
   test("mobile booking CTA closes the menu on the home page; the theme toggle keeps it open", async ({ page }) => {
@@ -304,6 +353,11 @@ test.describe("primary navigation state contract", () => {
     await nav.landmark.getByRole("button", { name: /^Włącz tryb/ }).focus();
     await page.keyboard.press("Tab");
     await expect(nav.main.locator(":focus")).toHaveCount(1);
+
+    await nav.landmark.getByRole("link", { name: "O nas" }).focus();
+    await page.setViewportSize({ ...MOBILE, width: 899 });
+    await expectMobileMenuClosed(nav);
+    await expect(nav.toggle).toBeFocused();
   });
 
   test("desktop navigation is exposed to assistive technology", async ({ page }) => {
