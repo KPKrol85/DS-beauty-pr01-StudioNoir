@@ -16,7 +16,7 @@ concurrency:
 
 jobs:
   validate:
-    name: Build, navigation and mobile contact-bar tests
+    name: Build, navigation, mobile contact-bar and interaction tests
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -45,3 +45,6 @@ jobs:
 
       - name: Run mobile contact-bar tests
         run: npm run test:mobile-contact-bar
+
+      - name: Run interaction tests
+        run: npm run test:interactions
