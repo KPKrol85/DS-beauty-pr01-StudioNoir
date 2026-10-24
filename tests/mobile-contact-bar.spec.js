@@ -23,7 +23,7 @@ const HIDDEN_VIEWPORTS = [
   { width: 1280, height: 800 },
 ];
 const BOOKING_NAME = "Demo rezerwacji – przejdź do demonstracyjnej rezerwacji wizyty";
-const PHONE_NAME = "Zadzwoń do KP_Code Digital Studio pod numer +48 533 537 091";
+const PHONE_NAME = "Telefon autora – zadzwoń do KP_Code Digital Studio pod numer +48 533 537 091";
 const PHONE_HREF = "tel:+48533537091";
 // The shared control height (--size-control, css/tokens.css).
 const TOUCH_TARGET = 48;
@@ -120,7 +120,7 @@ test.describe("two-action contact bar", () => {
       await expect(links.nth(0)).toHaveText("Demo rezerwacji");
       await expect(links.nth(1)).toHaveAttribute("href", PHONE_HREF);
       await expect(links.nth(1)).toHaveAccessibleName(PHONE_NAME);
-      await expect(links.nth(1)).toHaveText("Zadzwoń");
+      await expect(links.nth(1)).toHaveText("Telefon autora");
       await expect(bar.locator('[data-instagram-link], a[href*="instagram"]')).toHaveCount(0);
       await expect(page.locator("[data-instagram-link]")).toHaveCount(0);
 

@@ -967,8 +967,8 @@
   font-style: normal;
 }
 
-/* The postal address and the author's attribution read as one block; the
-   contact grid's gap keeps it apart from the map panel below. */
+/* The contact grid's gap keeps the postal address apart from the map panel
+   below. */
 .footer__address-block {
   margin: var(--space-sm) 0 0;
 }
@@ -980,8 +980,8 @@
   color: var(--color-ink-100);
 }
 
-/* The project author's attribution follows the postal address; the grid keeps
-   its two lines apart at every column width. */
+/* The project author's attribution closes the contact block after the
+   channels; the grid keeps its two lines apart at every column width. */
 .footer__attribution {
   display: grid;
   margin: var(--space-2xs) 0 0;
