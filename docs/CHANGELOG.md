@@ -74,6 +74,8 @@ When an implementation task is defined, apply this policy and state `Changelog: 
 
 ### Build and Tooling
 
+- Centralized the home and legal page header in `build/shared-header.js`, replacing four copies with `<!-- studio-noir:shared-header -->`. The `pre` transforms run as shared header → shared footer → primary navigation, preserving page-sensitive links, the home-only initially inert compact CTA, and existing accessibility and interaction contracts; invalid header markers or leftover header markup fail development and production transforms.
+
 - Added `.gitattributes` and `.editorconfig` defining LF line endings for text files, binary handling for fonts and raster images, and UTF-8/two-space editor defaults.
 - Generated the service-worker cache version and precache list from the actual production build output via a Vite plugin, replacing the hand-maintained cache identifier and file list.
 - Excluded editorial hero, stylist, and gallery image variants from service-worker precaching; they are cached on demand when first fetched, keeping installation lean while essential offline assets remain precached.

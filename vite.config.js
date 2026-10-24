@@ -4,6 +4,7 @@ import { relative, resolve } from "node:path";
 import { defineConfig } from "vite";
 import { primaryNavigation } from "./build/primary-navigation.js";
 import { sharedFooter } from "./build/shared-footer.js";
+import { sharedHeader } from "./build/shared-header.js";
 import { HOME_DOCUMENT, OFFLINE_DOCUMENT } from "./js/pwa-paths.js";
 
 const root = import.meta.dirname;
@@ -156,9 +157,10 @@ function cssCustomPropertyGuard() {
 export default defineConfig({
   base: "/",
   appType: "mpa",
-  // Both HTML transforms run as "pre" hooks in this order: the shared footer emits
-  // the footer navigation insertion point that primaryNavigation() then fills.
+  // All three HTML transforms run as "pre" hooks in this order: the shared
+  // renderers emit the navigation insertion points that primaryNavigation() fills.
   plugins: [
+    sharedHeader(root),
     sharedFooter(root),
     primaryNavigation(root),
     cssCustomPropertyGuard(),
