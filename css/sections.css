@@ -518,9 +518,8 @@
   font-size: var(--fs-sm);
 }
 
-/* The demo action adopts the header control's rectangle instead of the pill
-   used by page-level calls to action, and keeps its primary gold fill only
-   while the demo can be completed. */
+/* The demo action shares the header control's 8px rectangle, and keeps its
+   primary gold fill only while the demo can be completed. */
 .booking__action {
   border-radius: var(--radius-sm);
 }
