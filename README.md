@@ -18,7 +18,7 @@ Aktualny zakres:
 ### Kluczowe funkcje
 
 - Nawigacja kotwicowa z oznaczaniem aktywnej sekcji (`IntersectionObserver`, `aria-current`) i stanem nagłówka po przewinięciu — `js/header.js`.
-- Menu mobilne (poniżej 900 px) w panelu dialogowym z pułapką fokusu, zamykaniem klawiszem Escape i blokadą przewijania strony — `js/nav.js`.
+- Menu mobilne (poniżej 900 px) w panelu dialogowym z pułapką fokusu, zamykaniem klawiszem Escape i blokadą przewijania strony — `js/nav.js`. Panel zachowuje wyśrodkowanie, gdy zawartość się mieści, i przewija się wewnętrznie przy małej wysokości, z dostępnym przyciskiem zamknięcia i miejscem na obrys fokusu — `css/components.css`.
 - Galeria z podglądem zdjęć w lightboxie — `js/lightbox.js`.
 - Demonstracyjny widżet rezerwacji z dwoma wyborami (usługa i stylista), podsumowaniem aktualizowanym na bieżąco i akcją „Zakończ demo” — `js/booking.js`. Zakończenie demo zmienia jedynie status i etykietę przycisku: nic nie jest wysyłane ani zapisywane i nie powstaje żadna wizyta. Zmiana usługi lub stylisty po zakończeniu demo resetuje ten stan. Linki w kartach usług i stylistów (`data-booking-preselect-service`, `data-booking-preselect-stylist`) wstępnie zaznaczają odpowiednią opcję i przenoszą do niej fokus; bez JavaScript lub przy kliknięciu z klawiszem modyfikującym działają jak zwykłe linki do `#booking`. Sekcję uzupełniają alternatywne kanały kontaktu (telefon, e-mail) i komunikat `<noscript>`.
 - Przełącznik motywu ciemnego i jasnego z zapamiętaniem motywu; motyw początkowy wynika z zapisanej wartości lub preferencji systemowej (szczegóły w sekcji [Dane i trwałość stanu](#dane-i-trwałość-stanu)) — `js/theme.js`.
@@ -167,6 +167,7 @@ Co weryfikują polecenia:
   - etykiety, kolejność, cele i działanie siedmiu linków nagłówka oraz zgodność z nimi linków stopki na stronie głównej (`/`, `/index.html`) i stronach prawnych (`/privacy.html`, `/terms.html`, `/cookies.html`) bez JavaScript w przeglądarce, w widoku desktopowym;
   - wskaźnik bieżącej sekcji z `IntersectionObserver` i bez niego, w widoku mobilnym i desktopowym: sekcje z linkiem i bez linku, powrót na górę, wejście przez fragment `#services`, granice sekcji i zmiana rozmiaru okna;
   - menu mobilne jako okno modalne: stan ARIA, `inert`, blokada przewijania, przenoszenie i zawijanie fokusu, otwieranie klawiaturą oraz zamykanie przez Escape i wybór linku;
+  - na czterech stronach treści przy 667×375, 812×375, 320×256 i 375×812: widoczny fokus początkowy i obrysy przy Tab/Shift+Tab, przewijanie kółkiem oraz geometria i trafianie wskaźnikiem do wszystkich akcji, dostępne zamknięcie, ponowne otwarcie, brak przepełnienia poziomego, wyśrodkowanie w pionie, oba motywy i przejście przez 900 px;
   - akcja „Umów wizytę” w menu mobilnym zamyka panel i prowadzi do sekcji rezerwacji (ze stron prawnych do `/index.html#booking`), a przełącznik motywu zmienia motyw bez zamykania menu;
   - kompaktowy link „Umów wizytę” w nagłówku przy 375 px: nad sekcją hero jest ukryty (`visibility: hidden`, `inert`), nie występuje w drzewie dostępności i jest pomijany przez Tab; po opuszczeniu hero jest osiągalny klawiszem Tab z widocznym obrysem fokusu i prowadzi do `#booking`;
   - czyszczenie stanu otwartego menu przy przejściu do układu desktopowego (900 px), zwolnienie pułapki fokusu i dostępność nawigacji desktopowej dla technologii asystujących.
@@ -343,7 +344,7 @@ Current scope:
 ### Key Features
 
 - Anchor navigation with active-section highlighting (`IntersectionObserver`, `aria-current`) and a scrolled header state — `js/header.js`.
-- Mobile menu (below 900 px) in a dialog panel with a focus trap, Escape-key closing, and page scroll locking — `js/nav.js`.
+- Mobile menu (below 900 px) in a dialog panel with a focus trap, Escape-key closing, and page scroll locking — `js/nav.js`. The panel stays centered when content fits and scrolls internally on short viewports, with an accessible close control and room for focus outlines — `css/components.css`.
 - Gallery with a lightbox image preview — `js/lightbox.js`.
 - Demonstration booking widget with two selections (service and stylist), a live summary, and a "Zakończ demo" action — `js/booking.js`. Completing the demo only changes the status and the button label: nothing is sent or stored and no appointment is created. Changing the service or stylist after completion resets that state. Links in the service and stylist cards (`data-booking-preselect-service`, `data-booking-preselect-stylist`) preselect the matching option and move focus to it; without JavaScript, or on a modifier-key click, they behave as ordinary links to `#booking`. The section also offers alternative contact channels (phone, email) and a `<noscript>` message.
 - Dark and light theme toggle that remembers the theme; the initial theme comes from the stored value or the system preference (details under [Data and State Persistence](#data-and-state-persistence)) — `js/theme.js`.
@@ -492,6 +493,7 @@ What each command verifies:
   - labels, order, destinations, and activation of the seven header links, and the footer links matching them, on the home page (`/`, `/index.html`) and legal pages (`/privacy.html`, `/terms.html`, `/cookies.html`) without browser JavaScript, in the desktop layout;
   - the current-section indicator with and without `IntersectionObserver`, in mobile and desktop layouts: linked and unlinked sections, return to the top, a direct `#services` fragment load, section boundaries, and viewport resize;
   - the mobile menu as a modal: ARIA state, `inert`, scroll locking, focus movement and wrapping, keyboard opening, and closing on Escape and link activation;
+  - on all four content pages at 667×375, 812×375, 320×256, and 375×812: visible initial focus and Tab/Shift+Tab outlines, wheel scrolling and geometry/pointer hit testing for every action, close-control access, reopening, no horizontal overflow, portrait centering, both themes, and transitions across 900 px;
   - the "Umów wizytę" action in the mobile menu closes the panel and leads to the booking section (to `/index.html#booking` from the legal pages), while the theme toggle changes the theme without closing the menu;
   - the compact "Umów wizytę" header link at 375 px: over the hero section it is hidden (`visibility: hidden`, `inert`), absent from the accessibility tree, and skipped by Tab; once the hero leaves the viewport, it is reachable with Tab, shows a visible focus outline, and leads to `#booking`;
   - clearing the open menu's mobile state when switching to the desktop layout (900 px), releasing the focus trap, and desktop navigation exposure to assistive technologies.

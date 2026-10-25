@@ -18,12 +18,11 @@ Canonical sources are the root HTML documents, `build/`, `css/`, `js/`, `assets/
 - Check a main item only after its outcome, required subtasks, documentation, and focused verification are complete. Preserve unfinished work and established Polish content, ARIA, `data-*`, navigation, storage, responsive, and theme contracts.
 - Record significant completed changes in `docs/CHANGELOG.md` when authorized. Planning-only maintenance does not require a changelog entry.
 - Phases 1–3 and completed additional improvements retain the identifiers and titles from `docs/archive/plans/PLAN-2026-10-24.md`. Their implementations were cross-checked against current sources, tests, and configuration; prior execution evidence is recorded in `docs/archive/audits/daily-AUDIT-2026-10-24.md` and `AUDIT.md`, rather than claimed as new test runs.
-- This review used static repository inspection. No application build, browser suite, live deployment, or external licensing verification was performed. Existing tests use Chromium against Vite development; production PWA behavior requires separate production-preview verification. Repository hosting configuration does not establish deployment status.
+- The initial planning review used static repository inspection. PH4-01 implementation checks are recorded below and in `AUDIT.md`. Existing tests use Chromium against Vite development; the PH4-01 production-preview checks cover navigation, not a new PWA audit. Repository hosting configuration does not establish deployment status.
 
 ## Current priorities
 
-1. `PH4-01` — Make every mobile-menu action reachable on short viewports (`AUDIT.md` P1-01).
-2. `PH4-02` — Restore a usable lightbox image area at constrained heights (`AUDIT.md` P2-01).
+1. `PH4-02` — Restore a usable lightbox image area at constrained heights (`AUDIT.md` P2-01).
 
 ## Phase 1 — Accessibility of hidden and revealed content
 
@@ -87,13 +86,15 @@ Canonical sources are the root HTML documents, `build/`, `css/`, `js/`, `assets/
 
 These fixes are independent; address the primary-navigation defect first. Each item includes its own regression coverage and documentation updates, with no separate implementation prerequisite.
 
-- [ ] **PH4-01 — Keep the complete mobile menu reachable on short viewports**
-  - **Source:** `AUDIT.md` — P1-01, confirmed against `.nav__panel` in `css/components.css` and page locking/initial focus in `js/nav.js`. The fixed panel still centers its content without internal scrolling while body scrolling is locked.
-  - [ ] Adapt the canonical panel styles to available height, allowing internal scrolling without placing the first item beyond the scrollable start; keep the close control visible and usable.
-  - [ ] Preserve initial focus, Tab/Shift+Tab wrapping, dialog ARIA, main-content `inert`, body scroll locking, theme switching, native link destinations, and cleanup at the 900px desktop boundary. Change shared markup or JavaScript only if the layout correction requires it.
-  - [ ] Extend `tests/nav.spec.js` for the four content pages at 667×375, 812×375, and 320×256: verify visible initial focus, pointer scrolling, keyboard reachability of every link/action, close-control access, Escape/link closing, and breakpoint cleanup. Include portrait and light/dark checks, and retain contact-bar modal hiding.
-  - [ ] Run `npm run build`, `npm run test:nav`, and `npm run test:mobile-contact-bar`; inspect the corrected layout in `npm run preview`. Run `npm run test:interactions` if the shared focus helper changes.
-  - [ ] After successful verification, resolve P1-01 in `AUDIT.md`, update affected README behavior/check descriptions and `docs/CHANGELOG.md`, and complete this item.
+- [x] **PH4-01 — Keep the complete mobile menu reachable on short viewports**
+  - **Source:** `AUDIT.md` — resolved P1-01: the fixed panel previously centered overflowing content without internal scrolling while the body was locked.
+  - [x] Adapt the canonical panel styles to available height, allowing internal scrolling without placing the first item beyond the scrollable start; keep the close control visible and usable.
+  - [x] Preserve initial focus, Tab/Shift+Tab wrapping, dialog ARIA, main-content `inert`, body scroll locking, theme switching, native link destinations, and cleanup at the 900px desktop boundary. Change shared markup or JavaScript only if the layout correction requires it.
+  - [x] Extend `tests/nav.spec.js` for the four content pages at 667×375, 812×375, and 320×256: verify visible initial focus, pointer scrolling, keyboard reachability of every link/action, close-control access, Escape/link closing, and breakpoint cleanup. Include portrait and light/dark checks, and retain contact-bar modal hiding.
+  - [x] Run `npm run build`, `npm run test:nav`, and `npm run test:mobile-contact-bar`; inspect the corrected layout in `npm run preview`. Run `npm run test:interactions` if the shared focus helper changes.
+  - [x] After successful verification, resolve P1-01 in `AUDIT.md`, update affected README behavior/check descriptions and `docs/CHANGELOG.md`, and complete this item.
+  - **Completed outcome:** Mobile-only overflow, non-shrinking groups, and auto margins preserve centered portrait navigation and expose every action by scrolling. JavaScript and shared markup remain unchanged.
+  - **Verification:** Build passed; 45 navigation and 14 contact-bar tests passed. Production-preview browser and screenshot checks passed on all four content pages at 667×375, 812×375, 320×256, and 375×812 in light/dark themes; the shared focus helper was unchanged, so interaction tests were not rerun. Verification was Windows Chromium only.
   - **Completion condition:** Every menu action and its focus indication can be brought into view and activated at the affected dimensions on all four content pages; closing or switching to desktop restores the normal page state.
   - **Changelog:** yes — responsive navigation and accessibility behavior.
 

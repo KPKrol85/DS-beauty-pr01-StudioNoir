@@ -30,6 +30,7 @@ When an implementation task is defined, apply this policy and state `Changelog: 
 
 ### Changed
 
+- Kept the mobile menu centered when space allows and internally scrollable on short viewports, preserving close-control access and focus outlines; added four-page pointer/keyboard regression coverage.
 - Replaced the mobile menu toggle with an animated three-line-to-X control, accessible labels, modal focus handling, and reduced-motion support.
 - Migrated production URLs to `https://ds-beauty-pr01-studionoir.netlify.app/` across canonical/OG metadata, legal pages, SEO files, and the README.
 - Replaced ten SVG placeholders with responsive AVIF/WebP photography, hero preload, and absolute `og:image` URLs.

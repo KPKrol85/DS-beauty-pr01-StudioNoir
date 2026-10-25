@@ -6,13 +6,13 @@
 
 **Audit mode:** Final repository and implementation review
 
-**Current readiness:** Needs important fixes
+**Current readiness:** Ready with minor refinements
 
 ## 1. Executive assessment
 
-Studio Noir has a coherent architecture for its documented demonstration scope: six HTML pages, shared build-time navigation/header/footer generation, modular browser interactions, and production-only service-worker registration. The production build passed in memory, and all 83 existing browser tests passed in the verified environment. Booking accurately presents a browser-only demonstration, with no appointment creation or submission.
+Studio Noir has a coherent architecture for its documented demonstration scope: six HTML pages, shared build-time navigation/header/footer generation, modular browser interactions, and production-only service-worker registration. The initial audit passed an in-memory production build and all 83 then-existing browser tests. The PH4-01 follow-up passed the disk-writing build, 45 navigation tests, and 14 contact-bar tests. Booking accurately presents a browser-only demonstration, with no appointment creation or submission.
 
-One important responsive accessibility defect remains in the mobile menu, and a smaller height-constrained layout defect affects the lightbox. These were reproduced separately from the existing regression suite. Correct the menu before final release or portfolio sign-off; no P0 issue was detected.
+The mobile-menu defect P1-01 is resolved and verified under PH4-01. One height-constrained lightbox defect remains (P2-01); no P0 or open P1 issue is recorded. The two optional improvements remain open. This scoped follow-up does not establish complete release readiness.
 
 ## 2. Audit scope and verification
 
@@ -37,11 +37,20 @@ One important responsive accessibility defect remains in the mobile menu, and a 
 - CI action major versions were checked against the official [checkout releases](https://github.com/actions/checkout/releases) and [setup-node releases](https://github.com/actions/setup-node/releases); the referenced v7 releases exist. This does not verify execution of this repository's workflow.
 - Final `git diff --check` and a Node document check for trailing whitespace, required sections, and source-reference bounds — passed. Git status showed only the new `AUDIT.md`; no other repository file was changed.
 
+### PH4-01 follow-up verification — 2026-10-25
+
+- `npm run build` — passed, including disk output and existing build guards; generated output was not hand-edited.
+- `npm run test:nav` — **45 passed**, including 16 new four-page/viewport cases; `npm run test:mobile-contact-bar` — **14 passed**. The final navigation run used `--fully-parallel --workers=2`; both commands used `PLAYWRIGHT_BROWSERS_PATH` to locate preinstalled Chromium. No dependencies or project configuration changed.
+- `npm run preview -- --host 127.0.0.1 --port 4173 --strictPort` — production browser checks and start/end screenshots passed for `/`, `/privacy.html`, `/terms.html`, and `/cookies.html` at 320×256, 667×375, 812×375, and 375×812 (**16 scenarios**). Wheel scrolling and hit testing reached all nine panel actions; keyboard traversal kept focused controls and outlines visible. Initial focus, reopening, close access, theme switching, Escape, body locking, and the 900px transition remained usable, with no horizontal overflow or uncaught page error observed.
+- Short panels scrolled from 0 to 342px at 320×256 and 0 to 223px at both 375px heights. At 375×812, the stack remained vertically centered without scrolling. Additional home/privacy checks after scrolling the page 500px passed with normal motion: full-viewport geometry, disabled header backdrop filtering while open, wheel access to both boundaries, close hit testing, and Escape cleanup.
+- Source review and passing regressions preserve dialog ARIA, `inert`, Tab/Shift+Tab wrapping, native link/booking navigation, theme behavior, contact-bar modal hiding, and desktop navigation. `js/nav.js`, shared markup, and the shared focus helper were unchanged; `test:interactions` was not rerun. P2-01 and optional improvements were not implemented or re-audited.
+- `git diff --check` and the complete task diff review passed. The following limits still apply.
+
 ### Verification limitations
 
 - No live URL was supplied or tested. Canonical/manifest/README origins were treated as configuration, without assuming an active deployment. Real Netlify redirects, response headers, clean-URL behavior, and production infrastructure were not verified.
-- The normal disk-writing `npm run build` and `npm run preview` commands were intentionally not executed. Build generation and local production behavior were checked through the in-memory harness; filesystem output/copying and hosting-platform behavior were not exercised.
-- Browser verification was Windows Chromium only, using an explicit installed executable. Unmodified npm test commands, GitHub Actions execution, Firefox, WebKit, physical devices, assistive technologies, and service-worker upgrade transitions were not verified.
+- The initial audit used an in-memory build/serving harness. PH4-01 subsequently exercised `npm run build` and `npm run preview` for navigation; production PWA/offline behavior was not re-audited by that follow-up, and hosting-platform behavior remains unverified.
+- Browser verification was Windows Chromium only, using preinstalled browsers. GitHub Actions execution, Firefox, WebKit, physical devices, assistive technologies, and service-worker upgrade transitions were not verified.
 - The responsive checks were bounded viewport scenarios, not a complete visual/state audit. Contrast assessment covered the four opaque pairings above, not all translucent surfaces, backdrop composition, hover/focus/active states, or forced colors. No accessibility certification or performance benchmark/Lighthouse result is claimed.
 - Security review covered current repository-visible code/configuration; no penetration test or dependency vulnerability scan was performed. External profile/contact destinations and real correspondence/telephone delivery were not tested.
 - `THIRD-PARTY-NOTICES.md:35-57` explicitly leaves provenance/licensing of several redistributed SVG icons unverified. This audit does not resolve those rights or assess the legal adequacy of the public policy pages.
@@ -51,7 +60,7 @@ One important responsive accessibility defect remains in the mobile menu, and a 
 - **Canonical shared markup:** `build/shared-header.js`, `build/shared-footer.js`, and `build/primary-navigation.js` generate ordinary HTML in both Vite modes, validate insertion points, and prevent duplicate shared markup. Existing no-JavaScript desktop tests passed for home/legal navigation and matching footer destinations.
 - **Useful build contracts:** `vite.config.js` validates page inputs, required offline documents, worker placeholders, and unresolved CSS custom-property names. The successful in-memory build emitted hashed browser assets and a content-derived worker cache version; `dist/` is explicitly generated and ignored.
 - **Explicit demonstration boundaries:** `index.html` booking/contact/testimonial disclosures and `build/shared-footer.js` distinguish fictional salon content from the author's contact information. `js/booking.js` renders selections/status through `textContent`; the regression suite verified that completing the demo neither submits nor persists the selection.
-- **Tested interaction mechanics:** the existing suite verified menu state/focus wrapping and breakpoint cleanup, lightbox cycling/focus return, booking preselection, contact-bar focus clearance, back-to-top focus handoff, and theme persistence. These checks do not cover the short-height defects below.
+- **Tested interaction mechanics:** the initial suite verified menu state/focus wrapping and breakpoint cleanup, lightbox cycling/focus return, booking preselection, contact-bar focus clearance, back-to-top focus handoff, and theme persistence. PH4-01 adds verified short-height menu reachability coverage; P2-01 remains outside that follow-up.
 - **Resilient theme and content baseline:** `public/theme-bootstrap.js` resolves stored/system preferences before application initialization; `js/theme.js` handles invalid/blocked storage. The first-paint tests passed across all four content pages, including storage failure and static no-JavaScript defaults. `js/reveal.js` uses a zero intersection threshold and leaves content visible when its observer cannot be created; both existing short-viewport reveal tests passed.
 - **Bounded production caching:** `service-worker.js` restricts interception to same-origin GET requests, deletes only older caches with the project's prefix, and caches on-demand images only after successful responses. Local production tests verified document precaching and offline fallback. Image variants remain intentionally available only after fetching under the current cache version (`README.md:612-620`).
 
@@ -61,15 +70,7 @@ None detected.
 
 ## 5. P1 — Important issues worth fixing next
 
-### [P1-01] Mobile menu content becomes unreachable on short viewports
-
-- **Classification:** Defect
-- **Affected area:** Shared mobile navigation, responsive layout, keyboard accessibility on home and legal pages.
-- **Evidence:** `css/components.css:406-419`; `js/nav.js:35-39`, `js/nav.js:57-62`; reproduced in Chromium against production output and development sources.
-- **Current behavior:** The fixed, viewport-sized panel vertically centers its complete link/control stack with `overflow-y: visible`, while the body is scroll-locked. At 667×375 and 812×375, the first link lies approximately 28px above the viewport and the theme control extends to about y=406. At 320×256, the first two links are wholly above the viewport and lower controls extend below it. Opening the menu focuses the invisible first link; wheel input and setting panel `scrollTop` do not expose it.
-- **Impact:** Landscape-phone and constrained-height users cannot see or pointer-activate all primary menu items, and keyboard focus can begin outside the visible area. Closing the menu restores the page, but does not make the menu usable in the affected layout.
-- **Recommended direction:** Make the mobile panel height-aware and internally scrollable when its content exceeds available space; keep its first item and close control reachable while preserving modal state, focus wrapping, and body scroll locking.
-- **Verification criteria:** On all four content pages at 667×375, 812×375, and 320×256, opening, scrolling, and keyboard traversal expose every menu link/action and a usable close control. Escape, link navigation, and the 900px desktop transition still release modal locks correctly.
+None detected.
 
 ## 6. P2 — Minor refinements
 
@@ -101,12 +102,12 @@ None detected.
 
 ## 8. Current readiness conclusion
 
-**Status:** Needs important fixes
+**Status:** Ready with minor refinements
 
-The site builds and its existing regression suite passes within the verified demonstration scope. P1-01 should be resolved before final release or portfolio sign-off because a primary interaction loses visible, reachable content on ordinary landscape-phone heights. P2-01 is a smaller gallery refinement. Neither the lack of a booking backend nor the documented partial offline image model is a release defect for this project. Deployment, cross-browser, assistive-technology, and legal verification remain outside the completed checks.
+The production build and required navigation/contact-bar regressions pass. Open findings are **0 P0, 0 P1, and 1 P2**, plus **2 optional improvements**. P1-01 is verified resolved; P2-01 remains a smaller gallery refinement. Neither the lack of a booking backend nor the documented partial offline image model is a release defect for this project. Deployment, cross-browser, assistive-technology, and legal verification remain outside the completed checks; complete release readiness is not claimed.
 
 ## 9. Senior rating
 
 **Rating:** 8/10
 
-Clear canonical ownership, defensive storage handling, explicit demo disclosures, useful build guards, and passing focused browser regressions support a strong assessment within the static-site scope. The independently reproduced overlay height defects prevent a higher rating and final readiness approval; the existing tests' passing result does not cover those scenarios.
+Clear canonical ownership, defensive storage handling, explicit demo disclosures, useful build guards, and passing focused browser regressions support a strong assessment within the static-site scope. PH4-01 removes the verified navigation defect. The rating remains unchanged after this scoped follow-up: P2-01 and the stated verification limits remain, and complete release readiness has not been established.

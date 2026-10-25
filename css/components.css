@@ -460,6 +460,28 @@
   gap: var(--space-sm);
 }
 
+@media (width < 900px) {
+  .nav__panel {
+    justify-content: flex-start;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    /* Reserve close-control and focus-ring space at both scroll boundaries. */
+    padding: calc(var(--size-header) + var(--space-sm)) var(--space-md);
+    scroll-padding-block: var(--space-sm);
+  }
+
+  /* Auto margins center a stack that fits, then yield to scrolling when full. */
+  .nav__list {
+    flex-shrink: 0;
+    margin-block-start: auto;
+  }
+
+  .nav__cta {
+    flex-shrink: 0;
+    margin-block-end: auto;
+  }
+}
+
 /* Header booking link: a quiet outlined control beside the navigation, kept
    apart from the filled .button--primary used by page-level calls to action. */
 .header__booking {

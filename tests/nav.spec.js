@@ -371,6 +371,173 @@ test.describe("primary navigation state contract", () => {
   });
 });
 
+// Geometry and hit testing catch clipped controls that toBeVisible() accepts.
+const menuControlReachability = (controls) => controls.evaluateAll((elements) =>
+  elements.map((element) => {
+    const box = element.getBoundingClientRect();
+    const style = getComputedStyle(element);
+    const focused = element.matches(":focus-visible");
+    const ring = focused ? parseFloat(style.outlineWidth) + parseFloat(style.outlineOffset) : 0;
+    const hit = document.elementFromPoint(box.left + box.width / 2, box.top + box.height / 2);
+    return {
+      reachable: box.top - ring >= 0 && box.bottom + ring <= innerHeight &&
+        box.left - ring >= 0 && box.right + ring <= innerWidth && element.contains(hit),
+      focusVisible: focused && style.outlineStyle === "solid" && parseFloat(style.outlineWidth) >= 2,
+    };
+  })
+);
+
+const expectFocusedMenuControl = async (control) => {
+  await expect(control).toBeFocused();
+  await expect.poll(() => menuControlReachability(control)).toEqual([
+    { reachable: true, focusVisible: true },
+  ]);
+};
+
+test.describe("mobile menu viewport reachability", () => {
+  test.use({ reducedMotion: "reduce" });
+
+  const viewports = [
+    { width: 667, height: 375, colorScheme: "dark" },
+    { width: 812, height: 375, colorScheme: "light" },
+    { width: 320, height: 256, colorScheme: "dark" },
+    { ...MOBILE, colorScheme: "light" },
+  ];
+
+  for (const route of ["/", "/privacy.html", "/terms.html", "/cookies.html"]) {
+    for (const { colorScheme, ...viewport } of viewports) {
+      test(`${route} ${viewport.width}x${viewport.height} ${colorScheme}: pointer, focus, and cleanup`, async ({ page }) => {
+        await page.setViewportSize(viewport);
+        await page.emulateMedia({ colorScheme });
+        await page.goto(route);
+        await page.evaluate(() => document.fonts.ready);
+        await expect(page.locator("html")).toHaveClass(new RegExp(`theme--${colorScheme}`));
+        const nav = getNav(page);
+        const controls = nav.panel.locator("a[href], button");
+        const first = controls.first();
+        const theme = controls.last();
+        const booking = nav.panel.getByRole("link", { name: "Umów wizytę" });
+        const contactBar = page.locator(".mobile-cta");
+        const hasContactBar = route === "/" && viewport.width < 768;
+
+        await nav.toggle.click();
+        await expectMobileMenuOpen(nav);
+        await expect(controls).toHaveCount(9);
+        await expect(first).toBeFocused();
+        expect((await menuControlReachability(first))[0].reachable).toBe(true);
+        if (hasContactBar) await expect(contactBar).toHaveCSS("visibility", "hidden");
+
+        const geometry = await nav.panel.evaluate((panel) => ({
+          height: panel.clientHeight,
+          scrollHeight: panel.scrollHeight,
+          width: panel.clientWidth,
+          scrollWidth: panel.scrollWidth,
+          documentWidth: document.documentElement.scrollWidth,
+          stackCenter: (panel.firstElementChild.getBoundingClientRect().top +
+            panel.lastElementChild.getBoundingClientRect().bottom) / 2,
+        }));
+        expect(geometry.height).toBe(viewport.height);
+        expect(geometry.scrollWidth).toBe(geometry.width);
+        expect(geometry.documentWidth).toBe(viewport.width);
+        if (viewport.height === MOBILE.height) {
+          expect(geometry.scrollHeight).toBe(geometry.height);
+          expect(Math.abs(geometry.stackCenter - viewport.height / 2)).toBeLessThan(1);
+        } else {
+          expect(geometry.scrollHeight).toBeGreaterThan(geometry.height);
+        }
+
+        // Use real wheel input; locator scrolling could conceal a broken panel.
+        const pageY = await page.evaluate(() => scrollY);
+        const reached = new Set();
+        await page.mouse.move(viewport.width / 2, viewport.height / 2);
+        for (let step = 0; step < 10; step += 1) {
+          const states = await menuControlReachability(controls);
+          for (const [index, state] of states.entries()) {
+            if (state.reachable && !reached.has(index)) {
+              await controls.nth(index).click({ trial: true });
+              reached.add(index);
+            }
+          }
+          const { top, max } = await nav.panel.evaluate((panel) => ({
+            top: panel.scrollTop, max: panel.scrollHeight - panel.clientHeight,
+          }));
+          if (top >= max - 1) break;
+          await page.mouse.wheel(0, viewport.height / 2);
+          await expect.poll(() => nav.panel.evaluate((panel) => panel.scrollTop)).toBeGreaterThan(top);
+        }
+        expect([...reached].sort()).toEqual([0, 1, 2, 3, 4, 5, 6, 7, 8]);
+        expect(await page.evaluate(() => scrollY)).toBe(pageY);
+
+        const themeLabel = await theme.getAttribute("aria-label");
+        await theme.click();
+        await expect(theme).not.toHaveAttribute("aria-label", themeLabel);
+        await expect(page.locator("html")).toHaveClass(new RegExp(`theme--${colorScheme === "dark" ? "light" : "dark"}`));
+        await expectMobileMenuOpen(nav);
+        // The close control remains clickable above the panel at its scroll end.
+        expect((await menuControlReachability(nav.toggle))[0].reachable).toBe(true);
+        await nav.toggle.click();
+        await expectMobileMenuClosed(nav);
+        await expect(nav.toggle).toBeFocused();
+        if (hasContactBar) await expect(contactBar).toHaveCSS("visibility", "visible");
+
+        // Reopen from the scrolled end. Native focus must reveal the first link.
+        await page.keyboard.press("Enter");
+        for (let index = 0; index < 9; index += 1) {
+          await expectFocusedMenuControl(controls.nth(index));
+          await page.keyboard.press("Tab");
+        }
+        await expectFocusedMenuControl(nav.toggle);
+        await page.keyboard.press("Tab");
+        await expectFocusedMenuControl(first);
+        // Traverse backwards too, including both ends of the focus trap.
+        await page.keyboard.press("Shift+Tab");
+        await expectFocusedMenuControl(nav.toggle);
+        for (let index = 8; index >= 0; index -= 1) {
+          await page.keyboard.press("Shift+Tab");
+          await expectFocusedMenuControl(controls.nth(index));
+        }
+        await page.keyboard.press("Escape");
+        await expectMobileMenuClosed(nav);
+        await expect(nav.toggle).toBeFocused();
+
+        await page.keyboard.press("Enter");
+        await page.keyboard.press("Shift+Tab");
+        await page.keyboard.press("Shift+Tab");
+        await expectFocusedMenuControl(theme);
+        await page.setViewportSize({ width: 900, height: viewport.height });
+        await expectDesktopNavigation(nav);
+        await expectPageUnlocked(nav);
+        await expect(nav.panel).toHaveCSS("overflow-y", "visible");
+        await expect(nav.panel).toHaveCSS("padding-top", "0px");
+        await expect(nav.panel.locator(".nav__list")).toHaveCSS("margin-top", "0px");
+        for (const state of await menuControlReachability(controls)) expect(state.reachable).toBe(true);
+        await theme.focus();
+        await page.keyboard.press("Tab");
+        await expect(nav.main.locator(":focus")).toHaveCount(1);
+
+        await first.focus();
+        await page.setViewportSize({ width: 899, height: viewport.height });
+        await expectMobileMenuClosed(nav);
+        await expect(nav.toggle).toBeFocused();
+        await page.setViewportSize(viewport);
+        await page.keyboard.press("Enter");
+        await expectFocusedMenuControl(first);
+        await first.press("Enter");
+        await expect(page).toHaveURL(/#about$/);
+        await expectMobileMenuClosed(nav);
+        await expect(page.locator('main section[id="about"]')).toBeInViewport();
+
+        await page.goto(route);
+        await nav.toggle.click();
+        await booking.click();
+        await expect(page).toHaveURL(/#booking$/);
+        await expectMobileMenuClosed(nav);
+        await expect(page.locator('main section[id="booking"]')).toBeInViewport();
+      });
+    }
+  }
+});
+
 test.describe("mobile header booking link", () => {
   test("is skipped by Tab over the hero and reachable with a visible focus outline after it", async ({ page }) => {
     await page.setViewportSize(MOBILE);
