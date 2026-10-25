@@ -18,11 +18,11 @@ Canonical sources are the root HTML documents, `build/`, `css/`, `js/`, `assets/
 - Check a main item only after its outcome, required subtasks, documentation, and focused verification are complete. Preserve unfinished work and established Polish content, ARIA, `data-*`, navigation, storage, responsive, and theme contracts.
 - Record significant completed changes in `docs/CHANGELOG.md` when authorized. Planning-only maintenance does not require a changelog entry.
 - Phases 1–3 and completed additional improvements retain the identifiers and titles from `docs/archive/plans/PLAN-2026-10-24.md`. Their implementations were cross-checked against current sources, tests, and configuration; prior execution evidence is recorded in `docs/archive/audits/daily-AUDIT-2026-10-24.md` and `AUDIT.md`, rather than claimed as new test runs.
-- The initial planning review used static repository inspection. PH4-01 implementation checks are recorded below and in `AUDIT.md`. Existing tests use Chromium against Vite development; the PH4-01 production-preview checks cover navigation, not a new PWA audit. Repository hosting configuration does not establish deployment status.
+- The initial planning review used static repository inspection. Phase 4 implementation checks are recorded below and in `AUDIT.md`. Existing tests use Chromium against Vite development; the Phase 4 production-preview checks cover navigation and lightbox behavior, not a new PWA audit. Repository hosting configuration does not establish deployment status.
 
 ## Current priorities
 
-1. `PH4-02` — Restore a usable lightbox image area at constrained heights (`AUDIT.md` P2-01).
+No required Phase 4 correction remains open. Optional improvements and verification limitations remain documented below and in `AUDIT.md`.
 
 ## Phase 1 — Accessibility of hidden and revealed content
 
@@ -74,7 +74,7 @@ Canonical sources are the root HTML documents, `build/`, `css/`, `js/`, `assets/
 
 - [x] **O-02 — Add focused browser checks for non-navigation interactions**
   - **Completed outcome:** The interaction specification covers booking state/preselection, lightbox navigation/focus return, back-to-top behavior, and theme persistence, with npm and CI routing.
-  - **Evidence:** `tests/interactions.spec.js`, `package.json`, and `.github/workflows/ci.yml`; both audits record passing interaction checks. Short-height lightbox geometry remains separate work under `PH4-02`.
+  - **Evidence:** `tests/interactions.spec.js`, `package.json`, and `.github/workflows/ci.yml`; both audits record passing interaction checks. Short-height lightbox geometry is verified under `PH4-02`.
 
 - [x] **O-03 — Render the shared header at build time**
   - **Completed outcome:** One header renderer supplies the four content pages with page-specific destinations and a home-only inert mini CTA; insertion guards prevent duplicate or misplaced markup.
@@ -98,12 +98,14 @@ These fixes are independent; address the primary-navigation defect first. Each i
   - **Completion condition:** Every menu action and its focus indication can be brought into view and activated at the affected dimensions on all four content pages; closing or switching to desktop restores the normal page state.
   - **Changelog:** yes — responsive navigation and accessibility behavior.
 
-- [ ] **PH4-02 — Preserve a usable lightbox image area at constrained heights**
-  - **Source:** `AUDIT.md` — P2-01, confirmed against `.lightbox__content` and `.lightbox__image` in `css/components.css`. The 90dvh grid gives its image only the space left after fixed controls, caption, padding, and gaps.
-  - [ ] Adjust short-height spacing, row allocation, or internal scrolling in the canonical lightbox styles so the image does not collapse into a strip; retain access to the caption and close/previous/next controls.
-  - [ ] Extend `tests/interactions.spec.js` with short-height image-geometry and control-reachability checks; retain looping arrow-key navigation, live captions, focus wrapping/return, Escape/overlay closing, and body scroll restoration.
-  - [ ] Run `npm run build`, `npm run test:interactions`, and `npm run test:mobile-contact-bar`. In `npm run preview`, visually inspect all six images at 320×256, 667×375, and 375×812 in light and dark themes, including keyboard access to controls.
-  - [ ] After successful verification, resolve P2-01 in `AUDIT.md`, update affected README behavior/check descriptions and `docs/CHANGELOG.md`, and complete this item.
+- [x] **PH4-02 — Preserve a usable lightbox image area at constrained heights**
+  - **Source:** `AUDIT.md` — resolved P2-01: the 90dvh grid previously left only 8.39px for the image at 320×256.
+  - [x] Adjust short-height spacing, row allocation, or internal scrolling in the canonical lightbox styles so the image does not collapse into a strip; retain access to the caption and close/previous/next controls.
+  - [x] Extend `tests/interactions.spec.js` with short-height image-geometry and control-reachability checks; retain looping arrow-key navigation, live captions, focus wrapping/return, Escape/overlay closing, and body scroll restoration.
+  - [x] Run `npm run build`, `npm run test:interactions`, and `npm run test:mobile-contact-bar`. In `npm run preview`, visually inspect all six images at 320×256, 667×375, and 375×812 in light and dark themes, including keyboard access to controls.
+  - [x] After successful verification, resolve P2-01 in `AUDIT.md`, update affected README behavior/check descriptions and `docs/CHANGELOG.md`, and complete this item.
+  - **Completed outcome:** At heights up to 480px, reduced spacing and a viewport-relative image row retain a full, undistorted preview; internal scrolling exposes captions and controls. JavaScript, markup, asset selection, and ordinary portrait/desktop styling are unchanged.
+  - **Verification:** Build passed; 16 interaction and 14 contact-bar tests passed. Production preview passed 8 lightbox tests and visual checks of all six images at 320×256, 667×375, 375×812, and 1280×800 in both themes; actual bitmap sizes were respectively 102.4×128, 150×187.5, 289.5×361.88, and 415.2×519px. Focus outlines, wheel/keyboard reachability, closing, and scroll restoration passed in Windows Chromium; other browsers/devices and production PWA behavior were not re-audited.
   - **Completion condition:** At 320×256 every image is visibly inspectable rather than reduced to the reported approximately 8px strip, and all controls remain reachable; ordinary portrait and landscape presentation and modal behavior remain usable.
   - **Changelog:** yes — responsive gallery behavior.
 

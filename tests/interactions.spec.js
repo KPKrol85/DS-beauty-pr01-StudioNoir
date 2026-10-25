@@ -5,7 +5,7 @@ import { expect, test } from "@playwright/test";
 // control rendered by build/shared-footer.js (js/back-to-top.js), and theme
 // persistence across a reload and pages. First-paint theme resolution and
 // single-page switching are covered by tests/theme-first-paint.spec.js.
-// From 768px the mobile contact bar is hidden, so it covers none of these controls.
+// The short-height lightbox cases also check mobile contact-bar compatibility.
 const DESKTOP = { width: 1280, height: 800 };
 const LEGAL_PAGES = ["/privacy.html", "/terms.html", "/cookies.html"];
 
@@ -180,6 +180,82 @@ const expectLightboxImage = async (lightbox, index) => {
   await expect(lightbox.caption).toHaveText(`${alt} · ${index + 1} / ${count}`);
 };
 
+// Intersect with the viewport and every clipping ancestor, not just the img box.
+// For images, measure the actual object-fit: contain bitmap inside that box.
+const lightboxGeometry = (target) => target.evaluate((element) => {
+  const box = element.getBoundingClientRect();
+  const style = getComputedStyle(element);
+  const ring = element.matches(":focus-visible")
+    ? parseFloat(style.outlineWidth) + parseFloat(style.outlineOffset) : 0;
+  let width = box.width;
+  let height = box.height;
+  if (element instanceof HTMLImageElement) {
+    const scale = Math.min(width / element.naturalWidth, height / element.naturalHeight);
+    width = element.naturalWidth * scale;
+    height = element.naturalHeight * scale;
+  }
+  const left = box.left + (box.width - width) / 2 - ring;
+  const top = box.top + (box.height - height) / 2 - ring;
+  const right = left + width + ring * 2;
+  const bottom = top + height + ring * 2;
+  let clip = { left: 0, top: 0, right: innerWidth, bottom: innerHeight };
+  for (let parent = element.parentElement; parent; parent = parent.parentElement) {
+    const parentStyle = getComputedStyle(parent);
+    const rect = parent.getBoundingClientRect();
+    if (parentStyle.overflowX !== "visible") {
+      clip.left = Math.max(clip.left, rect.left + parent.clientLeft);
+      clip.right = Math.min(clip.right, rect.left + parent.clientLeft + parent.clientWidth);
+    }
+    if (parentStyle.overflowY !== "visible") {
+      clip.top = Math.max(clip.top, rect.top + parent.clientTop);
+      clip.bottom = Math.min(clip.bottom, rect.top + parent.clientTop + parent.clientHeight);
+    }
+  }
+  const dialog = element.closest('[role="dialog"]');
+  const dialogStyle = getComputedStyle(dialog);
+  const availableWidth = dialog.clientWidth - parseFloat(dialogStyle.paddingLeft) -
+    parseFloat(dialogStyle.paddingRight);
+  const hit = document.elementFromPoint(box.left + box.width / 2, box.top + box.height / 2);
+  return {
+    width, height,
+    fullyVisible: left >= clip.left - 1 && right <= clip.right + 1 &&
+      top >= clip.top - 1 && bottom <= clip.bottom + 1,
+    hit: element.contains(hit),
+    focusVisible: element.matches(":focus-visible") && style.outlineStyle === "solid" &&
+      parseFloat(style.outlineWidth) >= 2,
+    // A useful preview fits the entire bitmap into at least half the viewport's
+    // height, unless its natural aspect ratio exhausts the dialog width first.
+    usefulHeight: element instanceof HTMLImageElement
+      ? Math.min(innerHeight / 2, availableWidth * element.naturalHeight / element.naturalWidth) : 0,
+    direction: top < clip.top ? -1 : 1,
+  };
+});
+
+// Real wheel input proves the scroll range is reachable without locator auto-scroll.
+const revealLightboxTarget = async (page, lightbox, target) => {
+  const dialogBox = await lightbox.dialog.boundingBox();
+  await page.mouse.move(dialogBox.x + dialogBox.width / 2, dialogBox.y + dialogBox.height / 2);
+  // Let Chromium update compositor hit testing after native focus scrolling.
+  await lightbox.dialog.evaluate(() => new Promise((resolve) =>
+    requestAnimationFrame(() => requestAnimationFrame(resolve))));
+  for (let step = 0; step < 5; step += 1) {
+    const geometry = await lightboxGeometry(target);
+    if (geometry.fullyVisible) return;
+    const top = await lightbox.dialog.evaluate((dialog) => dialog.scrollTop);
+    await page.mouse.wheel(0, geometry.direction * dialogBox.height / 2);
+    await expect.poll(() => lightbox.dialog.evaluate((dialog) => dialog.scrollTop)).not.toBe(top);
+  }
+  expect((await lightboxGeometry(target)).fullyVisible).toBe(true);
+};
+
+const expectLightboxFocus = async (control) => {
+  await expect(control).toBeFocused();
+  await expect.poll(async () => {
+    const { fullyVisible, focusVisible, hit } = await lightboxGeometry(control);
+    return { fullyVisible, focusVisible, hit };
+  }).toEqual({ fullyVisible: true, focusVisible: true, hit: true });
+};
+
 test.describe("gallery lightbox", () => {
   test("a thumbnail opens a modal dialog that takes focus, locks scrolling, and keeps Tab inside", async ({ page }) => {
     await page.goto("/");
@@ -239,6 +315,101 @@ test.describe("gallery lightbox", () => {
     // Focus returns to the thumbnail of the image last shown, not to the one that opened the dialog.
     await expect(lightbox.thumbnails.nth(1)).toBeFocused();
   });
+});
+
+test.describe("lightbox viewport reachability", () => {
+  for (const viewport of [{ width: 320, height: 256 }, { width: 667, height: 375 }, { width: 375, height: 812 }]) {
+    for (const colorScheme of ["light", "dark"]) {
+      test(`${viewport.width}x${viewport.height} ${colorScheme}: six inspectable images and modal controls`, async ({ page }) => {
+        await page.setViewportSize(viewport);
+        await page.emulateMedia({ colorScheme });
+        await page.goto("/");
+        await page.evaluate(() => document.fonts.ready);
+        await expect(page.locator("html")).toHaveClass(new RegExp(`theme--${colorScheme}`));
+        const lightbox = getLightbox(page);
+        const body = page.locator("body");
+        const contactBar = page.locator(".mobile-cta");
+        const overflow = await body.evaluate((element) => element.style.overflow);
+        await expect(lightbox.thumbnails).toHaveCount(6);
+        await lightbox.thumbnails.first().click();
+        await expect(lightbox.dialog).toHaveAttribute("aria-modal", "true");
+        await expect(lightbox.root).toHaveAttribute("aria-hidden", "false");
+        await expect(lightbox.close).toBeFocused();
+        await expect(body).toHaveCSS("overflow", "hidden");
+        await expect(contactBar).toHaveCSS("visibility", "hidden");
+        await expect(page.getByRole("navigation", { name: "Szybki kontakt" })).toHaveCount(0);
+        const pageY = await page.evaluate(() => scrollY);
+
+        for (let index = 0; index < 6; index += 1) {
+          await expectLightboxImage(lightbox, index);
+          await expect.poll(() => lightbox.image.evaluate((image) => image.complete && image.naturalWidth > 0)).toBe(true);
+          await expect(lightbox.image).toHaveCSS("object-fit", "contain");
+          await revealLightboxTarget(page, lightbox, lightbox.image);
+          const image = await lightboxGeometry(lightbox.image);
+          expect(image.fullyVisible).toBe(true);
+          expect(image.height).toBeGreaterThanOrEqual(image.usefulHeight - 1);
+          expect(image.width).toBeGreaterThan(0);
+          await revealLightboxTarget(page, lightbox, lightbox.caption);
+          for (const control of [lightbox.close, lightbox.previous, lightbox.next]) {
+            await revealLightboxTarget(page, lightbox, control);
+            expect((await lightboxGeometry(control)).hit).toBe(true);
+            await control.click({ trial: true });
+          }
+          await lightbox.next.click();
+        }
+        await expectLightboxImage(lightbox, 0);
+        expect(await page.evaluate(() => scrollY)).toBe(pageY);
+        expect(await lightbox.dialog.evaluate((dialog) => dialog.scrollWidth)).toBeLessThanOrEqual(
+          await lightbox.dialog.evaluate((dialog) => dialog.clientWidth),
+        );
+        await lightbox.previous.click();
+        await expectLightboxImage(lightbox, 5);
+
+        // Keyboard traversal reveals controls and their outlines at both scroll ends.
+        // Next is focused after pointer navigation: wrap forward, then backward.
+        await lightbox.next.click();
+        for (const control of [lightbox.close, lightbox.previous, lightbox.next, lightbox.close]) {
+          await page.keyboard.press("Tab");
+          await expectLightboxFocus(control);
+        }
+        for (const control of [lightbox.next, lightbox.previous, lightbox.close, lightbox.next]) {
+          await page.keyboard.press("Shift+Tab");
+          await expectLightboxFocus(control);
+        }
+        await page.keyboard.press("Enter");
+        await expectLightboxImage(lightbox, 1);
+        await page.keyboard.press("ArrowLeft");
+        await expectLightboxImage(lightbox, 0);
+        await page.keyboard.press("ArrowLeft");
+        await expectLightboxImage(lightbox, 5);
+        await page.keyboard.press("ArrowRight");
+        await expectLightboxImage(lightbox, 0);
+
+        const expectClosed = async (index) => {
+          await expect(lightbox.root).toBeHidden();
+          await expect(lightbox.root).toHaveAttribute("aria-hidden", "true");
+          await expect(lightbox.dialog).toHaveCount(0);
+          await expect(lightbox.image).not.toHaveAttribute("src");
+          await expect(lightbox.thumbnails.nth(index)).toBeFocused();
+          expect(await body.evaluate((element) => element.style.overflow)).toBe(overflow);
+          await expect(contactBar).toHaveCSS("visibility", "visible");
+        };
+        await page.keyboard.press("Escape");
+        await expectClosed(0);
+        // Reopening after scrolling must expose Close and the entire first image.
+        await page.keyboard.press("Enter");
+        await expectLightboxFocus(lightbox.close);
+        await expect.poll(() => lightboxGeometry(lightbox.image).then((image) => image.fullyVisible)).toBe(true);
+        await page.keyboard.press("ArrowRight");
+        await lightbox.close.click();
+        await expectClosed(1);
+        await page.keyboard.press("Enter");
+        await page.keyboard.press("ArrowRight");
+        await lightbox.root.locator(".lightbox__overlay").click({ position: { x: 1, y: 1 } });
+        await expectClosed(2);
+      });
+    }
+  }
 });
 
 const getBackToTop = (page) => ({

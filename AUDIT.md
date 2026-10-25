@@ -10,9 +10,9 @@
 
 ## 1. Executive assessment
 
-Studio Noir has a coherent architecture for its documented demonstration scope: six HTML pages, shared build-time navigation/header/footer generation, modular browser interactions, and production-only service-worker registration. The initial audit passed an in-memory production build and all 83 then-existing browser tests. The PH4-01 follow-up passed the disk-writing build, 45 navigation tests, and 14 contact-bar tests. Booking accurately presents a browser-only demonstration, with no appointment creation or submission.
+Studio Noir has a coherent architecture for its documented demonstration scope: six HTML pages, shared build-time navigation/header/footer generation, modular browser interactions, and production-only service-worker registration. The initial audit passed an in-memory production build and all 83 then-existing browser tests. PH4-01 passed the disk-writing build, 45 navigation tests, and 14 contact-bar tests; PH4-02 passed the build, 16 interaction tests, 14 contact-bar tests, and 8 production-preview lightbox tests. Booking accurately presents a browser-only demonstration, with no appointment creation or submission.
 
-The mobile-menu defect P1-01 is resolved and verified under PH4-01. One height-constrained lightbox defect remains (P2-01); no P0 or open P1 issue is recorded. The two optional improvements remain open. This scoped follow-up does not establish complete release readiness.
+The mobile-menu defect P1-01 and height-constrained lightbox defect P2-01 are resolved and verified under PH4-01 and PH4-02. No open P0, P1, or P2 issue is recorded. The two optional improvements remain open. These scoped follow-ups do not establish complete release readiness.
 
 ## 2. Audit scope and verification
 
@@ -46,10 +46,18 @@ The mobile-menu defect P1-01 is resolved and verified under PH4-01. One height-c
 - Source review and passing regressions preserve dialog ARIA, `inert`, Tab/Shift+Tab wrapping, native link/booking navigation, theme behavior, contact-bar modal hiding, and desktop navigation. `js/nav.js`, shared markup, and the shared focus helper were unchanged; `test:interactions` was not rerun. P2-01 and optional improvements were not implemented or re-audited.
 - `git diff --check` and the complete task diff review passed. The following limits still apply.
 
+### PH4-02 follow-up verification — 2026-10-25
+
+- `npm run build` — passed with existing guards and generated disk output. `npm run test:interactions -- --fully-parallel --workers=2` — **16 passed** (including 6 new viewport/theme cases); `npm run test:mobile-contact-bar -- --fully-parallel --workers=2` — **14 passed**. Tests used preinstalled Windows Chromium through `PLAYWRIGHT_BROWSERS_PATH`; no dependencies or repository configuration changed.
+- The new 320×256 regression first failed against the original CSS with an actual bitmap height of **8.39px**. A preliminary run also timed out waiting for wheel scrolling; the helper now waits for compositor frames after focus scrolling. The final development and production runs passed without retries.
+- `npm run preview -- --host 127.0.0.1 --port 4174 --strictPort` served the disk build. The existing 2 desktop lightbox tests and 6 new viewport/theme cases passed against this preview using an OS-temporary configuration (**8 passed**). All six loaded images, actual contained bitmap geometry/clipping, wheel access, pointer controls, visible Tab/Shift+Tab wrapping, cyclic arrows, alt/caption updates, Escape/button/overlay closing, focus return, reopening, body scroll locking/restoration, and contact-bar hiding/restoration were checked.
+- Production screenshots of every image were visually inspected at 320×256, 667×375, and 375×812 in both themes (**36 image views**), plus 1280×800 (**12 desktop views**); focused-control screenshots were also inspected. All six images shared actual bitmap sizes of **102.4×128**, **150×187.5**, **289.5×361.88**, and **415.2×519px**, respectively. At 375×812 the `<img>` box remains 508.80px high, but `object-fit: contain` renders a 361.88px-high bitmap; element height alone overstates the visible photo size.
+- Short-height dialog scroll ranges were 0–84px at 320×256 and 0–15px at 667×375; portrait and desktop required no internal scrolling. Full images are visible on opening, and focus movement exposes control outlines. First-image light-theme screenshots at 375×812 and 1280×800 were pixel-identical to the pre-change build; no uncaught page errors occurred in the screenshot scenarios. JavaScript, markup, source selection, worker, and deployment configuration are unchanged. PWA/offline behavior and optional improvements were not re-audited; navigation tests were not rerun for this lightbox-only change.
+
 ### Verification limitations
 
 - No live URL was supplied or tested. Canonical/manifest/README origins were treated as configuration, without assuming an active deployment. Real Netlify redirects, response headers, clean-URL behavior, and production infrastructure were not verified.
-- The initial audit used an in-memory build/serving harness. PH4-01 subsequently exercised `npm run build` and `npm run preview` for navigation; production PWA/offline behavior was not re-audited by that follow-up, and hosting-platform behavior remains unverified.
+- The initial audit used an in-memory build/serving harness. Phase 4 subsequently exercised `npm run build` and `npm run preview` for navigation and lightbox behavior; production PWA/offline behavior was not re-audited by these follow-ups, and hosting-platform behavior remains unverified.
 - Browser verification was Windows Chromium only, using preinstalled browsers. GitHub Actions execution, Firefox, WebKit, physical devices, assistive technologies, and service-worker upgrade transitions were not verified.
 - The responsive checks were bounded viewport scenarios, not a complete visual/state audit. Contrast assessment covered the four opaque pairings above, not all translucent surfaces, backdrop composition, hover/focus/active states, or forced colors. No accessibility certification or performance benchmark/Lighthouse result is claimed.
 - Security review covered current repository-visible code/configuration; no penetration test or dependency vulnerability scan was performed. External profile/contact destinations and real correspondence/telephone delivery were not tested.
@@ -60,7 +68,7 @@ The mobile-menu defect P1-01 is resolved and verified under PH4-01. One height-c
 - **Canonical shared markup:** `build/shared-header.js`, `build/shared-footer.js`, and `build/primary-navigation.js` generate ordinary HTML in both Vite modes, validate insertion points, and prevent duplicate shared markup. Existing no-JavaScript desktop tests passed for home/legal navigation and matching footer destinations.
 - **Useful build contracts:** `vite.config.js` validates page inputs, required offline documents, worker placeholders, and unresolved CSS custom-property names. The successful in-memory build emitted hashed browser assets and a content-derived worker cache version; `dist/` is explicitly generated and ignored.
 - **Explicit demonstration boundaries:** `index.html` booking/contact/testimonial disclosures and `build/shared-footer.js` distinguish fictional salon content from the author's contact information. `js/booking.js` renders selections/status through `textContent`; the regression suite verified that completing the demo neither submits nor persists the selection.
-- **Tested interaction mechanics:** the initial suite verified menu state/focus wrapping and breakpoint cleanup, lightbox cycling/focus return, booking preselection, contact-bar focus clearance, back-to-top focus handoff, and theme persistence. PH4-01 adds verified short-height menu reachability coverage; P2-01 remains outside that follow-up.
+- **Tested interaction mechanics:** the initial suite verified menu state/focus wrapping and breakpoint cleanup, lightbox cycling/focus return, booking preselection, contact-bar focus clearance, back-to-top focus handoff, and theme persistence. Phase 4 adds verified short-height menu reachability and six-image lightbox geometry/control coverage in both themes.
 - **Resilient theme and content baseline:** `public/theme-bootstrap.js` resolves stored/system preferences before application initialization; `js/theme.js` handles invalid/blocked storage. The first-paint tests passed across all four content pages, including storage failure and static no-JavaScript defaults. `js/reveal.js` uses a zero intersection threshold and leaves content visible when its observer cannot be created; both existing short-viewport reveal tests passed.
 - **Bounded production caching:** `service-worker.js` restricts interception to same-origin GET requests, deletes only older caches with the project's prefix, and caches on-demand images only after successful responses. Local production tests verified document precaching and offline fallback. Image variants remain intentionally available only after fetching under the current cache version (`README.md:612-620`).
 
@@ -74,15 +82,12 @@ None detected.
 
 ## 6. P2 — Minor refinements
 
-### [P2-01] Lightbox image collapses to an almost invisible strip at reflow dimensions
+None open.
 
-- **Classification:** Defect
-- **Affected area:** Gallery lightbox, constrained-height responsive layout.
-- **Evidence:** `css/components.css:765-777`, `css/components.css:790-794`; first gallery image reproduced at 320×256 in Chromium.
-- **Current behavior:** The dialog is fixed to 90dvh, with automatic rows for close/caption/navigation and a `minmax(0, 1fr)` image row. At 320×256, the dialog is approximately 230px tall and the image receives only 8px height after padding, gaps, and controls. The same image has approximately 137px available at 667×375 and 509px at 375×812.
-- **Impact:** The gallery remains operable and can be closed, but its enlargement function becomes practically unusable at the narrow, short reflow size already used elsewhere in the project's tests.
-- **Recommended direction:** Adapt lightbox spacing/row allocation to short heights or allow appropriate internal scrolling so a useful image area remains available without losing access to controls.
-- **Verification criteria:** At 320×256, every gallery image can be meaningfully viewed in the open lightbox and close/previous/next controls remain reachable; ordinary portrait and landscape layouts retain their current behavior.
+### [P2-01] Lightbox image collapses to an almost invisible strip at reflow dimensions — RESOLVED
+
+- **Result:** PH4-02 adds a local height breakpoint in `css/components.css`: smaller token-based spacing, a viewport-relative image row, and internal scrolling preserve the contained image while exposing captions and controls. JavaScript, ARIA, focus/scroll behavior, source selection, and ordinary portrait/desktop styling are preserved.
+- **Verification:** Build, 16 interaction tests, 14 contact-bar tests, and 8 production-preview lightbox tests passed. All six images were visually inspected at the three required sizes and desktop in both themes; geometry and limitations are recorded in the PH4-02 follow-up above.
 
 ## 7. Extra quality improvements
 
@@ -104,10 +109,10 @@ None detected.
 
 **Status:** Ready with minor refinements
 
-The production build and required navigation/contact-bar regressions pass. Open findings are **0 P0, 0 P1, and 1 P2**, plus **2 optional improvements**. P1-01 is verified resolved; P2-01 remains a smaller gallery refinement. Neither the lack of a booking backend nor the documented partial offline image model is a release defect for this project. Deployment, cross-browser, assistive-technology, and legal verification remain outside the completed checks; complete release readiness is not claimed.
+The production build and required focused regressions pass. Open findings are **0 P0, 0 P1, and 0 P2**, plus **2 optional improvements**. P1-01 and P2-01 are verified resolved. Neither the lack of a booking backend nor the documented partial offline image model is a release defect for this project. Deployment, cross-browser, assistive-technology, and legal verification remain outside the completed checks; complete release readiness is not claimed.
 
 ## 9. Senior rating
 
 **Rating:** 8/10
 
-Clear canonical ownership, defensive storage handling, explicit demo disclosures, useful build guards, and passing focused browser regressions support a strong assessment within the static-site scope. PH4-01 removes the verified navigation defect. The rating remains unchanged after this scoped follow-up: P2-01 and the stated verification limits remain, and complete release readiness has not been established.
+Clear canonical ownership, defensive storage handling, explicit demo disclosures, useful build guards, and passing focused browser regressions support a strong assessment within the static-site scope. Phase 4 resolves the verified navigation and lightbox defects. The rating remains **8/10** after these scoped follow-ups: optional improvements and the stated verification limits remain, and complete release readiness has not been established.

@@ -30,6 +30,7 @@ When an implementation task is defined, apply this policy and state `Changelog: 
 
 ### Changed
 
+- Preserved a usable lightbox image area on short viewports with compact spacing, viewport-relative image sizing, and internal scrolling; verified all six images and pointer/keyboard controls in light/dark themes while retaining ordinary portrait/desktop presentation.
 - Kept the mobile menu centered when space allows and internally scrollable on short viewports, preserving close-control access and focus outlines; added four-page pointer/keyboard regression coverage.
 - Replaced the mobile menu toggle with an animated three-line-to-X control, accessible labels, modal focus handling, and reduced-motion support.
 - Migrated production URLs to `https://ds-beauty-pr01-studionoir.netlify.app/` across canonical/OG metadata, legal pages, SEO files, and the README.
