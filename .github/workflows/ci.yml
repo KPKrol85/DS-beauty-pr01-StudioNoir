@@ -16,7 +16,7 @@ concurrency:
 
 jobs:
   validate:
-    name: Build, navigation, mobile contact-bar and interaction tests
+    name: Build, navigation, mobile contact-bar, interaction, reveal and first-paint tests
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
@@ -48,3 +48,9 @@ jobs:
 
       - name: Run interaction tests
         run: npm run test:interactions
+
+      - name: Run section reveal tests
+        run: npm run test:reveal
+
+      - name: Run theme first-paint tests
+        run: npm run test:theme-first-paint

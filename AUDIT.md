@@ -12,7 +12,7 @@
 
 Studio Noir has a coherent architecture for its documented demonstration scope: six HTML pages, shared build-time navigation/header/footer generation, modular browser interactions, and production-only service-worker registration. The initial audit passed an in-memory production build and all 83 then-existing browser tests. PH4-01 passed the disk-writing build, 45 navigation tests, and 14 contact-bar tests; PH4-02 passed the build, 16 interaction tests, 14 contact-bar tests, and 8 production-preview lightbox tests. Booking accurately presents a browser-only demonstration, with no appointment creation or submission.
 
-The mobile-menu defect P1-01 and height-constrained lightbox defect P2-01 are resolved and verified under PH4-01 and PH4-02. No open P0, P1, or P2 issue is recorded. Optional improvement O-04 is implemented and verified; O-05 remains open. These scoped follow-ups do not establish complete release readiness.
+The mobile-menu defect P1-01 and height-constrained lightbox defect P2-01 are resolved and verified under PH4-01 and PH4-02. No open P0, P1, or P2 issue is recorded. Optional improvements O-04 and O-05 are implemented and locally verified. These scoped follow-ups do not establish complete release readiness.
 
 ## 2. Audit scope and verification
 
@@ -62,6 +62,14 @@ The mobile-menu defect P1-01 and height-constrained lightbox defect P2-01 are re
 - For the corrected offline run, other gallery entries were removed to create a controlled partial cache, the online page was closed, and a fresh page loaded offline with HTTP cache disabled and cleared. The lightbox received its own HTTP 200 response with `fromServiceWorker: true` and `serviceWorkerResponseSource: "cache-storage"`, decoded the AVIF at **480×600**, and visibly displayed it in a screenshot. Captions, Tab/Shift+Tab, cyclic arrows, Previous/Next, Escape/button closing, reopening, focus return, scroll restoration, and contact-bar restoration passed; an uncached next image failed to load while controls remained usable, and all six images loaded after restoring online state.
 - `git diff --check` and JavaScript syntax checks passed. Verification used preinstalled Windows Chromium **153.0.8010.12**, with local browser/server processes outside the sandbox's network isolation; an initial sandbox connection failure and a cache-inspection timing error in the temporary harness were corrected before the successful scenario. No dependencies, CI, deployment, or O-05 changes were made; uncached variants and service-worker upgrade transitions remain outside the demonstrated guarantee.
 
+### O-05 follow-up verification — 2026-10-25
+
+- `package.json` adds `test:reveal` and `test:theme-first-paint`; `.github/workflows/ci.yml` invokes them in separate named steps and expands the job display name. Existing specifications, `playwright.config.js`, dependencies, and lockfile are unchanged.
+- `npm run build` passed with the existing guards and generated disk output. `npm run test:reveal` passed **2 tests (47.3s)**; `npm run test:theme-first-paint` passed **28 tests (1.4 minutes)**, with no failed tests in either completed run. Both used the existing Chromium project, preinstalled Windows Chromium **153.0.8010.12**, and the configured Vite development server on **127.0.0.1:5183**, with only `PLAYWRIGHT_BROWSERS_PATH` set to locate installed browsers. No dependencies or browsers were installed.
+- The initial sandbox reveal invocation was interrupted before test results while port 5183 was unreachable. One focused reveal rerun and the first-paint run completed outside network isolation; assertions, application behavior, configuration, and timeouts were not modified. The three original suites were not rerun for this routing-only change.
+- The installed Playwright YAML parser accepted the workflow. A structural comparison with HEAD confirmed that only the job display name and the two appended steps changed; every existing specification maps exactly once through an npm script to CI. The build, Chromium installation, checkout, Node.js 22/cache, `npm ci`, original regression steps, single Ubuntu job, triggers, read-only permissions, concurrency cancellation, and 15-minute timeout are preserved. `git diff --check` passed; both README language sections and the changelog were synchronized.
+- GitHub Actions was neither triggered nor observed; local success and static routing do not establish a remote CI result or validate the Ubuntu job duration. These Playwright runs cover Vite development in Chromium, not production `dist/`, service-worker/offline behavior, or other browsers. Earlier production evidence remains limited to the separate scenarios recorded above.
+
 ### Verification limitations
 
 - No live URL was supplied or tested. Canonical/manifest/README origins were treated as configuration, without assuming an active deployment. Real Netlify redirects, response headers, clean-URL behavior, and production infrastructure were not verified.
@@ -106,21 +114,20 @@ None open.
 - **Verification:** Build, 18 interaction tests, 14 contact-bar tests, 9 production-preview tests, and the controlled offline scenario above passed. The cached 480px AVIF loaded in the lightbox with its WebP alternative absent; unavailable-image controls and online restoration were also verified in Windows Chromium.
 - **Scope boundary:** Optional improvement to the explicitly limited image-caching model; it does not require precaching the entire gallery or promise complete offline media availability.
 
-### Include the existing reveal and first-paint specifications in CI
+### Include the existing reveal and first-paint specifications in CI — COMPLETED (O-05)
 
 - **Relevant area:** Automated regression verification.
-- **Current evidence:** `.github/workflows/ci.yml:43-50` runs only navigation, contact-bar, and interaction scripts. `tests/reveal.spec.js` and `tests/theme-first-paint.spec.js` remain manual as documented in `README.md:519`; both were included in this audit's passing 83-test run.
-- **Potential value:** Automatically protect the short-viewport reveal and pre-initialization theme behaviors already covered by authored regression tests.
-- **Scope boundary:** Optional extension of existing Chromium coverage, using current dependencies and tests; the documented manual workflow is not itself a defect.
+- **Result:** Two new npm scripts and separate CI steps route all five existing specifications through the unchanged Chromium/Vite development-server configuration. The original workflow behavior and dependencies are preserved.
+- **Verification:** Build, 2 reveal tests, 28 first-paint tests, YAML parsing, exact workflow routing, and `git diff --check` passed locally. Remote CI execution was not observed; environment details and coverage limits are recorded above.
 
 ## 8. Current readiness conclusion
 
 **Status:** Ready with minor refinements
 
-The production build and required focused regressions pass. Open findings are **0 P0, 0 P1, and 0 P2**, plus **1 optional improvement (O-05)**. P1-01, P2-01, and O-04 are verified resolved. Neither the lack of a booking backend nor the documented partial offline image model is a release defect for this project. Deployment, cross-browser, assistive-technology, and legal verification remain outside the completed checks; complete release readiness is not claimed.
+The production build and required focused regressions pass. Open findings are **0 P0, 0 P1, and 0 P2**, with **0 planned optional improvements remaining**. P1-01, P2-01, O-04, and O-05 are verified resolved within their documented local scope. Neither the lack of a booking backend nor the documented partial offline image model is a release defect for this project. Remote CI, deployment, cross-browser, assistive-technology, and legal verification remain outside the completed checks; complete release readiness is not claimed.
 
 ## 9. Senior rating
 
 **Rating:** 8/10
 
-Clear canonical ownership, defensive storage handling, explicit demo disclosures, useful build guards, and passing focused browser regressions support a strong assessment within the static-site scope. Phase 4 resolves the verified navigation and lightbox defects. The rating remains **8/10** after these scoped follow-ups: optional improvements and the stated verification limits remain, and complete release readiness has not been established.
+Clear canonical ownership, defensive storage handling, explicit demo disclosures, useful build guards, and passing focused browser regressions support a strong assessment within the static-site scope. Phase 4 resolves the verified navigation and lightbox defects, and O-05 routes all five specifications into CI. The rating remains **8/10** after these scoped follow-ups: the stated verification limits remain, and complete release readiness has not been established.

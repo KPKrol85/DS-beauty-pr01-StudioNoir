@@ -22,7 +22,7 @@ Canonical sources are the root HTML documents, `build/`, `css/`, `js/`, `assets/
 
 ## Current priorities
 
-No required Phase 4 correction remains open. Optional improvements and verification limitations remain documented below and in `AUDIT.md`.
+No required Phase 4 correction or planned optional improvement remains open. Completed work and verification limitations remain documented below and in `AUDIT.md`.
 
 ## Phase 1 — Accessibility of hidden and revealed content
 
@@ -109,7 +109,7 @@ These fixes are independent; address the primary-navigation defect first. Each i
   - **Completion condition:** At 320×256 every image is visibly inspectable rather than reduced to the reported approximately 8px strip, and all controls remain reachable; ordinary portrait and landscape presentation and modal behavior remain usable.
   - **Changelog:** yes — responsive gallery behavior.
 
-## Optional future improvements
+## Optional improvements
 
 These items are non-blocking enhancements to the documented demonstration scope. They are independent of Phase 4 and do not expand product capabilities.
 
@@ -119,10 +119,7 @@ These items are non-blocking enhancements to the documented demonstration scope.
   - **Scope boundary:** Preserve on-demand image caching; no full-gallery precache or complete offline-media guarantee.
   - **Changelog:** yes — offline gallery behavior.
 
-- [ ] **O-05 — Include the existing reveal and first-paint specifications in CI**
-  - **Source:** `AUDIT.md` — optional CI finding; `.github/workflows/ci.yml` currently runs only the three npm-routed specifications, while `tests/reveal.spec.js` and `tests/theme-first-paint.spec.js` remain manual.
-  - [ ] Add project-script and CI routing for those two existing specifications with the current Chromium/Vite configuration and dependencies; retain the current build and three regression steps.
-  - [ ] Execute both specifications through the new scripts, verify workflow routing, and synchronize both README language sections and `docs/CHANGELOG.md`. Distinguish local test success from any observed remote CI result.
-  - **Completion condition:** CI invokes all five existing specifications, and documentation accurately describes the automated route and its development-server scope.
-  - **Scope boundary:** No browser-matrix expansion, new test framework, or deployment automation is required.
+- [x] **O-05 — Include the existing reveal and first-paint specifications in CI**
+  - **Completed outcome:** `test:reveal` and `test:theme-first-paint` invoke the existing specifications through separate CI steps; all five specifications use the unchanged Chromium/Vite development-server configuration. The build, original regression steps, dependencies, permissions, concurrency, and 15-minute timeout are preserved; both README language sections and the changelog document the route.
+  - **Verification:** `npm run build` passed; the new scripts passed 2 reveal and 28 first-paint tests with preinstalled Windows Chromium. YAML parsing, exact five-specification routing, preservation of the original workflow, and `git diff --check` passed; the sandbox run was interrupted before results, and successful browser runs used processes outside network isolation. Remote GitHub Actions, production PWA/offline behavior, and other browsers were not verified; the original three suites were not rerun.
   - **Changelog:** yes — regression verification workflow.

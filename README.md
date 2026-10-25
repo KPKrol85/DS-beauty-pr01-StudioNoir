@@ -141,11 +141,12 @@ npm run preview                  # vite preview — podgląd dist/, domyślnie h
 npm run test:nav                 # playwright test — testy regresji przeglądarkowej wspólnego kontraktu nawigacji
 npm run test:mobile-contact-bar  # playwright test — testy regresji przeglądarkowej paska szybkiego kontaktu
 npm run test:interactions        # playwright test — testy regresji przeglądarkowej rezerwacji, lightboxa, „Wróć na górę” i trwałości motywu
+npm run test:reveal              # playwright test — testy pojawiania się sekcji na krótkich widokach
+npm run test:theme-first-paint    # playwright test — testy motywu przed inicjalizacją aplikacji
 ```
 
 - Porty nie są ustawione w `vite.config.js`; podane wartości to domyślne ustawienia Vite.
-- `npm run test:nav`, `npm run test:mobile-contact-bar` i `npm run test:interactions` korzystają z `playwright.config.js`, który sam uruchamia dedykowany serwer Vite dev na porcie 5183; wymagana jest przeglądarka Chromium dla Playwright (`npx playwright install chromium`).
-- Specyfikacje bez skryptu npm uruchamia się bezpośrednio przez Playwright, z tą samą konfiguracją i tym samym serwerem: `npx playwright test tests/reveal.spec.js` oraz `npx playwright test tests/theme-first-paint.spec.js`.
+- Wszystkie pięć skryptów `test:*` korzysta z `playwright.config.js`, który sam uruchamia dedykowany serwer Vite dev na porcie 5183; wymagana jest przeglądarka Chromium dla Playwright (`npx playwright install chromium`).
 - Strony korzystają ze ścieżek absolutnych i modułów ES, dlatego wymagają serwera HTTP — nie należy otwierać plików HTML bezpośrednio z dysku.
 - Service worker jest rejestrowany tylko w buildzie produkcyjnym (`import.meta.env.PROD` w `js/main.js`), a więc w `npm run preview`, ale nie w `npm run dev`.
 
@@ -185,8 +186,8 @@ Co weryfikują polecenia:
   - responsywny lightbox przy 320×256, 667×375 i 375×812, w obu motywach: załadowanie wszystkich sześciu zdjęć, użyteczny rozmiar rzeczywistej bitmapy z uwzględnieniem proporcji i przycinania, przewijanie kółkiem do obrazu, podpisu i kontrolek, trafianie wskaźnikiem, widoczny obrys fokusu przy Tab/Shift+Tab, cykliczna nawigacja i aktualizacja alt/podpisu, ponowne otwarcie, zamykanie klawiszem Escape, przyciskiem i nakładką, powrót fokusu, blokada i przywrócenie przewijania oraz ukrycie/powrót paska kontaktu;
   - „Wróć na górę”: widoczność tylko wtedy, gdy `.footer__copyright` przecina obszar widoku, w obu kierunkach przewijania, a w stanie ukrytym brak w sekwencji Tab i drzewie dostępności; aktywacja klawiaturą — natychmiastowy powrót na górę przy `prefers-reduced-motion: reduce`, bez fragmentu w adresie, z fokusem na skip linku i dalszą sekwencją Tab od początku strony; aktywacja wskaźnikiem bez ograniczenia ruchu — płynne przewinięcie i zdjęcie fokusu bez przenoszenia go do skip linku; ten sam przycisk, wyzwalacz i przekazanie fokusu na stronach prawnych;
   - trwałość motywu: motyw jasny wybrany przełącznikiem przy ciemnej preferencji systemowej zostaje zapisany w `localStorage` i pozostaje aktywny (klasy `<html>` i `body`, etykieta przełącznika) po przeładowaniu strony głównej i przejściu linkiem stopki do `privacy.html`. Rozstrzyganie motywu przed pierwszym renderowaniem, preferencje systemowe i błędy pamięci pozostają zakresem `tests/theme-first-paint.spec.js`.
-- `npx playwright test tests/reveal.spec.js` — test regresji pojawiania się sekcji (`tests/reveal.spec.js`), uruchamiany bezpośrednio przez Playwright. Bez preferencji ograniczenia ruchu, na krótkich widokach 667×375 i 320×256 sprawdza, że elementy `[data-reveal]` poniżej początkowego widoku są początkowo ukryte, a każdy z jedenastu elementów — także kontenery wielokrotnie wyższe od widoku — po przewinięciu do niego przecina widok, ma klasę `is-visible` i pełną nieprzezroczystość.
-- `npx playwright test tests/theme-first-paint.spec.js` — testy inicjalizacji motywu (`tests/theme-first-paint.spec.js`), uruchamiane bezpośrednio przez Playwright:
+- `npm run test:reveal` — test regresji pojawiania się sekcji (`tests/reveal.spec.js`). Bez preferencji ograniczenia ruchu, na krótkich widokach 667×375 i 320×256 sprawdza, że elementy `[data-reveal]` poniżej początkowego widoku są początkowo ukryte, a każdy z jedenastu elementów — także kontenery wielokrotnie wyższe od widoku — po przewinięciu do niego przecina widok, ma klasę `is-visible` i pełną nieprzezroczystość.
+- `npm run test:theme-first-paint` — testy inicjalizacji motywu (`tests/theme-first-paint.spec.js`):
   - na `index.html`, `privacy.html`, `terms.html` i `cookies.html`, przy wstrzymanym `/js/main.js`, motyw ustawiony przez `public/theme-bootstrap.js` przed inicjalizacją aplikacji: klasa motywu na `<html>`, `color-scheme`, kolory `body` i `meta theme-color`, bez przeciwnego motywu na `<html>` na żadnym etapie ładowania;
   - przypadki: zapisany motyw jasny i ciemny, brak zapisanej wartości przy jasnej i ciemnej preferencji systemowej, niepoprawna zapisana wartość oraz `localStorage` zgłaszający wyjątek;
   - po inicjalizacji `js/theme.js`: etykieta przełącznika, zapis rozstrzygniętego motywu, przełączenie motywu i zapis zmiany;
@@ -194,7 +195,7 @@ Co weryfikują polecenia:
 - `npm run preview` — serwuje `dist/` po `npm run build` i jako jedyne polecenie projektu uruchamia service worker, dlatego w nim sprawdza się ręcznie precache, zachowanie offline i produkcyjne działanie PWA. Jeżeli wcześniej zarejestrowano worker pod tym samym adresem i portem, należy go wyrejestrować w narzędziach deweloperskich przeglądarki i odświeżyć stronę. Podgląd nie stosuje konfiguracji Netlify (`_redirects`, nagłówki z `netlify.toml`).
 - `git diff --check` — lekka, końcowa kontrola diffu przed commitem (błędy białych znaków, znaczniki konfliktów). Nie testuje aplikacji.
 
-Wszystkich pięć specyfikacji Playwright działa w Chromium na serwerze Vite dev. Skrypty npm mają tylko `tests/nav.spec.js`, `tests/mobile-contact-bar.spec.js` i `tests/interactions.spec.js` i tylko one są uruchamiane w CI (sekcja [Ciągła integracja (CI)](#ciągła-integracja-ci)); `tests/reveal.spec.js` i `tests/theme-first-paint.spec.js` uruchamia się ręcznie. Testy nie sprawdzają `dist/` ani produkcyjnego PWA, w tym działania offline; nie zapewniają pełnej regresji, audytu dostępności ani pokrycia wielu przeglądarek.
+Wszystkich pięć specyfikacji Playwright ma skrypty npm i jest uruchamianych w CI w Chromium na serwerze Vite dev (sekcja [Ciągła integracja (CI)](#ciągła-integracja-ci)). Testy nie sprawdzają `dist/` ani produkcyjnego PWA, w tym działania offline; nie zapewniają pełnej regresji, audytu dostępności ani pokrycia wielu przeglądarek.
 
 Dobór kontroli:
 
@@ -204,8 +205,8 @@ Dobór kontroli:
 | Wspólna nawigacja: `build/primary-navigation.js`, `build/shared-header.js`, znaczniki `<!-- studio-noir:shared-header -->`, markup nagłówka i menu, `js/header.js` (w tym kompaktowy link „Umów wizytę” w nagłówku), `js/nav.js`, `js/wrap-tab-focus.js`, style nawigacji i menu, przełączanie stanu mobilnego i desktopowego | `npm run build` (przy zmianach generowania HTML, CSS lub HTML), `npm run test:nav`, `npm run test:interactions` (przy zmianach `js/wrap-tab-focus.js`, używanego też przez lightbox), `git diff --check` |
 | Wspólna stopka: `build/shared-footer.js` (marka, linki prawne i ich `aria-current`, dane kontaktowe, linki społecznościowe, prawa autorskie, markup przycisku „Wróć na górę”), znaczniki `<!-- studio-noir:shared-footer -->` | `npm run build`, `npm run test:nav` (linki stopki „Nawigacja”), `npm run test:mobile-contact-bar` (link Instagram w stopce), `npm run test:interactions` (przycisk „Wróć na górę” i jego wyzwalacz `.footer__copyright`), ręczna kontrola pozostałej zawartości stopki w `npm run dev`, `git diff --check` |
 | Pasek szybkiego kontaktu: markup `.mobile-cta`, jego style, `--mobile-contact-bar-clearance`, `scroll-margin-bottom` linków w kartach stylistów i elementów galerii | `npm run build`, `npm run test:mobile-contact-bar`, `git diff --check` |
-| Pojawianie się sekcji: `js/reveal.js`, atrybuty `data-reveal`, style `.reveal` | `npm run build`, `npx playwright test tests/reveal.spec.js`, `git diff --check` |
-| Inicjalizacja i przełączanie motywu: `public/theme-bootstrap.js`, `js/theme.js`, tokeny motywu i `color-scheme` | `npm run build`, `npx playwright test tests/theme-first-paint.spec.js`, `npm run test:interactions` (trwałość motywu po przeładowaniu i między stronami), `git diff --check` |
+| Pojawianie się sekcji: `js/reveal.js`, atrybuty `data-reveal`, style `.reveal` | `npm run build`, `npm run test:reveal`, `git diff --check` |
+| Inicjalizacja i przełączanie motywu: `public/theme-bootstrap.js`, `js/theme.js`, tokeny motywu i `color-scheme` | `npm run build`, `npm run test:theme-first-paint`, `npm run test:interactions` (trwałość motywu po przeładowaniu i między stronami), `git diff --check` |
 | Przycisk „Wróć na górę”: `js/back-to-top.js`, style `.back-to-top`, markup w `build/shared-footer.js` | `npm run build`, `npm run test:interactions`, `git diff --check` |
 | Rezerwacja i lightbox: `js/booking.js`, `js/lightbox.js`, markup i style sekcji rezerwacji, galerii i lightboxa | `npm run build`, `npm run test:interactions`, `npm run test:mobile-contact-bar` (ukrycie paska przy otwartym lightboxie), `git diff --check` |
 | `service-worker.js`, `js/pwa-paths.js`, precache, `offline.html`, produkcyjne działanie PWA | `npm run build`, następnie `npm run preview`; `git diff --check` |
@@ -220,9 +221,11 @@ Workflow GitHub Actions `.github/workflows/ci.yml` uruchamia się przy pushu do 
 3. `npx playwright install --with-deps chromium` — Chromium wraz z wymaganymi zależnościami systemowymi;
 4. `npm run test:nav` — testy nawigacji na dedykowanym serwerze Vite dev (port 5183);
 5. `npm run test:mobile-contact-bar` — testy paska szybkiego kontaktu, również na dedykowanym serwerze Vite dev;
-6. `npm run test:interactions` — testy rezerwacji, lightboxa, przycisku „Wróć na górę” i trwałości motywu, w tym samym projekcie Chromium i na dedykowanym serwerze Vite dev.
+6. `npm run test:interactions` — testy rezerwacji, lightboxa, przycisku „Wróć na górę” i trwałości motywu;
+7. `npm run test:reveal` — testy pojawiania się sekcji na krótkich widokach;
+8. `npm run test:theme-first-paint` — testy motywu przed inicjalizacją aplikacji, przełączania i statycznego wariantu bez JavaScript.
 
-CI nie uruchamia `tests/reveal.spec.js` ani `tests/theme-first-paint.spec.js`.
+Wszystkie pięć kroków testowych korzysta z tego samego projektu Chromium i dedykowanego serwera Vite dev. Limit czasu zadania wynosi 15 minut.
 
 Błąd któregokolwiek kroku przerywa zadanie i oznacza przebieg jako nieudany. Workflow ma wyłącznie uprawnienie `contents: read`, a nowszy przebieg dla tej samej gałęzi lub pull requesta anuluje poprzedni, jeszcze trwający. CI tylko weryfikuje zmiany: nie modyfikuje repozytorium i nie wdraża witryny — wydanie produkcyjne pozostaje ręczną publikacją przez Netlify CLI, opisaną w sekcji [Wdrożenie](#wdrożenie).
 
@@ -472,11 +475,12 @@ npm run preview                  # vite preview — serves dist/, default http:/
 npm run test:nav                 # playwright test — browser regression tests for the shared navigation contract
 npm run test:mobile-contact-bar  # playwright test — browser regression tests for the mobile contact bar
 npm run test:interactions        # playwright test — browser regression tests for booking, the lightbox, "Wróć na górę", and theme persistence
+npm run test:reveal              # playwright test — section reveal tests on short viewports
+npm run test:theme-first-paint    # playwright test — theme tests before application initialization
 ```
 
 - Ports are not set in `vite.config.js`; the values above are Vite defaults.
-- `npm run test:nav`, `npm run test:mobile-contact-bar`, and `npm run test:interactions` use `playwright.config.js`, which starts its own dedicated Vite dev server on port 5183; the Playwright Chromium browser is required (`npx playwright install chromium`).
-- Specifications without an npm script are run directly through Playwright, with the same configuration and server: `npx playwright test tests/reveal.spec.js` and `npx playwright test tests/theme-first-paint.spec.js`.
+- All five `test:*` scripts use `playwright.config.js`, which starts its own dedicated Vite dev server on port 5183; the Playwright Chromium browser is required (`npx playwright install chromium`).
 - Pages use absolute paths and ES modules, so they require an HTTP server — the HTML files should not be opened directly from disk.
 - The service worker is registered only in production builds (`import.meta.env.PROD` in `js/main.js`), so it is active in `npm run preview` but not in `npm run dev`.
 
@@ -516,8 +520,8 @@ What each command verifies:
   - responsive lightbox at 320×256, 667×375, and 375×812 in both themes: loading all six images, useful actual bitmap dimensions accounting for aspect ratio and clipping, wheel access to the image/caption/controls, pointer hit testing, visible Tab/Shift+Tab outlines, cyclic navigation and alt/caption updates, reopening, Escape/button/overlay closing, focus return, scroll locking/restoration, and contact-bar hiding/restoration;
   - "Wróć na górę": visible only while `.footer__copyright` intersects the viewport, in both scroll directions, and absent from the Tab sequence and the accessibility tree while hidden; keyboard activation returns to the top immediately with `prefers-reduced-motion: reduce`, adds no URL fragment, focuses the skip link, and the Tab sequence continues from the start of the page; pointer activation without reduced motion scrolls smoothly and releases focus without moving it to the skip link; the same control, trigger, and focus hand-off on the legal pages;
   - theme persistence: a light theme chosen with the toggle under a dark system preference is stored in `localStorage` and stays active (`<html>` and `body` classes, toggle label) after a home page reload and after following the footer link to `privacy.html`. First-paint theme resolution, system preferences, and storage failures remain the scope of `tests/theme-first-paint.spec.js`.
-- `npx playwright test tests/reveal.spec.js` — the section reveal regression test (`tests/reveal.spec.js`), run directly through Playwright. Without a reduced-motion preference, on the short 667×375 and 320×256 viewports, it checks that `[data-reveal]` elements below the initial viewport start hidden, and that each of the eleven elements — including containers several times taller than the viewport — intersects the viewport once scrolled to, has the `is-visible` class, and is fully opaque.
-- `npx playwright test tests/theme-first-paint.spec.js` — theme initialization tests (`tests/theme-first-paint.spec.js`), run directly through Playwright:
+- `npm run test:reveal` — the section reveal regression test (`tests/reveal.spec.js`). Without a reduced-motion preference, on the short 667×375 and 320×256 viewports, it checks that `[data-reveal]` elements below the initial viewport start hidden, and that each of the eleven elements — including containers several times taller than the viewport — intersects the viewport once scrolled to, has the `is-visible` class, and is fully opaque.
+- `npm run test:theme-first-paint` — theme initialization tests (`tests/theme-first-paint.spec.js`):
   - on `index.html`, `privacy.html`, `terms.html`, and `cookies.html`, with `/js/main.js` held back, the theme set by `public/theme-bootstrap.js` before application initialization: the theme class on `<html>`, `color-scheme`, `body` colours, and `meta theme-color`, with the opposite theme never present on `<html>` during loading;
   - cases: stored light and dark themes, no stored value with light and dark system preferences, an invalid stored value, and a throwing `localStorage`;
   - after `js/theme.js` initializes: the toggle label, persistence of the resolved theme, switching the theme, and persistence of the change;
@@ -525,7 +529,7 @@ What each command verifies:
 - `npm run preview` — serves `dist/` after `npm run build` and is the only project command in which the service worker runs, so precache, offline behaviour, and production PWA behaviour are checked there manually. If a worker was previously registered on the same address and port, unregister it in the browser developer tools and reload the page. Preview does not apply the Netlify configuration (`_redirects`, headers from `netlify.toml`).
 - `git diff --check` — lightweight final diff check before committing (whitespace errors, conflict markers). It does not test the application.
 
-All five Playwright specifications run in Chromium against the Vite dev server. Only `tests/nav.spec.js`, `tests/mobile-contact-bar.spec.js`, and `tests/interactions.spec.js` have npm scripts, and only they run in CI (see [Continuous Integration (CI)](#continuous-integration-ci)); `tests/reveal.spec.js` and `tests/theme-first-paint.spec.js` are run manually. The tests do not check `dist/` or production PWA behaviour, including offline behaviour; they do not provide complete regression, an accessibility audit, or cross-browser coverage.
+All five Playwright specifications have npm scripts and run in CI in Chromium against the Vite dev server (see [Continuous Integration (CI)](#continuous-integration-ci)). The tests do not check `dist/` or production PWA behaviour, including offline behaviour; they do not provide complete regression, an accessibility audit, or cross-browser coverage.
 
 Choosing checks:
 
@@ -535,8 +539,8 @@ Choosing checks:
 | Shared navigation: `build/primary-navigation.js`, `build/shared-header.js`, `<!-- studio-noir:shared-header -->` markers, header and menu markup, `js/header.js` (including the compact "Umów wizytę" header link), `js/nav.js`, `js/wrap-tab-focus.js`, navigation and menu styles, mobile/desktop state switching | `npm run build` (for changes to HTML generation, CSS, or HTML), `npm run test:nav`, `npm run test:interactions` (for changes to `js/wrap-tab-focus.js`, which the lightbox also uses), `git diff --check` |
 | Shared footer: `build/shared-footer.js` (brand, legal links and their `aria-current`, contact details, social links, copyright, "Wróć na górę" button markup), the `<!-- studio-noir:shared-footer -->` markers | `npm run build`, `npm run test:nav` ("Nawigacja" footer links), `npm run test:mobile-contact-bar` (footer Instagram link), `npm run test:interactions` (the "Wróć na górę" button and its `.footer__copyright` trigger), manual check of the remaining footer content in `npm run dev`, `git diff --check` |
 | Quick-contact bar: `.mobile-cta` markup, its styles, `--mobile-contact-bar-clearance`, stylist-card link and gallery-item `scroll-margin-bottom` | `npm run build`, `npm run test:mobile-contact-bar`, `git diff --check` |
-| Section reveal: `js/reveal.js`, `data-reveal` attributes, `.reveal` styles | `npm run build`, `npx playwright test tests/reveal.spec.js`, `git diff --check` |
-| Theme initialization and switching: `public/theme-bootstrap.js`, `js/theme.js`, theme tokens and `color-scheme` | `npm run build`, `npx playwright test tests/theme-first-paint.spec.js`, `npm run test:interactions` (theme persistence across a reload and pages), `git diff --check` |
+| Section reveal: `js/reveal.js`, `data-reveal` attributes, `.reveal` styles | `npm run build`, `npm run test:reveal`, `git diff --check` |
+| Theme initialization and switching: `public/theme-bootstrap.js`, `js/theme.js`, theme tokens and `color-scheme` | `npm run build`, `npm run test:theme-first-paint`, `npm run test:interactions` (theme persistence across a reload and pages), `git diff --check` |
 | "Wróć na górę" button: `js/back-to-top.js`, `.back-to-top` styles, markup in `build/shared-footer.js` | `npm run build`, `npm run test:interactions`, `git diff --check` |
 | Booking and lightbox: `js/booking.js`, `js/lightbox.js`, booking, gallery, and lightbox markup and styles | `npm run build`, `npm run test:interactions`, `npm run test:mobile-contact-bar` (bar hidden while the lightbox is open), `git diff --check` |
 | `service-worker.js`, `js/pwa-paths.js`, precache, `offline.html`, production PWA behaviour | `npm run build`, then `npm run preview`; `git diff --check` |
@@ -551,9 +555,11 @@ The GitHub Actions workflow `.github/workflows/ci.yml` runs on pushes to `main` 
 3. `npx playwright install --with-deps chromium` — Chromium with its required system dependencies;
 4. `npm run test:nav` — the navigation tests against the dedicated Vite dev server (port 5183);
 5. `npm run test:mobile-contact-bar` — the quick-contact bar tests, also against the dedicated Vite dev server;
-6. `npm run test:interactions` — the booking, lightbox, "Wróć na górę", and theme persistence tests, in the same Chromium project and against the dedicated Vite dev server.
+6. `npm run test:interactions` — the booking, lightbox, "Wróć na górę", and theme persistence tests;
+7. `npm run test:reveal` — the section reveal tests on short viewports;
+8. `npm run test:theme-first-paint` — the theme tests before application initialization, switching, and the static no-JavaScript variant.
 
-CI does not run `tests/reveal.spec.js` or `tests/theme-first-paint.spec.js`.
+All five test steps use the same Chromium project and dedicated Vite dev server. The job timeout is 15 minutes.
 
 A failure in any step stops the job and marks the run as failed. The workflow has only the `contents: read` permission, and a newer run for the same branch or pull request cancels a superseded run still in progress. CI only validates changes: it does not modify the repository or deploy the site — production releases remain a manual Netlify CLI publish, as described under [Deployment](#deployment).
 
