@@ -167,17 +167,27 @@ const getLightbox = (page) => {
   };
 };
 
+// Make the loaded-candidate cases deterministic despite native lazy loading.
+const loadGalleryImages = async (lightbox) => {
+  await lightbox.thumbnails.last().scrollIntoViewIfNeeded();
+  await lightbox.thumbnails.first().scrollIntoViewIfNeeded();
+  await expect.poll(() => lightbox.thumbnails.locator("img").evaluateAll((images) =>
+    images.every((img) => img.complete && img.naturalWidth > 0))).toBe(true);
+};
+
 // The dialog shows the thumbnail's image and description; the caption adds its position.
 const expectLightboxImage = async (lightbox, index) => {
   const count = await lightbox.thumbnails.count();
   const { src, alt } = await lightbox.thumbnails
     .nth(index)
     .locator("img")
-    .evaluate((img) => ({ src: img.src, alt: img.alt }));
+    .evaluate((img) => ({ src: img.currentSrc || img.src, alt: img.alt }));
 
   await expect(lightbox.image).toHaveJSProperty("src", src);
   await expect(lightbox.image).toHaveAttribute("alt", alt);
   await expect(lightbox.caption).toHaveText(`${alt} · ${index + 1} / ${count}`);
+  await expect.poll(() => lightbox.image.evaluate((img) =>
+    img.complete && img.naturalWidth > 0 && img.naturalHeight > 0)).toBe(true);
 };
 
 // Intersect with the viewport and every clipping ancestor, not just the img box.
@@ -257,6 +267,100 @@ const expectLightboxFocus = async (control) => {
 };
 
 test.describe("gallery lightbox", () => {
+  test("reuses all six loaded picture candidates without requesting their fallback variants", async ({ page }) => {
+    await page.goto("/");
+    const lightbox = getLightbox(page);
+    await loadGalleryImages(lightbox);
+    const sources = await lightbox.thumbnails.locator("img").evaluateAll((images) =>
+      images.map((img) => ({ selected: img.currentSrc, fallback: img.src })));
+    for (const source of sources) {
+      expect(source.selected).not.toBe(source.fallback);
+      expect(source.selected).toMatch(/\.avif$/);
+    }
+    const fallbackRequests = [];
+    page.on("request", (request) => {
+      if (sources.some((source) => source.fallback === request.url())) fallbackRequests.push(request.url());
+    });
+
+    await lightbox.thumbnails.first().click();
+    for (let index = 0; index < 6; index += 1) {
+      await expectLightboxImage(lightbox, index);
+      await lightbox.next.click();
+    }
+    await expectLightboxImage(lightbox, 0);
+    await lightbox.close.click();
+    await expect(lightbox.thumbnails.first()).toBeFocused();
+    await page.keyboard.press("Enter");
+    await expectLightboxImage(lightbox, 0);
+    await page.keyboard.press("Escape");
+    expect(fallbackRequests).toEqual([]);
+  });
+
+  test("uses src for unavailable thumbnails and ignores an older response after rapid navigation", async ({ page }) => {
+    let releaseFirst;
+    let firstReady;
+    let firstFinished;
+    const held = new Promise((resolve) => { releaseFirst = resolve; });
+    const ready = new Promise((resolve) => { firstReady = resolve; });
+    const finished = new Promise((resolve) => { firstFinished = resolve; });
+    await page.route("**/assets/img/gallery/**", async (route) => {
+      const url = route.request().url();
+      // Failed picture candidates leave the original WebP src as the usable fallback.
+      if (url.endsWith(".avif")) return route.abort();
+      if (url.endsWith("gallery-1-800.webp")) {
+        const response = await route.fetch();
+        firstReady();
+        await held;
+        await route.fulfill({ response });
+        firstFinished();
+        return;
+      }
+      await route.continue();
+    });
+    await page.goto("/");
+    const lightbox = getLightbox(page);
+    await lightbox.thumbnails.last().scrollIntoViewIfNeeded();
+    await lightbox.thumbnails.first().scrollIntoViewIfNeeded();
+    await expect.poll(() => lightbox.thumbnails.locator("img").evaluateAll((images) =>
+      images.every((img) => img.complete && img.naturalWidth === 0))).toBe(true);
+    const fallback = await lightbox.thumbnails.locator("img").evaluateAll((images) =>
+      images.map((img) => ({ src: img.src, alt: img.alt })));
+    const expectFallback = async (index) => {
+      await expect(lightbox.image).toHaveJSProperty("src", fallback[index].src);
+      await expect(lightbox.image).toHaveAttribute("alt", fallback[index].alt);
+      await expect(lightbox.caption).toHaveText(`${fallback[index].alt} · ${index + 1} / 6`);
+      await expect.poll(() => lightbox.image.evaluate((img) =>
+        img.complete && img.naturalWidth > 0 && img.naturalHeight > 0)).toBe(true);
+    };
+
+    try {
+      await lightbox.thumbnails.first().click();
+      await ready;
+      await expect(lightbox.image).toHaveJSProperty("src", fallback[0].src);
+      // Dispatch several changes in one task while the first image is still pending.
+      await page.evaluate(() => {
+        for (const key of ["ArrowRight", "ArrowRight", "ArrowRight", "ArrowRight", "ArrowLeft"]) {
+          document.dispatchEvent(new KeyboardEvent("keydown", { key, bubbles: true }));
+        }
+      });
+      await expectFallback(3);
+      releaseFirst();
+      await finished;
+      await expectFallback(3);
+      await page.keyboard.press("Escape");
+      await expect(lightbox.thumbnails.nth(3)).toBeFocused();
+      await expect(lightbox.image).not.toHaveAttribute("src");
+      await page.keyboard.press("Enter");
+      await expectFallback(3);
+      await lightbox.previous.click();
+      await expectFallback(2);
+      await lightbox.close.click();
+      await expect(lightbox.thumbnails.nth(2)).toBeFocused();
+    } finally {
+      releaseFirst();
+    }
+  });
+
   test("a thumbnail opens a modal dialog that takes focus, locks scrolling, and keeps Tab inside", async ({ page }) => {
     await page.goto("/");
     const lightbox = getLightbox(page);
@@ -266,6 +370,7 @@ test.describe("gallery lightbox", () => {
     await expect(lightbox.root).toHaveAttribute("aria-hidden", "true");
     await expect(lightbox.dialog).toHaveCount(0);
 
+    await loadGalleryImages(lightbox);
     await lightbox.thumbnails.nth(2).click();
     await expect(lightbox.root).toHaveAttribute("aria-hidden", "false");
     await expect(lightbox.dialog).toBeVisible();
@@ -293,6 +398,7 @@ test.describe("gallery lightbox", () => {
     const lightbox = getLightbox(page);
     const body = page.locator("body");
 
+    await loadGalleryImages(lightbox);
     await lightbox.thumbnails.first().focus();
     await page.keyboard.press("Enter");
     await expect(lightbox.close).toBeFocused();
@@ -331,6 +437,7 @@ test.describe("lightbox viewport reachability", () => {
         const contactBar = page.locator(".mobile-cta");
         const overflow = await body.evaluate((element) => element.style.overflow);
         await expect(lightbox.thumbnails).toHaveCount(6);
+        await loadGalleryImages(lightbox);
         await lightbox.thumbnails.first().click();
         await expect(lightbox.dialog).toHaveAttribute("aria-modal", "true");
         await expect(lightbox.root).toHaveAttribute("aria-hidden", "false");
@@ -342,7 +449,6 @@ test.describe("lightbox viewport reachability", () => {
 
         for (let index = 0; index < 6; index += 1) {
           await expectLightboxImage(lightbox, index);
-          await expect.poll(() => lightbox.image.evaluate((image) => image.complete && image.naturalWidth > 0)).toBe(true);
           await expect(lightbox.image).toHaveCSS("object-fit", "contain");
           await revealLightboxTarget(page, lightbox, lightbox.image);
           const image = await lightboxGeometry(lightbox.image);

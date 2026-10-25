@@ -30,6 +30,7 @@ When an implementation task is defined, apply this policy and state `Changelog: 
 
 ### Changed
 
+- Reused loaded browser-selected gallery variants in the lightbox, retaining the thumbnail `src` fallback; verified cached-image viewing offline with an uncached WebP alternative, while preserving on-demand caching and existing modal behavior. Added focused source-selection, fallback, and rapid-navigation regression coverage; uncached gallery variants remain unavailable offline.
 - Preserved a usable lightbox image area on short viewports with compact spacing, viewport-relative image sizing, and internal scrolling; verified all six images and pointer/keyboard controls in light/dark themes while retaining ordinary portrait/desktop presentation.
 - Kept the mobile menu centered when space allows and internally scrollable on short viewports, preserving close-control access and focus outlines; added four-page pointer/keyboard regression coverage.
 - Replaced the mobile menu toggle with an animated three-line-to-X control, accessible labels, modal focus handling, and reduced-motion support.

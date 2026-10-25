@@ -12,7 +12,7 @@
 
 Studio Noir has a coherent architecture for its documented demonstration scope: six HTML pages, shared build-time navigation/header/footer generation, modular browser interactions, and production-only service-worker registration. The initial audit passed an in-memory production build and all 83 then-existing browser tests. PH4-01 passed the disk-writing build, 45 navigation tests, and 14 contact-bar tests; PH4-02 passed the build, 16 interaction tests, 14 contact-bar tests, and 8 production-preview lightbox tests. Booking accurately presents a browser-only demonstration, with no appointment creation or submission.
 
-The mobile-menu defect P1-01 and height-constrained lightbox defect P2-01 are resolved and verified under PH4-01 and PH4-02. No open P0, P1, or P2 issue is recorded. The two optional improvements remain open. These scoped follow-ups do not establish complete release readiness.
+The mobile-menu defect P1-01 and height-constrained lightbox defect P2-01 are resolved and verified under PH4-01 and PH4-02. No open P0, P1, or P2 issue is recorded. Optional improvement O-04 is implemented and verified; O-05 remains open. These scoped follow-ups do not establish complete release readiness.
 
 ## 2. Audit scope and verification
 
@@ -54,10 +54,18 @@ The mobile-menu defect P1-01 and height-constrained lightbox defect P2-01 are re
 - Production screenshots of every image were visually inspected at 320×256, 667×375, and 375×812 in both themes (**36 image views**), plus 1280×800 (**12 desktop views**); focused-control screenshots were also inspected. All six images shared actual bitmap sizes of **102.4×128**, **150×187.5**, **289.5×361.88**, and **415.2×519px**, respectively. At 375×812 the `<img>` box remains 508.80px high, but `object-fit: contain` renders a 361.88px-high bitmap; element height alone overstates the visible photo size.
 - Short-height dialog scroll ranges were 0–84px at 320×256 and 0–15px at 667×375; portrait and desktop required no internal scrolling. Full images are visible on opening, and focus movement exposes control outlines. First-image light-theme screenshots at 375×812 and 1280×800 were pixel-identical to the pre-change build; no uncaught page errors occurred in the screenshot scenarios. JavaScript, markup, source selection, worker, and deployment configuration are unchanged. PWA/offline behavior and optional improvements were not re-audited; navigation tests were not rerun for this lightbox-only change.
 
+### O-04 follow-up verification — 2026-10-25
+
+- `js/lightbox.js` now reuses `currentSrc` when the thumbnail is complete and has positive intrinsic width, otherwise retaining `src`. Selection remains synchronous, without loading callbacks or retries; worker strategy, generated cache ownership, markup, image assets, and modal contracts are unchanged.
+- `npm run build` passed; `npm run test:interactions -- --fully-parallel --workers=2` passed **18 tests**; `npm run test:mobile-contact-bar -- --fully-parallel --workers=2` passed **14 tests**. The interaction cases cover all six loaded candidates without alternative WebP requests, unavailable-thumbnail fallback, an older response released after rapid navigation, captions, reopening, keyboard behavior, and PH4-02 geometry in both themes. An initial run exposed assertions reading `currentSrc` after a still-loading thumbnail had legitimately used `src`; explicit lazy-image readiness fixed the test setup, and two later 30-second timeouts during overlapping dev/preview runs did not recur when the suites ran separately, without timeout or assertion relaxation.
+- `npm run preview -- --host 127.0.0.1 --port 4174 --strictPort` served the disk build. **9 production lightbox tests** passed through a temporary configuration, covering online source reuse, desktop controls, and all six images at 320×256, 667×375, and 375×812 in light/dark themes. A separate offline scenario used an isolated context, activated `/service-worker.js`, cache `studio-noir-2a7049f4bd7af854`, and a thumbnail displayed under worker control: `gallery-1-480-BPlG_r-i.avif` was cached, while `gallery-1-800-BRiLXCYq.webp` was absent; the original implementation was first reproduced with a 0×0 lightbox image.
+- For the corrected offline run, other gallery entries were removed to create a controlled partial cache, the online page was closed, and a fresh page loaded offline with HTTP cache disabled and cleared. The lightbox received its own HTTP 200 response with `fromServiceWorker: true` and `serviceWorkerResponseSource: "cache-storage"`, decoded the AVIF at **480×600**, and visibly displayed it in a screenshot. Captions, Tab/Shift+Tab, cyclic arrows, Previous/Next, Escape/button closing, reopening, focus return, scroll restoration, and contact-bar restoration passed; an uncached next image failed to load while controls remained usable, and all six images loaded after restoring online state.
+- `git diff --check` and JavaScript syntax checks passed. Verification used preinstalled Windows Chromium **153.0.8010.12**, with local browser/server processes outside the sandbox's network isolation; an initial sandbox connection failure and a cache-inspection timing error in the temporary harness were corrected before the successful scenario. No dependencies, CI, deployment, or O-05 changes were made; uncached variants and service-worker upgrade transitions remain outside the demonstrated guarantee.
+
 ### Verification limitations
 
 - No live URL was supplied or tested. Canonical/manifest/README origins were treated as configuration, without assuming an active deployment. Real Netlify redirects, response headers, clean-URL behavior, and production infrastructure were not verified.
-- The initial audit used an in-memory build/serving harness. Phase 4 subsequently exercised `npm run build` and `npm run preview` for navigation and lightbox behavior; production PWA/offline behavior was not re-audited by these follow-ups, and hosting-platform behavior remains unverified.
+- The initial audit used an in-memory build/serving harness. Phase 4 subsequently exercised `npm run build` and `npm run preview` for navigation and lightbox behavior; O-04 then verified the controlled partial-cache gallery scenario above. This does not establish complete offline-gallery availability, and hosting-platform behavior remains unverified.
 - Browser verification was Windows Chromium only, using preinstalled browsers. GitHub Actions execution, Firefox, WebKit, physical devices, assistive technologies, and service-worker upgrade transitions were not verified.
 - The responsive checks were bounded viewport scenarios, not a complete visual/state audit. Contrast assessment covered the four opaque pairings above, not all translucent surfaces, backdrop composition, hover/focus/active states, or forced colors. No accessibility certification or performance benchmark/Lighthouse result is claimed.
 - Security review covered current repository-visible code/configuration; no penetration test or dependency vulnerability scan was performed. External profile/contact destinations and real correspondence/telephone delivery were not tested.
@@ -91,11 +99,11 @@ None open.
 
 ## 7. Extra quality improvements
 
-### Reuse an available gallery image when its lightbox alternative is uncached
+### Reuse an available gallery image when its lightbox alternative is uncached — COMPLETED (O-04)
 
 - **Relevant area:** Lightbox image selection and partial offline support.
-- **Current evidence:** `js/lightbox.js:20-24` assigns the thumbnail's fallback `src`, rather than the browser-selected `currentSrc`. Locally, the displayed 480px AVIF was cached, but opening the lightbox offline requested an uncached 800px WebP and produced `naturalWidth: 0`. `README.md:620` already discloses that different/unfetched variants can be unavailable offline.
-- **Potential value:** An available thumbnail variant could provide a usable offline preview and avoid an unnecessary alternative-format request where appropriate.
+- **Result:** `js/lightbox.js` reuses a loaded browser-selected `currentSrc`, retaining `src` as fallback without asynchronous retries. Responsive image selection, descriptions, navigation, focus, and partial on-demand caching remain intact.
+- **Verification:** Build, 18 interaction tests, 14 contact-bar tests, 9 production-preview tests, and the controlled offline scenario above passed. The cached 480px AVIF loaded in the lightbox with its WebP alternative absent; unavailable-image controls and online restoration were also verified in Windows Chromium.
 - **Scope boundary:** Optional improvement to the explicitly limited image-caching model; it does not require precaching the entire gallery or promise complete offline media availability.
 
 ### Include the existing reveal and first-paint specifications in CI
@@ -109,7 +117,7 @@ None open.
 
 **Status:** Ready with minor refinements
 
-The production build and required focused regressions pass. Open findings are **0 P0, 0 P1, and 0 P2**, plus **2 optional improvements**. P1-01 and P2-01 are verified resolved. Neither the lack of a booking backend nor the documented partial offline image model is a release defect for this project. Deployment, cross-browser, assistive-technology, and legal verification remain outside the completed checks; complete release readiness is not claimed.
+The production build and required focused regressions pass. Open findings are **0 P0, 0 P1, and 0 P2**, plus **1 optional improvement (O-05)**. P1-01, P2-01, and O-04 are verified resolved. Neither the lack of a booking backend nor the documented partial offline image model is a release defect for this project. Deployment, cross-browser, assistive-technology, and legal verification remain outside the completed checks; complete release readiness is not claimed.
 
 ## 9. Senior rating
 

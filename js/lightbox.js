@@ -19,7 +19,10 @@ export const initLightbox = () => {
 
   const render = () => {
     const thumbnail = triggers[currentIndex].querySelector("img");
-    image.src = thumbnail.src;
+    // Reuse a loaded picture candidate and its on-demand cache entry.
+    const selectedSource = thumbnail.complete && thumbnail.naturalWidth > 0
+      ? thumbnail.currentSrc : "";
+    image.src = selectedSource || thumbnail.src;
     image.alt = thumbnail.alt;
     caption.textContent = `${thumbnail.alt} · ${currentIndex + 1} / ${triggers.length}`;
   };

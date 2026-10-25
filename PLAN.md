@@ -113,12 +113,9 @@ These fixes are independent; address the primary-navigation defect first. Each i
 
 These items are non-blocking enhancements to the documented demonstration scope. They are independent of Phase 4 and do not expand product capabilities.
 
-- [ ] **O-04 — Reuse an available gallery variant for offline lightbox viewing**
-  - **Source:** `AUDIT.md` — optional offline-gallery finding; `js/lightbox.js` uses the thumbnail's fallback `src`, while `index.html` supplies responsive AVIF/WebP alternatives cached on demand by `service-worker.js`.
-  - [ ] Use the browser-selected available variant, or a bounded fallback to it, when the alternative lightbox source is unavailable; preserve descriptions, navigation, focus behavior, and useful online image quality.
-  - [ ] Update the source-selection expectation in `tests/interactions.spec.js` to match the chosen behavior. Verify the offline case against a production build in `npm run preview`: view a thumbnail under worker control, go offline with its alternative uncached, and confirm a loaded lightbox image and working navigation/close controls.
-  - [ ] Update the precise partial-offline behavior in `README.md` and record the completed change in `docs/CHANGELOG.md` after verification.
-  - **Completion condition:** A previously displayed cached gallery variant can be viewed in the lightbox when its alternative is uncached; normal online viewing remains functional.
+- [x] **O-04 — Reuse an available gallery variant for offline lightbox viewing**
+  - **Completed outcome:** The lightbox reuses a successfully loaded thumbnail's browser-selected `currentSrc`, with the original `src` as fallback. Source selection is synchronous; responsive candidates, descriptions, modal interactions, and on-demand caching remain intact. Both README language sections and the changelog describe the bounded offline behavior.
+  - **Verification:** Build, 18 interaction tests, 14 contact-bar tests, and 9 production-preview lightbox tests passed. A separate controlled production scenario confirmed a 480×600 AVIF response from service-worker CacheStorage offline with its 800px WebP alternative uncached, working controls around an unavailable image, and all six images after restoring connectivity. Windows Chromium only; detailed evidence and preliminary test-harness failures are recorded in `AUDIT.md`.
   - **Scope boundary:** Preserve on-demand image caching; no full-gallery precache or complete offline-media guarantee.
   - **Changelog:** yes — offline gallery behavior.
 
