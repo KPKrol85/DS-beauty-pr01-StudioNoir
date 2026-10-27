@@ -107,5 +107,13 @@ export const initNav = () => {
     render();
   });
 
+  // The browser may clear focus from the newly hidden panel before the change
+  // event above runs; send that focus to the toggle, not to the page body.
+  panel.addEventListener("focusout", (event) => {
+    if (!isOpen && !desktopViewport.matches && event.relatedTarget === null) {
+      toggle.focus();
+    }
+  });
+
   render();
 };

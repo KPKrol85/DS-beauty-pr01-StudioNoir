@@ -360,6 +360,32 @@ test.describe("primary navigation state contract", () => {
     await expect(nav.toggle).toBeFocused();
   });
 
+  test("narrowing returns focus to the toggle when the browser clears it before the breakpoint event", async ({ page }) => {
+    // Chromium can blur a link in the newly hidden panel before it dispatches
+    // the media query change event, the order behind intermittent CI failures.
+    // Blurring at the start of the navigation listener reproduces it reliably.
+    await page.addInitScript(() => {
+      const addEventListener = MediaQueryList.prototype.addEventListener;
+      MediaQueryList.prototype.addEventListener = function (type, listener, options) {
+        const handle = type === "change" && this.media === "(min-width: 900px)"
+          ? (event) => {
+            if (!event.matches) document.activeElement.blur();
+            listener(event);
+          }
+          : listener;
+        return addEventListener.call(this, type, handle, options);
+      };
+    });
+    await page.setViewportSize(BREAKPOINT);
+    await page.goto("/");
+    const nav = getNav(page);
+
+    await nav.landmark.getByRole("link", { name: "O nas" }).focus();
+    await page.setViewportSize({ ...BREAKPOINT, width: 899 });
+    await expectMobileMenuClosed(nav);
+    await expect(nav.toggle).toBeFocused();
+  });
+
   test("desktop navigation is exposed to assistive technology", async ({ page }) => {
     await page.setViewportSize(DESKTOP);
     await page.goto("/");
