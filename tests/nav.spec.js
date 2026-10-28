@@ -605,3 +605,57 @@ test.describe("mobile header booking link", () => {
     await expect(page.locator('main section[id="booking"]')).toBeInViewport();
   });
 });
+
+// Moving backwards, the browser aligns each newly focused control with the top of
+// the scrollport, where the sticky header would cover it without scroll padding.
+test.describe("sticky header focus clearance", () => {
+  test.use({ reducedMotion: "reduce" });
+
+  for (const viewport of [MOBILE, BREAKPOINT, DESKTOP]) {
+    test(`${viewport.width}x${viewport.height}: Shift+Tab keeps page controls below the header`, async ({ page }) => {
+      await page.setViewportSize(viewport);
+      await page.goto("/");
+      await page.locator(".footer__link").first().focus();
+
+      let checked = 0;
+      for (let step = 0; step < 80; step += 1) {
+        await page.keyboard.press("Shift+Tab");
+        const geometry = await page.evaluate(() => {
+          const element = document.activeElement;
+          if (element.closest("[data-header]")) return { done: true };
+          if (!element.closest("[data-page-content]")) return null;
+
+          const box = element.getBoundingClientRect();
+          const style = getComputedStyle(element);
+          const headerBottom = document.querySelector("[data-header]").getBoundingClientRect().bottom;
+          const bar = document.querySelector(".mobile-cta");
+          const bandBottom = getComputedStyle(bar).display === "none" ? innerHeight : bar.getBoundingClientRect().top;
+          return {
+            label: element.getAttribute("aria-label") || element.textContent.trim().slice(0, 40),
+            top: box.top,
+            bottom: box.bottom,
+            ring: parseFloat(style.outlineWidth) + parseFloat(style.outlineOffset),
+            headerBottom,
+            band: bandBottom - headerBottom,
+          };
+        });
+        if (geometry?.done) break;
+        if (!geometry) continue;
+
+        checked += 1;
+        const label = `${geometry.label} at ${JSON.stringify(geometry)}`;
+        if (geometry.bottom - geometry.top + 2 * geometry.ring <= geometry.band) {
+          // The control and its focus outline clear the header.
+          expect(geometry.top - geometry.ring, label).toBeGreaterThanOrEqual(geometry.headerBottom);
+        } else {
+          // A photograph taller than the visible band must still cross it.
+          expect(geometry.bottom, label).toBeGreaterThan(geometry.headerBottom);
+        }
+      }
+
+      // The walk reached the header after covering the page's controls.
+      await expect(page.locator("[data-header] :focus")).toHaveCount(1);
+      expect(checked).toBeGreaterThan(20);
+    });
+  }
+});

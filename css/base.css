@@ -20,8 +20,12 @@
   box-sizing: border-box;
 }
 
+/* Focus and fragment scrolling stop below the sticky header. The spacing token
+   covers its tallest state (about 4.7rem at 320px) plus the focus outline, and
+   stays within the reading line of js/header.js (header height + 24px). */
 html {
   scroll-behavior: smooth;
+  scroll-padding-top: calc(var(--size-header) + var(--space-md));
 }
 
 body {

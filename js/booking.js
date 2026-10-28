@@ -19,15 +19,16 @@ const focusThroughFragmentNavigation = (element, afterReset) => {
   focus();
 };
 
-// The anchor aligns its target with the viewport top, which on a short viewport
-// can leave an element of the target below the visible area, its bottom scroll
-// margin included. Only then is the element scrolled into view, two frames on:
-// Blink starts the anchor scroll in the frame after the navigation, so the
-// correction takes that scroll over instead of racing it.
+// The anchor aligns its target with the root scroll padding below the sticky
+// header, which on a short viewport can leave an element of the target below the
+// visible area, its bottom scroll margin included. Only then is the element
+// scrolled into view, two frames on: Blink starts the anchor scroll in the frame
+// after the navigation, so the correction takes that scroll over instead of racing it.
 const revealBelowAnchor = (target, element) => {
   const clearance = parseFloat(getComputedStyle(element).scrollMarginBottom) || 0;
+  const offset = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
   const bottom = element.getBoundingClientRect().bottom - target.getBoundingClientRect().top;
-  if (bottom + clearance <= window.innerHeight) return;
+  if (offset + bottom + clearance <= window.innerHeight) return;
 
   window.requestAnimationFrame(() =>
     window.requestAnimationFrame(() => element.scrollIntoView({ block: "nearest" }))
