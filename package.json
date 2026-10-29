@@ -23,7 +23,8 @@
     "test:mobile-contact-bar": "playwright test tests/mobile-contact-bar.spec.js",
     "test:interactions": "playwright test tests/interactions.spec.js",
     "test:reveal": "playwright test tests/reveal.spec.js",
-    "test:theme-first-paint": "playwright test tests/theme-first-paint.spec.js"
+    "test:theme-first-paint": "playwright test tests/theme-first-paint.spec.js",
+    "test:manifest": "playwright test tests/manifest.spec.js"
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0",

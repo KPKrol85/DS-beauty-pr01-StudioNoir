@@ -25,6 +25,7 @@ When an implementation task is defined, apply this policy and state `Changelog: 
 
 ### Added
 
+- Added PWA install screenshots and app shortcuts to the manifest: two 1440×900 `wide` and two 390×844 `narrow` dark-theme JPEG captures of the production build (home, gallery, home, booking demo) with Polish labels, and "Usługi", "Galeria", and "Demo rezerwacji" shortcuts to `/index.html#services`, `#gallery`, and `#booking`, each with its own 192×192 PNG icon exported from an original SVG source. Screenshots are excluded from the service-worker precache (324 KB less per installation); shortcut icons are precached. Added the `test:manifest` Playwright specification and CI step; actual install-dialog and shortcut-menu rendering was not verified on a device.
 - Added the initial Studio Noir site with home, legal, offline, and 404 pages, modular CSS/JS, PWA support, and self-hosted assets.
 - Added service and stylist booking links with preselection and a standard `#booking` fallback without JavaScript.
 

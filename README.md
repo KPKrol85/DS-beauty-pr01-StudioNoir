@@ -34,7 +34,7 @@ Aktualny zakres:
 
   Playfair Display 1.203 pochodzi z [Google Fonts, commit `8b0a1d0f5983c89bc2b93f1b5fb55f9e252744b5`](https://github.com/google/fonts/tree/8b0a1d0f5983c89bc2b93f1b5fb55f9e252744b5/ofl/playfairdisplay); oryginalny TTF spakowano do WOFF2 bez subsettingu ani zmian glifów, metryk i nazw. Inter 4.001 to niezmieniony `InterVariable.woff2` z [wydania autora `v4.1`](https://github.com/rsms/inter/tree/v4.1/docs/font-files) (oś rozmiaru optycznego 14–32). Oba fonty są na SIL OFL 1.1; pełne noty i licencje w `public/font-licenses/playfair-display-OFL.txt` oraz `public/font-licenses/inter-OFL.txt` trafiają do `dist/font-licenses/` podczas buildu.
 - **Build:** Vite `^8.3.1` (8.3.1 w `package-lock.json`) — zależność deweloperska (`devDependencies`); wejścia buildu konfigurowane przez `build.rolldownOptions`.
-- **Testy:** Playwright — `@playwright/test` `^1.63.0` (1.63.0 w `package-lock.json`), zależność deweloperska używana przez skoncentrowane testy regresji przeglądarkowej nawigacji, paska szybkiego kontaktu, interakcji (rezerwacja, lightbox, „Wróć na górę”, trwałość motywu), pojawiania się sekcji i inicjalizacji motywu.
+- **Testy:** Playwright — `@playwright/test` `^1.63.0` (1.63.0 w `package-lock.json`), zależność deweloperska używana przez skoncentrowane testy regresji przeglądarkowej nawigacji, paska szybkiego kontaktu, interakcji (rezerwacja, lightbox, „Wróć na górę”, trwałość motywu), pojawiania się sekcji, inicjalizacji motywu oraz kontraktów manifestu PWA (zrzuty ekranu i skróty).
 - **Środowisko:** Node.js `^20.19.0 || >=22.12.0` (`engines` w `package.json`), npm (`package-lock.json`).
 - **Wdrożenie:** konfiguracja Netlify (`netlify.toml`, `public/_redirects`).
 
@@ -48,7 +48,7 @@ Aktualny zakres:
 - **Fokus nakładek:** `wrapTabFocus` z `js/wrap-tab-focus.js` obsługuje zawijanie Tab/Shift+Tab na granicach listy kontrolek w menu mobilnym i lightboxie. `js/nav.js` i `js/lightbox.js` nadal samodzielnie wybierają dostępne kontrolki i sprawdzają stan otwarcia.
 - **CSS:** `css/style.css` importuje warstwy w kolejności `tokens.css` → `base.css` → `layout.css` → `components.css` → `sections.css`. Motyw jasny nadpisuje tokeny kolorów w klasie `.theme--light`. Poniżej 768 px token `--mobile-contact-bar-clearance` z `css/tokens.css` dostarcza wspólny odstęp dla `padding-bottom` elementu `body` w `css/components.css` i `scroll-margin-bottom` opcji rezerwacji w `css/sections.css`, uwzględniając safe area; `js/booking.js` odczytuje obliczony margines oraz `scroll-padding-top` elementu `html` przy korekcie widoczności wyboru. `scroll-padding-top` w `css/base.css` (`--size-header` + `--space-md`) zatrzymuje przewijanie do fokusu i kotwic poniżej przyklejonego nagłówka.
 - **Build:** `vite.config.js` ustawia `appType: "mpa"`, `base: "/"` i siedem wejść: sześć stron HTML oraz `service-worker.js`. Lokalne pluginy: `studio-noir-shared-header` (`build/shared-header.js`) renderuje nagłówek, `studio-noir-shared-footer` (`build/shared-footer.js`) renderuje stopkę i przycisk „Wróć na górę”, `studio-noir-primary-navigation` (`build/primary-navigation.js`) renderuje nawigację, `studio-noir-css-custom-properties` sprawdza odwołania do właściwości niestandardowych, `studio-noir-social-image-urls` zamienia ścieżkę `og:image` na adres absolutny, a `studio-noir-precache` uzupełnia service worker o listę precache, listę obrazów buforowanych na żądanie i wersję cache.
-- **Pliki o stałych adresach:** `public/` zawiera manifest, favicony i ikony PWA (`assets/icons/favicon/`), `robots.txt`, `sitemap.xml` i `_redirects`; Vite kopiuje je do `dist/` bez przetwarzania.
+- **Pliki o stałych adresach:** `public/` zawiera manifest, favicony i ikony PWA (`assets/icons/favicon/`), ikony skrótów PWA (`assets/icons/shortcuts/`), zrzuty ekranu okna instalacji PWA (`assets/screenshots/pwa/`), `robots.txt`, `sitemap.xml` i `_redirects`; Vite kopiuje je do `dist/` bez przetwarzania.
 
 ### Struktura projektu
 
@@ -103,7 +103,10 @@ Aktualny zakres:
 │   ├── manifest.webmanifest
 │   ├── robots.txt
 │   ├── sitemap.xml
-│   └── assets/icons/favicon/ # favicony, Apple touch icon i ikony manifestu PWA
+│   └── assets/
+│       ├── icons/favicon/  # favicony, Apple touch icon i ikony manifestu PWA
+│       ├── icons/shortcuts/ # ikony skrótów PWA: źródła SVG i eksporty PNG 192×192
+│       └── screenshots/pwa/ # zrzuty ekranu okna instalacji PWA (JPEG)
 ├── docs/
 │   ├── CHANGELOG.md
 │   └── archive/
@@ -113,7 +116,8 @@ Aktualny zakres:
 │   ├── mobile-contact-bar.spec.js # testy regresji paska szybkiego kontaktu
 │   ├── interactions.spec.js # testy regresji rezerwacji, lightboxa, „Wróć na górę” i trwałości motywu
 │   ├── reveal.spec.js      # test pojawiania się sekcji na krótkich widokach
-│   └── theme-first-paint.spec.js # testy motywu przed pierwszym renderowaniem
+│   ├── theme-first-paint.spec.js # testy motywu przed pierwszym renderowaniem
+│   └── manifest.spec.js    # testy kontraktów manifestu PWA (zrzuty ekranu, skróty)
 ├── vite.config.js
 ├── playwright.config.js    # konfiguracja Playwright (Chromium, serwer Vite dev)
 ├── netlify.toml
@@ -143,10 +147,11 @@ npm run test:mobile-contact-bar  # playwright test — testy regresji przegląda
 npm run test:interactions        # playwright test — testy regresji przeglądarkowej rezerwacji, lightboxa, „Wróć na górę” i trwałości motywu
 npm run test:reveal              # playwright test — testy pojawiania się sekcji na krótkich widokach
 npm run test:theme-first-paint    # playwright test — testy motywu przed inicjalizacją aplikacji
+npm run test:manifest            # playwright test — testy kontraktów manifestu PWA: zrzutów ekranu i skrótów
 ```
 
 - Porty nie są ustawione w `vite.config.js`; podane wartości to domyślne ustawienia Vite.
-- Wszystkie pięć skryptów `test:*` korzysta z `playwright.config.js`, który sam uruchamia dedykowany serwer Vite dev na porcie 5183; wymagana jest przeglądarka Chromium dla Playwright (`npx playwright install chromium`).
+- Wszystkie sześć skryptów `test:*` korzysta z `playwright.config.js`, który sam uruchamia dedykowany serwer Vite dev na porcie 5183; wymagana jest przeglądarka Chromium dla Playwright (`npx playwright install chromium`).
 - Strony korzystają ze ścieżek absolutnych i modułów ES, dlatego wymagają serwera HTTP — nie należy otwierać plików HTML bezpośrednio z dysku.
 - Service worker jest rejestrowany tylko w buildzie produkcyjnym (`import.meta.env.PROD` w `js/main.js`), a więc w `npm run preview`, ale nie w `npm run dev`.
 
@@ -193,10 +198,15 @@ Co weryfikują polecenia:
   - przypadki: zapisany motyw jasny i ciemny, brak zapisanej wartości przy jasnej i ciemnej preferencji systemowej, niepoprawna zapisana wartość oraz `localStorage` zgłaszający wyjątek;
   - po inicjalizacji `js/theme.js`: etykieta przełącznika, zapis rozstrzygniętego motywu, przełączenie motywu i zapis zmiany;
   - bez JavaScript: statyczny ciemny motyw i neutralna etykieta przełącznika.
+- `npm run test:manifest` — testy kontraktów manifestu PWA (`tests/manifest.spec.js`):
+  - zachowanie `start_url`, `scope`, `display` i trzech ikon głównych;
+  - cztery zrzuty ekranu, po dwa `wide` (1440×900) i `narrow` (390×844): typ `image/jpeg` deklarowany i serwowany, niepusta etykieta, rzeczywisty rozmiar obrazu zgodny z `sizes` oraz ograniczenia Chromium (boki 320–3840 px, proporcja do 2,3);
+  - trzy skróty „Usługi”, „Galeria” i „Demo rezerwacji” z adresami w zakresie `scope` i osobnymi ikonami PNG 192×192 o różnej zawartości;
+  - przy 375×812 i 1280×800 sekcja docelowa każdego skrótu jest widoczna, a jej górna krawędź znajduje się poniżej przyklejonego nagłówka.
 - `npm run preview` — serwuje `dist/` po `npm run build` i jako jedyne polecenie projektu uruchamia service worker, dlatego w nim sprawdza się ręcznie precache, zachowanie offline i produkcyjne działanie PWA. Jeżeli wcześniej zarejestrowano worker pod tym samym adresem i portem, należy go wyrejestrować w narzędziach deweloperskich przeglądarki i odświeżyć stronę. Podgląd nie stosuje konfiguracji Netlify (`_redirects`, nagłówki z `netlify.toml`).
 - `git diff --check` — lekka, końcowa kontrola diffu przed commitem (błędy białych znaków, znaczniki konfliktów). Nie testuje aplikacji.
 
-Wszystkich pięć specyfikacji Playwright ma skrypty npm i jest uruchamianych w CI w Chromium na serwerze Vite dev (sekcja [Ciągła integracja (CI)](#ciągła-integracja-ci)). Testy nie sprawdzają `dist/` ani produkcyjnego PWA, w tym działania offline; nie zapewniają pełnej regresji, audytu dostępności ani pokrycia wielu przeglądarek.
+Wszystkich sześć specyfikacji Playwright ma skrypty npm i jest uruchamianych w CI w Chromium na serwerze Vite dev (sekcja [Ciągła integracja (CI)](#ciągła-integracja-ci)). Testy nie sprawdzają `dist/` ani produkcyjnego PWA, w tym działania offline; nie zapewniają pełnej regresji, audytu dostępności ani pokrycia wielu przeglądarek.
 
 Dobór kontroli:
 
@@ -210,6 +220,7 @@ Dobór kontroli:
 | Inicjalizacja i przełączanie motywu: `public/theme-bootstrap.js`, `js/theme.js`, tokeny motywu i `color-scheme` | `npm run build`, `npm run test:theme-first-paint`, `npm run test:interactions` (trwałość motywu po przeładowaniu i między stronami), `git diff --check` |
 | Przycisk „Wróć na górę”: `js/back-to-top.js`, style `.back-to-top`, markup w `build/shared-footer.js` | `npm run build`, `npm run test:interactions`, `git diff --check` |
 | Rezerwacja i lightbox: `js/booking.js`, `js/lightbox.js`, markup i style sekcji rezerwacji, galerii i lightboxa | `npm run build`, `npm run test:interactions`, `npm run test:mobile-contact-bar` (ukrycie paska przy otwartym lightboxie), `git diff --check` |
+| Manifest PWA: `public/manifest.webmanifest`, zrzuty ekranu w `public/assets/screenshots/pwa/`, ikony skrótów w `public/assets/icons/shortcuts/` | `npm run build`, `npm run test:manifest`, `git diff --check` |
 | `service-worker.js`, `js/pwa-paths.js`, precache, `offline.html`, produkcyjne działanie PWA | `npm run build`, następnie `npm run preview`; `git diff --check` |
 | Wyłącznie dokumentacja | `git diff --check` |
 
@@ -224,9 +235,10 @@ Workflow GitHub Actions `.github/workflows/ci.yml` uruchamia się przy pushu do 
 5. `npm run test:mobile-contact-bar` — testy paska szybkiego kontaktu, również na dedykowanym serwerze Vite dev;
 6. `npm run test:interactions` — testy rezerwacji, lightboxa, przycisku „Wróć na górę” i trwałości motywu;
 7. `npm run test:reveal` — testy pojawiania się sekcji na krótkich widokach;
-8. `npm run test:theme-first-paint` — testy motywu przed inicjalizacją aplikacji, przełączania i statycznego wariantu bez JavaScript.
+8. `npm run test:theme-first-paint` — testy motywu przed inicjalizacją aplikacji, przełączania i statycznego wariantu bez JavaScript;
+9. `npm run test:manifest` — testy kontraktów manifestu PWA: zrzutów ekranu i skrótów.
 
-Wszystkie pięć kroków testowych korzysta z tego samego projektu Chromium i dedykowanego serwera Vite dev. Limit czasu zadania wynosi 15 minut.
+Wszystkie sześć kroków testowych korzysta z tego samego projektu Chromium i dedykowanego serwera Vite dev. Limit czasu zadania wynosi 15 minut.
 
 Błąd któregokolwiek kroku przerywa zadanie i oznacza przebieg jako nieudany. Workflow ma wyłącznie uprawnienie `contents: read`, a nowszy przebieg dla tej samej gałęzi lub pull requesta anuluje poprzedni, jeszcze trwający. CI tylko weryfikuje zmiany: nie modyfikuje repozytorium i nie wdraża witryny — wydanie produkcyjne pozostaje ręczną publikacją przez Netlify CLI, opisaną w sekcji [Wdrożenie](#wdrożenie).
 
@@ -295,10 +307,12 @@ Opcjonalnie, przed krokiem 5, to samo polecenie bez flagi `--prod` (`npx netlify
 ### PWA i obsługa offline
 
 - `public/manifest.webmanifest` definiuje `start_url` i `scope` jako `/`, `display: "standalone"`, kolory motywu oraz ikony z `public/assets/icons/favicon/`: PNG 192×192 i 512×512 oraz skalowalny SVG (`sizes: "any"`), wszystkie z `purpose: "any"`. Ikony nie są oznaczone jako `maskable`, ponieważ grafika wychodzi poza strefę bezpieczną maski. Manifest jest podpięty na stronie głównej i stronach prawnych.
+- Manifest deklaruje cztery zrzuty ekranu dla rozszerzonego okna instalacji: pliki JPEG z `public/assets/screenshots/pwa/`, przechwycone z buildu produkcyjnego w ciemnym motywie, z polskimi etykietami. Dwa zrzuty `form_factor: "wide"` (1440×900) pokazują stronę główną i galerię, a dwa `form_factor: "narrow"` (390×844) — stronę główną i demo rezerwacji z wybraną usługą i stylistą. Chromium wyświetla zrzuty `wide` w oknie instalacji na komputerze, a `narrow` na urządzeniach mobilnych; inne przeglądarki mogą je pomijać.
+- Trzy skróty aplikacji (`shortcuts`) prowadzą do sekcji strony głównej: „Usługi” (`/index.html#services`), „Galeria” (`/index.html#gallery`) i „Demo rezerwacji” (`/index.html#booking`). Opis skrótu rezerwacji zaznacza, że to demonstracja bez wysyłania rezerwacji. Każdy skrót ma własną ikonę PNG 192×192 (`purpose: "any"`) z `public/assets/icons/shortcuts/`, wyeksportowaną z leżącego obok źródła SVG: złoty piktogram (nożyczki, ramka ze zdjęciem, kalendarz z zaznaczonym terminem) na ciemnym tle, w strefie bezpiecznej ikony. Skróty to zwykłe adresy z fragmentem, bez obsługi JavaScript; `scroll-padding-top` utrzymuje sekcję docelową poniżej przyklejonego nagłówka. Sposób i liczba wyświetlanych skrótów zależą od platformy (np. menu kontekstowe ikony zainstalowanej aplikacji).
 - Strona główna i strony prawne deklarują favicony z tego samego katalogu: ICO (16, 32 i 48 px), PNG 96×96, SVG z wariantem jasnym i ciemnym zależnym od `prefers-color-scheme` przeglądarki oraz Apple touch icon 180×180. `404.html` i `offline.html` deklarują te same favicony bez Apple touch icon.
 - `js/main.js` rejestruje `/service-worker.js` po zdarzeniu `load`, wyłącznie w buildzie produkcyjnym.
 - `js/pwa-paths.js` definiuje wspólne stałe `HOME_DOCUMENT` (`/index.html`) i `OFFLINE_DOCUMENT` (`/offline.html`), używane przez kontrolę precache w `vite.config.js` i obsługę nawigacji bez połączenia w `service-worker.js`.
-- Podczas buildu plugin `studio-noir-precache` zastępuje w workerze znaczniki `__STUDIO_NOIR_PRECACHE__`, `__STUDIO_NOIR_ON_DEMAND_IMAGES__` i `__STUDIO_NOIR_CACHE_VERSION__`. Lista precache obejmuje pliki wyjściowe buildu poza samym `service-worker.js` oraz pliki z `public/` z wyjątkiem nazw zaczynających się od `_`. Wyjątkiem są warianty obrazów redakcyjnych z `assets/img/hero/`, `assets/img/stylists/` i `assets/img/gallery/`: nie trafiają do precache instalacyjnego, lecz na osobną listę obrazów buforowanych na żądanie. Wersja cache to fragment skrótu SHA-256 z kodu workera oraz nazw i zawartości plików z obu list. Kontrole, którymi plugin przerywa build, opisuje sekcja [Weryfikacja zmian](#weryfikacja-zmian).
+- Podczas buildu plugin `studio-noir-precache` zastępuje w workerze znaczniki `__STUDIO_NOIR_PRECACHE__`, `__STUDIO_NOIR_ON_DEMAND_IMAGES__` i `__STUDIO_NOIR_CACHE_VERSION__`. Lista precache obejmuje pliki wyjściowe buildu poza samym `service-worker.js` oraz pliki z `public/` z wyjątkiem nazw zaczynających się od `_` i katalogu `assets/screenshots/`. Zrzuty ekranu manifestu pobiera wyłącznie okno instalacji przeglądarki, więc nie trafiają do cache workera ani nie wpływają na wersję cache; ikony skrótów pozostają w precache. Wyjątkiem są warianty obrazów redakcyjnych z `assets/img/hero/`, `assets/img/stylists/` i `assets/img/gallery/`: nie trafiają do precache instalacyjnego, lecz na osobną listę obrazów buforowanych na żądanie. Wersja cache to fragment skrótu SHA-256 z kodu workera oraz nazw i zawartości plików z obu list. Kontrole, którymi plugin przerywa build, opisuje sekcja [Weryfikacja zmian](#weryfikacja-zmian).
 - Instalacja zapisuje zasoby z listy precache w cache `studio-noir-<wersja>` i wywołuje `skipWaiting()`; aktywacja usuwa wyłącznie starsze cache z prefiksem `studio-noir-` i przejmuje otwarte karty (`clients.claim()`).
 - Nawigacja korzysta najpierw z sieci. Bez połączenia worker zwraca zapisaną stronę (również dla adresów bez rozszerzenia, np. `/privacy`) lub `offline.html`.
 - Worker przechwytuje żądania GET z tej samej domeny do zasobów z listy precache i z listy obrazów na żądanie: zwraca wpis z cache, a w razie jego braku pobiera zasób z sieci. Obraz z listy na żądanie trafia do cache bieżącej wersji dopiero po udanej odpowiedzi sieci. Bez połączenia dostępne są więc tylko te warianty obrazów, które wcześniej pobrano przy tej wersji cache; obrazy niewyświetlone lub inny wariant wybrany przez przeglądarkę mogą być niedostępne. Pozostałe żądania, żądania inne niż GET i żądania do innych domen nie są przechwytywane.
@@ -328,7 +342,7 @@ Opcjonalnie, przed krokiem 5, to samo polecenie bez flagi `--prod` (`npx netlify
 - Strukturę nagłówka i warianty linków logo i rezerwacji oraz kompaktowego CTA zmienia się w `build/shared-header.js`. Cztery źródłowe strony zawierają wyłącznie znaczniki `<!-- studio-noir:shared-header -->` i `<!-- studio-noir:shared-footer -->` w miejscach nagłówka i stopki. Kolejność transformacji `pre` w `vite.config.js` musi pozostać `sharedHeader(root)` → `sharedFooter(root)` → `primaryNavigation(root)`; nawigacja wypełnia znaczniki list wygenerowane przez oba renderery, a błędna kolejność przerywa transformację.
 - Pozostałą zawartość stopki (marka, linki prawne, dane kontaktowe, linki społecznościowe, prawa autorskie) i markup przycisku „Wróć na górę” zmienia się wyłącznie w `build/shared-footer.js`; zmiana obejmuje wszystkie cztery strony.
 - `.gitignore` wyklucza wyniki buildu, zależności i lokalne artefakty. `.gitattributes` określa LF dla tekstowych źródeł i konfiguracji oraz traktuje fonty i obrazy rastrowe jako binarne. `.editorconfig` ustala UTF-8, LF, wcięcia po dwie spacje i końcowy znak nowej linii; zachowuje końcowe spacje w Markdown.
-- Nowa strona HTML wymaga dodania wejścia w `build.rolldownOptions.input` w `vite.config.js`; brak wejścia dla strony w katalogu głównym przerywa build. Nowe strony i nowe pliki w `public/` trafiają do listy precache automatycznie, a nowe warianty obrazów z `assets/img/hero/`, `assets/img/stylists/` i `assets/img/gallery/` używane przez strony — na listę obrazów na żądanie.
+- Nowa strona HTML wymaga dodania wejścia w `build.rolldownOptions.input` w `vite.config.js`; brak wejścia dla strony w katalogu głównym przerywa build. Nowe strony i nowe pliki w `public/` (poza `assets/screenshots/`) trafiają do listy precache automatycznie, a nowe warianty obrazów z `assets/img/hero/`, `assets/img/stylists/` i `assets/img/gallery/` używane przez strony — na listę obrazów na żądanie.
 - Wersji cache ani list cache nie zmienia się ręcznie; znaczniki `__STUDIO_NOIR_PRECACHE__`, `__STUDIO_NOIR_ON_DEMAND_IMAGES__` i `__STUDIO_NOIR_CACHE_VERSION__` muszą pozostać w `service-worker.js`.
 - Historia zmian jest prowadzona w [docs/CHANGELOG.md](docs/CHANGELOG.md).
 - Cykl raportu usprawnień:
@@ -370,7 +384,7 @@ Current scope:
 
   Playfair Display 1.203 comes from [Google Fonts, commit `8b0a1d0f5983c89bc2b93f1b5fb55f9e252744b5`](https://github.com/google/fonts/tree/8b0a1d0f5983c89bc2b93f1b5fb55f9e252744b5/ofl/playfairdisplay); the original TTF was packed into WOFF2 without subsetting or changes to glyphs, metrics, or names. Inter 4.001 is the unchanged `InterVariable.woff2` from [the author's `v4.1` release](https://github.com/rsms/inter/tree/v4.1/docs/font-files) (optical size axis 14–32). Both fonts use SIL OFL 1.1; full notices and licenses in `public/font-licenses/playfair-display-OFL.txt` and `public/font-licenses/inter-OFL.txt` are included in `dist/font-licenses/` during the build.
 - **Build:** Vite `^8.3.1` (8.3.1 in `package-lock.json`) — a development dependency (`devDependencies`); build inputs are configured through `build.rolldownOptions`.
-- **Testing:** Playwright — `@playwright/test` `^1.63.0` (1.63.0 in `package-lock.json`), a development dependency used by the focused browser regression tests for the navigation, the mobile contact bar, interactions (booking, lightbox, "Wróć na górę", theme persistence), section reveal, and theme initialization.
+- **Testing:** Playwright — `@playwright/test` `^1.63.0` (1.63.0 in `package-lock.json`), a development dependency used by the focused browser regression tests for the navigation, the mobile contact bar, interactions (booking, lightbox, "Wróć na górę", theme persistence), section reveal, theme initialization, and the PWA manifest contracts (screenshots and shortcuts).
 - **Environment:** Node.js `^20.19.0 || >=22.12.0` (`engines` in `package.json`), npm (`package-lock.json`).
 - **Deployment:** Netlify configuration (`netlify.toml`, `public/_redirects`).
 
@@ -384,7 +398,7 @@ Current scope:
 - **Overlay focus:** `wrapTabFocus` from `js/wrap-tab-focus.js` wraps Tab/Shift+Tab at the boundaries of the control list in the mobile menu and lightbox. `js/nav.js` and `js/lightbox.js` still select their own eligible controls and check their open state.
 - **CSS:** `css/style.css` imports the layers in the order `tokens.css` → `base.css` → `layout.css` → `components.css` → `sections.css`. The light theme overrides the colour tokens in the `.theme--light` class. Below 768 px, the `--mobile-contact-bar-clearance` token from `css/tokens.css` supplies shared clearance for `padding-bottom` on `body` in `css/components.css` and booking-choice `scroll-margin-bottom` in `css/sections.css`, including the safe area; `js/booking.js` reads the computed margin and the `html` element's `scroll-padding-top` when correcting choice visibility. `scroll-padding-top` in `css/base.css` (`--size-header` + `--space-md`) stops focus and anchor scrolling below the sticky header.
 - **Build:** `vite.config.js` sets `appType: "mpa"`, `base: "/"`, and seven inputs: the six HTML pages and `service-worker.js`. Local plugins: `studio-noir-shared-header` (`build/shared-header.js`) renders the header, `studio-noir-shared-footer` (`build/shared-footer.js`) renders the footer and the "Wróć na górę" button, `studio-noir-primary-navigation` (`build/primary-navigation.js`) renders the navigation, `studio-noir-css-custom-properties` checks custom-property references, `studio-noir-social-image-urls` turns the `og:image` path into an absolute URL, and `studio-noir-precache` injects the precache list, the on-demand image list, and the cache version into the service worker.
-- **Stable-path files:** `public/` holds the manifest, favicons and PWA icons (`assets/icons/favicon/`), `robots.txt`, `sitemap.xml`, and `_redirects`; Vite copies them into `dist/` without processing.
+- **Stable-path files:** `public/` holds the manifest, favicons and PWA icons (`assets/icons/favicon/`), PWA shortcut icons (`assets/icons/shortcuts/`), PWA install-dialog screenshots (`assets/screenshots/pwa/`), `robots.txt`, `sitemap.xml`, and `_redirects`; Vite copies them into `dist/` without processing.
 
 ### Project Structure
 
@@ -439,7 +453,10 @@ Current scope:
 │   ├── manifest.webmanifest
 │   ├── robots.txt
 │   ├── sitemap.xml
-│   └── assets/icons/favicon/ # favicons, Apple touch icon, and PWA manifest icons
+│   └── assets/
+│       ├── icons/favicon/  # favicons, Apple touch icon, and PWA manifest icons
+│       ├── icons/shortcuts/ # PWA shortcut icons: SVG sources and 192×192 PNG exports
+│       └── screenshots/pwa/ # PWA install-dialog screenshots (JPEG)
 ├── docs/
 │   ├── CHANGELOG.md
 │   └── archive/
@@ -449,7 +466,8 @@ Current scope:
 │   ├── mobile-contact-bar.spec.js # browser regression tests for the mobile contact bar
 │   ├── interactions.spec.js # booking, lightbox, "Wróć na górę", and theme persistence regression tests
 │   ├── reveal.spec.js      # section reveal test on short viewports
-│   └── theme-first-paint.spec.js # first-paint theme tests
+│   ├── theme-first-paint.spec.js # first-paint theme tests
+│   └── manifest.spec.js    # PWA manifest contract tests (screenshots, shortcuts)
 ├── vite.config.js
 ├── playwright.config.js    # Playwright configuration (Chromium, Vite dev server)
 ├── netlify.toml
@@ -479,10 +497,11 @@ npm run test:mobile-contact-bar  # playwright test — browser regression tests 
 npm run test:interactions        # playwright test — browser regression tests for booking, the lightbox, "Wróć na górę", and theme persistence
 npm run test:reveal              # playwright test — section reveal tests on short viewports
 npm run test:theme-first-paint    # playwright test — theme tests before application initialization
+npm run test:manifest            # playwright test — PWA manifest contract tests for screenshots and shortcuts
 ```
 
 - Ports are not set in `vite.config.js`; the values above are Vite defaults.
-- All five `test:*` scripts use `playwright.config.js`, which starts its own dedicated Vite dev server on port 5183; the Playwright Chromium browser is required (`npx playwright install chromium`).
+- All six `test:*` scripts use `playwright.config.js`, which starts its own dedicated Vite dev server on port 5183; the Playwright Chromium browser is required (`npx playwright install chromium`).
 - Pages use absolute paths and ES modules, so they require an HTTP server — the HTML files should not be opened directly from disk.
 - The service worker is registered only in production builds (`import.meta.env.PROD` in `js/main.js`), so it is active in `npm run preview` but not in `npm run dev`.
 
@@ -529,10 +548,15 @@ What each command verifies:
   - cases: stored light and dark themes, no stored value with light and dark system preferences, an invalid stored value, and a throwing `localStorage`;
   - after `js/theme.js` initializes: the toggle label, persistence of the resolved theme, switching the theme, and persistence of the change;
   - without JavaScript: the static dark theme and the neutral toggle label.
+- `npm run test:manifest` — PWA manifest contract tests (`tests/manifest.spec.js`):
+  - `start_url`, `scope`, `display`, and the three primary icons are preserved;
+  - four screenshots, two `wide` (1440×900) and two `narrow` (390×844): `image/jpeg` declared and served, a non-empty label, an actual image size matching `sizes`, and the Chromium constraints (sides of 320–3840 px, aspect ratio up to 2.3);
+  - three shortcuts, "Usługi", "Galeria", and "Demo rezerwacji", with in-scope URLs and their own 192×192 PNG icons with distinct content;
+  - at 375×812 and 1280×800, each shortcut's target section is visible and its top edge sits below the sticky header.
 - `npm run preview` — serves `dist/` after `npm run build` and is the only project command in which the service worker runs, so precache, offline behaviour, and production PWA behaviour are checked there manually. If a worker was previously registered on the same address and port, unregister it in the browser developer tools and reload the page. Preview does not apply the Netlify configuration (`_redirects`, headers from `netlify.toml`).
 - `git diff --check` — lightweight final diff check before committing (whitespace errors, conflict markers). It does not test the application.
 
-All five Playwright specifications have npm scripts and run in CI in Chromium against the Vite dev server (see [Continuous Integration (CI)](#continuous-integration-ci)). The tests do not check `dist/` or production PWA behaviour, including offline behaviour; they do not provide complete regression, an accessibility audit, or cross-browser coverage.
+All six Playwright specifications have npm scripts and run in CI in Chromium against the Vite dev server (see [Continuous Integration (CI)](#continuous-integration-ci)). The tests do not check `dist/` or production PWA behaviour, including offline behaviour; they do not provide complete regression, an accessibility audit, or cross-browser coverage.
 
 Choosing checks:
 
@@ -546,6 +570,7 @@ Choosing checks:
 | Theme initialization and switching: `public/theme-bootstrap.js`, `js/theme.js`, theme tokens and `color-scheme` | `npm run build`, `npm run test:theme-first-paint`, `npm run test:interactions` (theme persistence across a reload and pages), `git diff --check` |
 | "Wróć na górę" button: `js/back-to-top.js`, `.back-to-top` styles, markup in `build/shared-footer.js` | `npm run build`, `npm run test:interactions`, `git diff --check` |
 | Booking and lightbox: `js/booking.js`, `js/lightbox.js`, booking, gallery, and lightbox markup and styles | `npm run build`, `npm run test:interactions`, `npm run test:mobile-contact-bar` (bar hidden while the lightbox is open), `git diff --check` |
+| PWA manifest: `public/manifest.webmanifest`, screenshots in `public/assets/screenshots/pwa/`, shortcut icons in `public/assets/icons/shortcuts/` | `npm run build`, `npm run test:manifest`, `git diff --check` |
 | `service-worker.js`, `js/pwa-paths.js`, precache, `offline.html`, production PWA behaviour | `npm run build`, then `npm run preview`; `git diff --check` |
 | Documentation only | `git diff --check` |
 
@@ -560,9 +585,10 @@ The GitHub Actions workflow `.github/workflows/ci.yml` runs on pushes to `main` 
 5. `npm run test:mobile-contact-bar` — the quick-contact bar tests, also against the dedicated Vite dev server;
 6. `npm run test:interactions` — the booking, lightbox, "Wróć na górę", and theme persistence tests;
 7. `npm run test:reveal` — the section reveal tests on short viewports;
-8. `npm run test:theme-first-paint` — the theme tests before application initialization, switching, and the static no-JavaScript variant.
+8. `npm run test:theme-first-paint` — the theme tests before application initialization, switching, and the static no-JavaScript variant;
+9. `npm run test:manifest` — the PWA manifest contract tests for screenshots and shortcuts.
 
-All five test steps use the same Chromium project and dedicated Vite dev server. The job timeout is 15 minutes.
+All six test steps use the same Chromium project and dedicated Vite dev server. The job timeout is 15 minutes.
 
 A failure in any step stops the job and marks the run as failed. The workflow has only the `contents: read` permission, and a newer run for the same branch or pull request cancels a superseded run still in progress. CI only validates changes: it does not modify the repository or deploy the site — production releases remain a manual Netlify CLI publish, as described under [Deployment](#deployment).
 
@@ -631,10 +657,12 @@ Optionally, before step 5, the same command without the `--prod` flag (`npx netl
 ### PWA and Offline Support
 
 - `public/manifest.webmanifest` defines `start_url` and `scope` as `/`, `display: "standalone"`, theme colours, and icons from `public/assets/icons/favicon/`: 192×192 and 512×512 PNGs plus a scalable SVG (`sizes: "any"`), all with `purpose: "any"`. The icons are not declared `maskable` because the artwork extends beyond the mask safe zone. The manifest is linked from the home page and the legal pages.
+- The manifest declares four screenshots for the richer install dialog: JPEG files from `public/assets/screenshots/pwa/`, captured from the production build in the dark theme, with Polish labels. Two `form_factor: "wide"` screenshots (1440×900) show the home page and the gallery, and two `form_factor: "narrow"` screenshots (390×844) show the home page and the booking demo with a service and stylist selected. Chromium shows `wide` screenshots in the desktop install dialog and `narrow` ones on mobile devices; other browsers may ignore them.
+- Three app shortcuts (`shortcuts`) lead to home page sections: "Usługi" (`/index.html#services`), "Galeria" (`/index.html#gallery`), and "Demo rezerwacji" (`/index.html#booking`). The booking shortcut description states that it is a demonstration that sends no booking. Each shortcut has its own 192×192 PNG icon (`purpose: "any"`) from `public/assets/icons/shortcuts/`, exported from the SVG source stored beside it: a gold pictogram (scissors, a framed picture, a calendar with a highlighted date) on a dark tile, within the icon safe zone. Shortcuts are plain fragment URLs without JavaScript handling; `scroll-padding-top` keeps the target section below the sticky header. How many shortcuts are shown, and where, depends on the platform (for example, the installed app icon's context menu).
 - The home page and the legal pages declare favicons from the same directory: an ICO (16, 32, and 48 px), a 96×96 PNG, an SVG with light and dark variants driven by the browser's `prefers-color-scheme`, and a 180×180 Apple touch icon. `404.html` and `offline.html` declare the same favicons without the Apple touch icon.
 - `js/main.js` registers `/service-worker.js` after the `load` event, in production builds only.
 - `js/pwa-paths.js` defines the shared `HOME_DOCUMENT` (`/index.html`) and `OFFLINE_DOCUMENT` (`/offline.html`) constants, used by the precache guard in `vite.config.js` and offline navigation handling in `service-worker.js`.
-- During the build, the `studio-noir-precache` plugin replaces the `__STUDIO_NOIR_PRECACHE__`, `__STUDIO_NOIR_ON_DEMAND_IMAGES__`, and `__STUDIO_NOIR_CACHE_VERSION__` markers in the worker. The precache list covers build output files other than `service-worker.js`, plus the files from `public/`, except names starting with `_`. The exception is the editorial image variants from `assets/img/hero/`, `assets/img/stylists/`, and `assets/img/gallery/`: they are excluded from the installation precache and placed on a separate on-demand image list. The cache version is a truncated SHA-256 hash of the worker code and the names and contents of the files on both lists. The checks with which the plugin fails the build are listed under [Change Verification](#change-verification).
+- During the build, the `studio-noir-precache` plugin replaces the `__STUDIO_NOIR_PRECACHE__`, `__STUDIO_NOIR_ON_DEMAND_IMAGES__`, and `__STUDIO_NOIR_CACHE_VERSION__` markers in the worker. The precache list covers build output files other than `service-worker.js`, plus the files from `public/`, except names starting with `_` and the `assets/screenshots/` directory. Manifest screenshots are fetched only by the browser's install dialog, so they are not stored in the worker cache and do not affect the cache version; shortcut icons remain precached. The exception is the editorial image variants from `assets/img/hero/`, `assets/img/stylists/`, and `assets/img/gallery/`: they are excluded from the installation precache and placed on a separate on-demand image list. The cache version is a truncated SHA-256 hash of the worker code and the names and contents of the files on both lists. The checks with which the plugin fails the build are listed under [Change Verification](#change-verification).
 - Installation stores the precache-list assets in the `studio-noir-<version>` cache and calls `skipWaiting()`; activation deletes only older caches with the `studio-noir-` prefix and takes control of open tabs (`clients.claim()`).
 - Navigation requests are network-first. When offline, the worker returns the cached page (including extensionless URLs such as `/privacy`) or `offline.html`.
 - The worker intercepts same-origin GET requests for assets on the precache list and the on-demand image list: it returns the cached entry, falling back to the network when no entry exists. An on-demand image is added to the current cache version only after a successful network response. Offline, therefore, only image variants previously fetched under that cache version are available; images that were never displayed, or a different variant selected by the browser, may be unavailable. Other requests, non-GET requests, and cross-origin requests are not intercepted.
@@ -664,7 +692,7 @@ Optionally, before step 5, the same command without the `--prod` flag (`npx netl
 - Header structure and the logo, booking-link, and compact-CTA variants are changed in `build/shared-header.js`. The four source pages contain only `<!-- studio-noir:shared-header -->` and `<!-- studio-noir:shared-footer -->` markers in place of the header and footer. The `pre` transform order in `vite.config.js` must stay `sharedHeader(root)` → `sharedFooter(root)` → `primaryNavigation(root)`; navigation fills the list markers emitted by both renderers, and an incorrect order fails the transformation.
 - The rest of the footer (brand, legal links, contact details, social links, copyright) and the "Wróć na górę" button markup are changed only in `build/shared-footer.js`; a change applies to all four pages.
 - `.gitignore` excludes build output, dependencies, and local artifacts. `.gitattributes` sets LF for text sources and configuration and treats fonts and raster images as binary. `.editorconfig` sets UTF-8, LF, two-space indentation, and a final newline; it preserves trailing spaces in Markdown.
-- A new HTML page requires a new entry in `build.rolldownOptions.input` in `vite.config.js`; a root-level page without an entry fails the build. New pages and new files in `public/` are added to the precache list automatically, and new image variants from `assets/img/hero/`, `assets/img/stylists/`, and `assets/img/gallery/` used by the pages are added to the on-demand image list.
+- A new HTML page requires a new entry in `build.rolldownOptions.input` in `vite.config.js`; a root-level page without an entry fails the build. New pages and new files in `public/` (outside `assets/screenshots/`) are added to the precache list automatically, and new image variants from `assets/img/hero/`, `assets/img/stylists/`, and `assets/img/gallery/` used by the pages are added to the on-demand image list.
 - The cache version and cache lists are never changed manually; the `__STUDIO_NOIR_PRECACHE__`, `__STUDIO_NOIR_ON_DEMAND_IMAGES__`, and `__STUDIO_NOIR_CACHE_VERSION__` markers must remain in `service-worker.js`.
 - The change history is kept in [docs/CHANGELOG.md](docs/CHANGELOG.md).
 - Improvement-report lifecycle:

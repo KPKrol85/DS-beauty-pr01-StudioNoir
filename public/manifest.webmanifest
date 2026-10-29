@@ -26,5 +26,79 @@
       "type": "image/svg+xml",
       "purpose": "any"
     }
+  ],
+  "screenshots": [
+    {
+      "src": "/assets/screenshots/pwa/desktop-home-1440x900.jpg",
+      "sizes": "1440x900",
+      "type": "image/jpeg",
+      "form_factor": "wide",
+      "label": "Strona główna Studio Noir w ciemnym motywie na komputerze"
+    },
+    {
+      "src": "/assets/screenshots/pwa/desktop-gallery-1440x900.jpg",
+      "sizes": "1440x900",
+      "type": "image/jpeg",
+      "form_factor": "wide",
+      "label": "Galeria fotografii fryzur Studio Noir na komputerze"
+    },
+    {
+      "src": "/assets/screenshots/pwa/mobile-home-390x844.jpg",
+      "sizes": "390x844",
+      "type": "image/jpeg",
+      "form_factor": "narrow",
+      "label": "Strona główna Studio Noir w ciemnym motywie na telefonie"
+    },
+    {
+      "src": "/assets/screenshots/pwa/mobile-booking-demo-390x844.jpg",
+      "sizes": "390x844",
+      "type": "image/jpeg",
+      "form_factor": "narrow",
+      "label": "Demo rezerwacji na telefonie z wybraną usługą i stylistą w podsumowaniu"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Usługi",
+      "short_name": "Usługi",
+      "description": "Przejdź do oferty usług studia.",
+      "url": "/index.html#services",
+      "icons": [
+        {
+          "src": "/assets/icons/shortcuts/services-192x192.png",
+          "sizes": "192x192",
+          "type": "image/png",
+          "purpose": "any"
+        }
+      ]
+    },
+    {
+      "name": "Galeria",
+      "short_name": "Galeria",
+      "description": "Zobacz galerię fryzur i stylizacji.",
+      "url": "/index.html#gallery",
+      "icons": [
+        {
+          "src": "/assets/icons/shortcuts/gallery-192x192.png",
+          "sizes": "192x192",
+          "type": "image/png",
+          "purpose": "any"
+        }
+      ]
+    },
+    {
+      "name": "Demo rezerwacji",
+      "short_name": "Demo rezerwacji",
+      "description": "Wybierz usługę i stylistę w demonstracji — bez wysyłania rezerwacji.",
+      "url": "/index.html#booking",
+      "icons": [
+        {
+          "src": "/assets/icons/shortcuts/booking-demo-192x192.png",
+          "sizes": "192x192",
+          "type": "image/png",
+          "purpose": "any"
+        }
+      ]
+    }
   ]
 }

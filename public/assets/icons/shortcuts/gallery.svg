@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192" width="192" height="192">
+  <defs>
+    <radialGradient id="tile" cx="50%" cy="38%" r="75%">
+      <stop offset="0" stop-color="#1c1c22"/>
+      <stop offset="1" stop-color="#0b0b0e"/>
+    </radialGradient>
+    <linearGradient id="gold" x1="0" y1="44" x2="0" y2="148" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#d6b996"/>
+      <stop offset="1" stop-color="#9d8061"/>
+    </linearGradient>
+  </defs>
+  <rect width="192" height="192" fill="url(#tile)"/>
+  <circle cx="96" cy="96" r="70" fill="none" stroke="#c7a47e" stroke-opacity=".22" stroke-width="2"/>
+  <!-- Gallery: a framed picture in front of a second frame. -->
+  <g fill="none" stroke="url(#gold)" stroke-width="6" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M70 64v-8q0-8 8-8h54q8 0 8 8v64q0 8-8 8h-8"/>
+    <rect x="54" y="64" width="70" height="80" rx="8"/>
+    <path d="m57 128 23-26 16 16 10-10 15 15"/>
+  </g>
+  <circle cx="104" cy="86" r="7" fill="#d6b996"/>
+</svg>

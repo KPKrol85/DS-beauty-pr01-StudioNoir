@@ -21,6 +21,8 @@ function publicAssets(directory, prefix = "") {
   return readdirSync(directory, { withFileTypes: true }).flatMap((entry) => {
     const name = `${prefix}${entry.name}`;
     const path = resolve(directory, entry.name);
+    // Manifest screenshots are fetched only by the browser's install UI, not by the site.
+    if (name === "assets/screenshots") return [];
     if (entry.isDirectory()) return publicAssets(path, `${name}/`);
     // Netlify routing/header files are deployment metadata, not fetchable assets.
     if (entry.name.startsWith("_")) return [];

@@ -54,3 +54,6 @@ jobs:
 
       - name: Run theme first-paint tests
         run: npm run test:theme-first-paint
+
+      - name: Run manifest tests
+        run: npm run test:manifest
