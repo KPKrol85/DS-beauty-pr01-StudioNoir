@@ -48,7 +48,7 @@ Aktualny zakres:
 - **Fokus nakładek:** `wrapTabFocus` z `js/wrap-tab-focus.js` obsługuje zawijanie Tab/Shift+Tab na granicach listy kontrolek w menu mobilnym i lightboxie. `js/nav.js` i `js/lightbox.js` nadal samodzielnie wybierają dostępne kontrolki i sprawdzają stan otwarcia.
 - **CSS:** `css/style.css` importuje warstwy w kolejności `tokens.css` → `base.css` → `layout.css` → `components.css` → `sections.css`. Motyw jasny nadpisuje tokeny kolorów w klasie `.theme--light`. Poniżej 768 px token `--mobile-contact-bar-clearance` z `css/tokens.css` dostarcza wspólny odstęp dla `padding-bottom` elementu `body` w `css/components.css` i `scroll-margin-bottom` opcji rezerwacji w `css/sections.css`, uwzględniając safe area; `js/booking.js` odczytuje obliczony margines oraz `scroll-padding-top` elementu `html` przy korekcie widoczności wyboru. `scroll-padding-top` w `css/base.css` (`--size-header` + `--space-md`) zatrzymuje przewijanie do fokusu i kotwic poniżej przyklejonego nagłówka.
 - **Build:** `vite.config.js` ustawia `appType: "mpa"`, `base: "/"` i siedem wejść: sześć stron HTML oraz `service-worker.js`. Lokalne pluginy: `studio-noir-shared-header` (`build/shared-header.js`) renderuje nagłówek, `studio-noir-shared-footer` (`build/shared-footer.js`) renderuje stopkę i przycisk „Wróć na górę”, `studio-noir-primary-navigation` (`build/primary-navigation.js`) renderuje nawigację, `studio-noir-css-custom-properties` sprawdza odwołania do właściwości niestandardowych, `studio-noir-social-image-urls` zamienia ścieżkę `og:image` na adres absolutny, a `studio-noir-precache` uzupełnia service worker o listę precache, listę obrazów buforowanych na żądanie i wersję cache.
-- **Pliki o stałych adresach:** `public/` zawiera manifest, ikonę, `robots.txt`, `sitemap.xml` i `_redirects`; Vite kopiuje je do `dist/` bez przetwarzania.
+- **Pliki o stałych adresach:** `public/` zawiera manifest, favicony i ikony PWA (`assets/icons/favicon/`), `robots.txt`, `sitemap.xml` i `_redirects`; Vite kopiuje je do `dist/` bez przetwarzania.
 
 ### Struktura projektu
 
@@ -103,7 +103,7 @@ Aktualny zakres:
 │   ├── manifest.webmanifest
 │   ├── robots.txt
 │   ├── sitemap.xml
-│   └── assets/icons/favicon.svg
+│   └── assets/icons/favicon/ # favicony, Apple touch icon i ikony manifestu PWA
 ├── docs/
 │   ├── CHANGELOG.md
 │   └── archive/
@@ -294,7 +294,8 @@ Opcjonalnie, przed krokiem 5, to samo polecenie bez flagi `--prod` (`npx netlify
 
 ### PWA i obsługa offline
 
-- `public/manifest.webmanifest` definiuje `start_url` i `scope` jako `/`, `display: "standalone"`, kolory motywu oraz jedną ikonę SVG (64×64). Manifest jest podpięty na stronie głównej i stronach prawnych.
+- `public/manifest.webmanifest` definiuje `start_url` i `scope` jako `/`, `display: "standalone"`, kolory motywu oraz ikony z `public/assets/icons/favicon/`: PNG 192×192 i 512×512 oraz skalowalny SVG (`sizes: "any"`), wszystkie z `purpose: "any"`. Ikony nie są oznaczone jako `maskable`, ponieważ grafika wychodzi poza strefę bezpieczną maski. Manifest jest podpięty na stronie głównej i stronach prawnych.
+- Strona główna i strony prawne deklarują favicony z tego samego katalogu: ICO (16, 32 i 48 px), PNG 96×96, SVG z wariantem jasnym i ciemnym zależnym od `prefers-color-scheme` przeglądarki oraz Apple touch icon 180×180. `404.html` i `offline.html` deklarują te same favicony bez Apple touch icon.
 - `js/main.js` rejestruje `/service-worker.js` po zdarzeniu `load`, wyłącznie w buildzie produkcyjnym.
 - `js/pwa-paths.js` definiuje wspólne stałe `HOME_DOCUMENT` (`/index.html`) i `OFFLINE_DOCUMENT` (`/offline.html`), używane przez kontrolę precache w `vite.config.js` i obsługę nawigacji bez połączenia w `service-worker.js`.
 - Podczas buildu plugin `studio-noir-precache` zastępuje w workerze znaczniki `__STUDIO_NOIR_PRECACHE__`, `__STUDIO_NOIR_ON_DEMAND_IMAGES__` i `__STUDIO_NOIR_CACHE_VERSION__`. Lista precache obejmuje pliki wyjściowe buildu poza samym `service-worker.js` oraz pliki z `public/` z wyjątkiem nazw zaczynających się od `_`. Wyjątkiem są warianty obrazów redakcyjnych z `assets/img/hero/`, `assets/img/stylists/` i `assets/img/gallery/`: nie trafiają do precache instalacyjnego, lecz na osobną listę obrazów buforowanych na żądanie. Wersja cache to fragment skrótu SHA-256 z kodu workera oraz nazw i zawartości plików z obu list. Kontrole, którymi plugin przerywa build, opisuje sekcja [Weryfikacja zmian](#weryfikacja-zmian).
@@ -383,7 +384,7 @@ Current scope:
 - **Overlay focus:** `wrapTabFocus` from `js/wrap-tab-focus.js` wraps Tab/Shift+Tab at the boundaries of the control list in the mobile menu and lightbox. `js/nav.js` and `js/lightbox.js` still select their own eligible controls and check their open state.
 - **CSS:** `css/style.css` imports the layers in the order `tokens.css` → `base.css` → `layout.css` → `components.css` → `sections.css`. The light theme overrides the colour tokens in the `.theme--light` class. Below 768 px, the `--mobile-contact-bar-clearance` token from `css/tokens.css` supplies shared clearance for `padding-bottom` on `body` in `css/components.css` and booking-choice `scroll-margin-bottom` in `css/sections.css`, including the safe area; `js/booking.js` reads the computed margin and the `html` element's `scroll-padding-top` when correcting choice visibility. `scroll-padding-top` in `css/base.css` (`--size-header` + `--space-md`) stops focus and anchor scrolling below the sticky header.
 - **Build:** `vite.config.js` sets `appType: "mpa"`, `base: "/"`, and seven inputs: the six HTML pages and `service-worker.js`. Local plugins: `studio-noir-shared-header` (`build/shared-header.js`) renders the header, `studio-noir-shared-footer` (`build/shared-footer.js`) renders the footer and the "Wróć na górę" button, `studio-noir-primary-navigation` (`build/primary-navigation.js`) renders the navigation, `studio-noir-css-custom-properties` checks custom-property references, `studio-noir-social-image-urls` turns the `og:image` path into an absolute URL, and `studio-noir-precache` injects the precache list, the on-demand image list, and the cache version into the service worker.
-- **Stable-path files:** `public/` holds the manifest, icon, `robots.txt`, `sitemap.xml`, and `_redirects`; Vite copies them into `dist/` without processing.
+- **Stable-path files:** `public/` holds the manifest, favicons and PWA icons (`assets/icons/favicon/`), `robots.txt`, `sitemap.xml`, and `_redirects`; Vite copies them into `dist/` without processing.
 
 ### Project Structure
 
@@ -438,7 +439,7 @@ Current scope:
 │   ├── manifest.webmanifest
 │   ├── robots.txt
 │   ├── sitemap.xml
-│   └── assets/icons/favicon.svg
+│   └── assets/icons/favicon/ # favicons, Apple touch icon, and PWA manifest icons
 ├── docs/
 │   ├── CHANGELOG.md
 │   └── archive/
@@ -629,7 +630,8 @@ Optionally, before step 5, the same command without the `--prod` flag (`npx netl
 
 ### PWA and Offline Support
 
-- `public/manifest.webmanifest` defines `start_url` and `scope` as `/`, `display: "standalone"`, theme colours, and a single SVG icon (64×64). The manifest is linked from the home page and the legal pages.
+- `public/manifest.webmanifest` defines `start_url` and `scope` as `/`, `display: "standalone"`, theme colours, and icons from `public/assets/icons/favicon/`: 192×192 and 512×512 PNGs plus a scalable SVG (`sizes: "any"`), all with `purpose: "any"`. The icons are not declared `maskable` because the artwork extends beyond the mask safe zone. The manifest is linked from the home page and the legal pages.
+- The home page and the legal pages declare favicons from the same directory: an ICO (16, 32, and 48 px), a 96×96 PNG, an SVG with light and dark variants driven by the browser's `prefers-color-scheme`, and a 180×180 Apple touch icon. `404.html` and `offline.html` declare the same favicons without the Apple touch icon.
 - `js/main.js` registers `/service-worker.js` after the `load` event, in production builds only.
 - `js/pwa-paths.js` defines the shared `HOME_DOCUMENT` (`/index.html`) and `OFFLINE_DOCUMENT` (`/offline.html`) constants, used by the precache guard in `vite.config.js` and offline navigation handling in `service-worker.js`.
 - During the build, the `studio-noir-precache` plugin replaces the `__STUDIO_NOIR_PRECACHE__`, `__STUDIO_NOIR_ON_DEMAND_IMAGES__`, and `__STUDIO_NOIR_CACHE_VERSION__` markers in the worker. The precache list covers build output files other than `service-worker.js`, plus the files from `public/`, except names starting with `_`. The exception is the editorial image variants from `assets/img/hero/`, `assets/img/stylists/`, and `assets/img/gallery/`: they are excluded from the installation precache and placed on a separate on-demand image list. The cache version is a truncated SHA-256 hash of the worker code and the names and contents of the files on both lists. The checks with which the plugin fails the build are listed under [Change Verification](#change-verification).
