@@ -661,12 +661,14 @@ test.describe("sticky header focus clearance", () => {
 });
 
 // Each legal page lists its numbered sections in a "Spis treści" navigation,
-// and every numbered heading links back to it. Both are native fragment links,
-// cleared of the sticky header by the root scroll padding (css/base.css).
+// and every numbered section closes with a link back to it. Both are native
+// fragment links, cleared of the sticky header by the root scroll padding
+// (css/base.css). `inner` names a section with its own focus stops: inline
+// links or a table region.
 const LEGAL_DOCUMENTS = [
-  { route: "/privacy.html", contents: "privacy-toc", sections: 14, wrapping: "privacy-transfers-title" },
-  { route: "/terms.html", contents: "terms-toc", sections: 17, wrapping: "terms-services-title" },
-  { route: "/cookies.html", contents: "cookies-toc", sections: 9, wrapping: "cookies-legal-basis-title" },
+  { route: "/privacy.html", contents: "privacy-toc", sections: 14, inner: "privacy-recipients-title" },
+  { route: "/terms.html", contents: "terms-toc", sections: 17, inner: "terms-data-title" },
+  { route: "/cookies.html", contents: "cookies-toc", sections: 9, inner: "cookies-types-title" },
 ];
 const NARROW = { width: 320, height: 640 };
 const RETURN_LINK_NAME = "Wróć do spisu treści";
@@ -674,19 +676,40 @@ const RETURN_LINK_NAME = "Wróć do spisu treści";
 const getContentsLinks = (page) =>
   page.getByRole("navigation", { name: "Spis treści" }).getByRole("list").getByRole("link");
 
-// Numbered top-level headings in document order, with the link that follows each one.
+const getReturnLinks = (page) => page.getByRole("link", { name: RETURN_LINK_NAME, exact: true });
+
+// Numbered top-level headings in document order, with the return links each
+// section holds and whether one closes it after its content. A section runs to
+// the next numbered heading or, for the last one, to the closing rule.
 const readLegalOutline = (page) =>
-  page.locator("main h2").evaluateAll((headings) =>
-    headings
-      .filter((heading) => /^\d+\. /.test(heading.textContent))
-      .map((heading) => ({
+  page.locator("main h2").evaluateAll((headings, name) => {
+    const numbered = headings.filter((heading) => /^\d+\. /.test(heading.textContent));
+    const isReturn = (node) => node.matches(`a[aria-label="${name}"]`);
+    return numbered.map((heading, index) => {
+      const end = numbered[index + 1] ?? heading.parentElement.querySelector(":scope > hr");
+      const content = [];
+      for (let node = heading.nextElementSibling; node && node !== end; node = node.nextElementSibling) content.push(node);
+      return {
         id: heading.id,
         text: heading.textContent,
-        next: heading.nextElementSibling?.getAttribute("href") ?? null,
-      }))
-  );
+        returns: content.flatMap((node) => [node, ...node.querySelectorAll("a")].filter(isReturn).map((link) => link.getAttribute("href"))),
+        closing: content.length > 1 && isReturn(content.at(-1)),
+      };
+    });
+  }, RETURN_LINK_NAME);
 
-const getReturnLink = (page, headingId) => page.locator(`[id="${headingId}"] + a`);
+// The first return link after a heading, which the outline test proves is its section's own.
+const getReturnLink = (page, headingId) => page.locator(`[id="${headingId}"] ~ a[aria-label="${RETURN_LINK_NAME}"]`).first();
+
+// The section's sequential focus stops in document order, and the focused one's position.
+const readSectionFocus = (page, headingId) =>
+  page.locator(`[id="${headingId}"]`).evaluate((heading) => {
+    const stops = [];
+    for (let node = heading.nextElementSibling; node && !node.matches("h2, hr"); node = node.nextElementSibling) {
+      stops.push(...[node, ...node.querySelectorAll("*")].filter((element) => element.matches("a[href], [tabindex='0']")));
+    }
+    return { position: stops.indexOf(document.activeElement), count: stops.length };
+  });
 
 const expectFragmentTarget = async (page, id) => {
   const target = page.locator(`[id="${id}"]`);
@@ -698,6 +721,25 @@ const expectFragmentTarget = async (page, id) => {
       return Math.round(box.y - header.y - header.height);
     })
     .toBeGreaterThanOrEqual(0);
+};
+
+// A section entry is restored where it was left: at its heading, at its return
+// link, or in between, depending on whether the scroll that brought the link
+// into view was saved before leaving. Either way the band below the header
+// shows part of that section.
+const expectSectionRestored = async (page, id) => {
+  await expect(page).toHaveURL((url) => url.hash === `#${id}`);
+  await expect
+    .poll(() =>
+      page.locator(`[id="${id}"]`).evaluate((heading, name) => {
+        let link = heading.nextElementSibling;
+        while (!link.matches(`a[aria-label="${name}"]`)) link = link.nextElementSibling;
+        const headerBottom = document.querySelector("[data-header]").getBoundingClientRect().bottom;
+        const [start, end] = [heading.getBoundingClientRect().top, link.getBoundingClientRect().bottom];
+        return Math.min(innerHeight, end) - Math.max(headerBottom, start);
+      }, RETURN_LINK_NAME)
+    )
+    .toBeGreaterThan(0);
 };
 
 const expectVisibleFocusBelowHeader = async (control) => {
@@ -715,25 +757,55 @@ const expectVisibleFocusBelowHeader = async (control) => {
   expect(state.clearance).toBeGreaterThanOrEqual(0);
 };
 
-// Position relative to the heading, so a shifted control fails regardless of scrolling.
+// Position relative to the content above, so a shifted control fails regardless of scrolling.
 const readReturnLink = (link) =>
   link.evaluate((node) => {
     const style = getComputedStyle(node);
     const box = node.getBoundingClientRect();
-    const heading = node.previousElementSibling.getBoundingClientRect();
+    const above = node.previousElementSibling.getBoundingClientRect();
     return {
-      box: [box.left - heading.left, box.top - heading.top, box.width, box.height],
+      box: [box.left - above.left, box.top - above.bottom, box.width, box.height],
       color: style.color,
       washed: style.backgroundColor !== "rgba(0, 0, 0, 0)",
       travel: getComputedStyle(node.firstElementChild).transform,
     };
   });
 
+// The visible chevron, not just its mask box: the mask image's opaque pixels,
+// drawn over the square icon box at ten times its scale, mapped onto the page.
+const readChevron = (link) =>
+  link.evaluate(async (node) => {
+    const icon = node.firstElementChild;
+    const image = new Image();
+    image.src = getComputedStyle(icon).maskImage.match(/url\("(.+)"\)/)[1];
+    await image.decode();
+    const [control, box] = [node.getBoundingClientRect(), icon.getBoundingClientRect()];
+    const scale = 10;
+    const size = Math.round(box.width * scale);
+    const canvas = Object.assign(document.createElement("canvas"), { width: size, height: size });
+    const context = canvas.getContext("2d");
+    context.drawImage(image, 0, 0, size, size);
+    const { data } = context.getImageData(0, 0, size, size);
+    let [left, top, right, bottom] = [size, size, 0, 0];
+    for (let pixel = 0; pixel < size * size; pixel += 1) {
+      if (data[pixel * 4 + 3] === 0) continue;
+      const [x, y] = [pixel % size, Math.floor(pixel / size)];
+      [left, top, right, bottom] = [Math.min(left, x), Math.min(top, y), Math.max(right, x + 1), Math.max(bottom, y + 1)];
+    }
+    return {
+      width: (right - left) / scale,
+      offset: [
+        box.left + (left + right) / 2 / scale - (control.left + control.width / 2),
+        box.top + (top + bottom) / 2 / scale - (control.top + control.height / 2),
+      ],
+    };
+  });
+
 test.describe("legal document contents", () => {
   test.use({ reducedMotion: "reduce" });
 
-  for (const { route, contents, sections } of LEGAL_DOCUMENTS) {
-    test(`${route}: one contents link and one return link per numbered section`, async ({ page }) => {
+  for (const { route, contents, sections, inner } of LEGAL_DOCUMENTS) {
+    test(`${route}: one contents link per numbered section, each section closed by one return link`, async ({ page }) => {
       await page.goto(route);
       const nav = page.getByRole("navigation", { name: "Spis treści" });
       const links = getContentsLinks(page);
@@ -752,10 +824,12 @@ test.describe("legal document contents", () => {
       const ids = await page.locator("[id]").evaluateAll((nodes) => nodes.map((node) => node.id));
       expect(new Set(ids).size).toBe(ids.length);
 
-      // Each numbered heading alone is followed by a return link, which stays
-      // outside the heading's accessible name.
-      expect(outline.map(({ next }) => next)).toEqual(Array(sections).fill(`#${contents}`));
-      await expect(page.getByRole("link", { name: RETURN_LINK_NAME, exact: true })).toHaveCount(sections);
+      // Each section holds exactly one return link, to the contents, as its
+      // final element after the content, so none sits beside a heading or
+      // after the closing rule; headings keep their own accessible names.
+      expect(outline.map(({ returns }) => returns)).toEqual(Array(sections).fill([`#${contents}`]));
+      expect(outline.map(({ closing }) => closing)).toEqual(Array(sections).fill(true));
+      await expect(getReturnLinks(page)).toHaveCount(sections);
       for (const { id, text } of outline) {
         await expect(page.locator(`[id="${id}"]`)).toHaveAccessibleName(text);
       }
@@ -768,21 +842,28 @@ test.describe("legal document contents", () => {
       }
     });
 
-    test(`${route}: keyboard moves from the contents to a section and back`, async ({ page }) => {
+    test(`${route}: keyboard moves from the contents through a section to its return link and back`, async ({ page }) => {
       await page.setViewportSize(DESKTOP);
       await page.goto(route);
       const links = getContentsLinks(page);
       const outline = await readLegalOutline(page);
 
-      for (const index of [0, sections - 1]) {
-        const { id } = outline[index];
-        await links.nth(index).focus();
+      for (const id of [outline[0].id, inner, outline.at(-1).id]) {
+        await links.nth(outline.findIndex((section) => section.id === id)).focus();
         await page.keyboard.press("Enter");
         await expectFragmentTarget(page, id);
 
-        // Sequential focus resumes at the fragment target, so its return link is next.
-        await page.keyboard.press("Tab");
-        await expectVisibleFocusBelowHeader(getReturnLink(page, id));
+        // Sequential focus resumes at the fragment target and passes the
+        // section's own links and table regions in order before its return link.
+        const { count } = await readSectionFocus(page, id);
+        if (id === inner) expect(count).toBeGreaterThan(1);
+        for (let position = 0; position < count; position += 1) {
+          await page.keyboard.press("Tab");
+          expect(await readSectionFocus(page, id)).toEqual({ position, count });
+        }
+        const link = getReturnLink(page, id);
+        await expectVisibleFocusBelowHeader(link);
+        await expect(link).toBeInViewport();
         await page.keyboard.press("Enter");
         await expectFragmentTarget(page, contents);
         await page.keyboard.press("Tab");
@@ -794,7 +875,7 @@ test.describe("legal document contents", () => {
   test.describe("without browser JavaScript", () => {
     test.use({ javaScriptEnabled: false });
 
-    for (const { route, contents, wrapping } of LEGAL_DOCUMENTS) {
+    for (const { route, contents, inner } of LEGAL_DOCUMENTS) {
       for (const [layout, viewport] of [["desktop", DESKTOP], ["320px", NARROW]]) {
         test(`${route} ${layout}: contents, return, and history navigation`, async ({ page }) => {
           await page.setViewportSize(viewport);
@@ -815,33 +896,40 @@ test.describe("legal document contents", () => {
           // History traversal restores each entry's URL and the position it was
           // left from, which on a narrow screen may lie further down the contents.
           await page.goBack();
-          await expectFragmentTarget(page, last.id);
+          await expectSectionRestored(page, last.id);
           await page.goBack();
           await expect(page).toHaveURL((url) => url.hash === `#${contents}`);
           await expect(links.last()).toBeInViewport();
           await page.goBack();
-          await expectFragmentTarget(page, first.id);
+          await expectSectionRestored(page, first.id);
 
-          // A direct link opens a long section; at 320px its heading wraps beside
-          // the return link, which stays centered on the first line.
-          await page.goto(`${route}#${wrapping}`);
-          await expectFragmentTarget(page, wrapping);
-          const geometry = await page.locator(`[id="${wrapping}"]`).evaluate((heading) => {
-            const line = parseFloat(getComputedStyle(heading).lineHeight);
-            const box = heading.getBoundingClientRect();
-            const link = heading.nextElementSibling.getBoundingClientRect();
-            const root = document.documentElement;
-            return {
-              lines: Math.round(box.height / line),
-              offset: Math.abs(link.top + link.height / 2 - (box.top + line / 2)),
-              inside: link.right <= root.clientWidth,
-              overflow: root.scrollWidth - root.clientWidth,
-            };
-          });
-          if (layout === "320px") expect(geometry.lines).toBeGreaterThan(1);
-          expect(geometry.offset).toBeLessThanOrEqual(1);
-          expect(geometry.inside).toBe(true);
-          expect(geometry.overflow).toBe(0);
+          // A direct link opens a section with nested content. Every return link
+          // sits on the text column's start edge with the same gap below its
+          // section's content, and its 48px hit area stays clear of that content,
+          // the heading or rule below, and the viewport edges.
+          await page.goto(`${route}#${inner}`);
+          await expectFragmentTarget(page, inner);
+          const geometry = await getReturnLinks(page).evaluateAll((nodes) =>
+            nodes.map((node) => {
+              const box = node.getBoundingClientRect();
+              const column = node.parentElement.getBoundingClientRect();
+              const reach = (48 - box.height) / 2;
+              return {
+                start: box.left - column.left,
+                above: Math.round(box.top - node.previousElementSibling.getBoundingClientRect().bottom),
+                clear: [
+                  box.top - reach >= node.previousElementSibling.getBoundingClientRect().bottom,
+                  box.bottom + reach <= node.nextElementSibling.getBoundingClientRect().top,
+                  box.left - reach >= 0,
+                  box.right + reach <= document.documentElement.clientWidth,
+                ],
+              };
+            })
+          );
+          const overflow = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+          expect(new Set(geometry.map(({ start, above }) => `${start} ${above}`))).toEqual(new Set(["0 16"]));
+          expect(geometry.map(({ clear }) => clear)).toEqual(Array(geometry.length).fill([true, true, true, true]));
+          expect(overflow).toBe(0);
         });
       }
     }
@@ -849,21 +937,26 @@ test.describe("legal document contents", () => {
 
   for (const colorScheme of ["dark", "light"]) {
     for (const reducedMotion of ["no-preference", "reduce"]) {
-      test(`${colorScheme}, ${reducedMotion} motion: return link feedback keeps its box and 48px hit area`, async ({ page }) => {
+      test(`${colorScheme}, ${reducedMotion} motion: return link feedback keeps its box, centered chevron, and 48px hit area`, async ({ page }) => {
         await page.emulateMedia({ colorScheme, reducedMotion });
         await page.setViewportSize(DESKTOP);
         await page.goto("/terms.html");
         await expect(page.locator("html")).toHaveClass(new RegExp(`theme--${colorScheme}`));
-        const heading = page.locator("#terms-services-title");
         const link = getReturnLink(page, "terms-services-title");
+        const closing = link.locator("xpath=preceding-sibling::*[1]");
         // The contents title carries the theme's gold accent token.
         const gold = await page.locator(".legal-toc__title").evaluate((node) => getComputedStyle(node).color);
-        await heading.evaluate((node) => node.scrollIntoView({ block: "center", behavior: "instant" }));
+        await link.evaluate((node) => node.scrollIntoView({ block: "center", behavior: "instant" }));
 
         const rest = await readReturnLink(link);
         expect(rest).toMatchObject({ washed: false, travel: "none" });
         expect(rest.color).not.toBe(gold);
-        expect(rest.box.slice(2)).toEqual([32, 32]);
+        expect(rest.box).toEqual([0, 16, 32, 32]);
+
+        // A compact 15px chevron, its visible center on the control's center.
+        const chevron = await readChevron(link);
+        expect(chevron.width).toBeLessThanOrEqual(16);
+        for (const offset of chevron.offset) expect(Math.abs(offset)).toBeLessThanOrEqual(0.25);
 
         // The pseudo-element extends the 32px square to a 48px target.
         const hits = await link.evaluate((node) => {
@@ -881,7 +974,8 @@ test.describe("legal document contents", () => {
         await link.hover();
         await expect.poll(() => readReturnLink(link)).toEqual(active);
 
-        await heading.click();
+        // The section's closing paragraph has no links, so Tab moves from it to the return link.
+        await closing.click();
         await expect.poll(() => readReturnLink(link)).toEqual(rest);
         await page.keyboard.press("Tab");
         await expectVisibleFocusBelowHeader(link);

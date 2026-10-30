@@ -220,15 +220,16 @@
   margin-block-end: 0;
 }
 
-/* Running-text links only; buttons and the contents links style themselves. */
-.prose a:not(.button, .legal-toc__link) {
+/* Running-text links only; buttons, the contents links, and the return
+   controls style themselves. */
+.prose a:not(.button, .legal-toc__link, .legal-return) {
   text-decoration: underline;
   text-decoration-thickness: 0.075em;
   text-underline-offset: 0.18em;
 }
 
-.prose a:not(.button, .legal-toc__link):hover,
-.prose a:not(.button, .legal-toc__link):focus-visible {
+.prose a:not(.button, .legal-toc__link, .legal-return):hover,
+.prose a:not(.button, .legal-toc__link, .legal-return):focus-visible {
   text-decoration-color: var(--color-gold-400);
   text-decoration-thickness: 0.14em;
 }
@@ -329,51 +330,36 @@
   }
 }
 
-/* A numbered legal heading and its return link to the contents. The row takes
-   over the heading's prose spacing, so the vertical rhythm is unchanged, and
-   keeps the link outside the heading's accessible name. */
-.legal-heading {
-  /* The heading's first line, on which the return link is centered. */
-  --legal-heading-line: calc(var(--fs-xl) * var(--lh-heading));
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-sm);
-  margin-block: var(--space-2xl) var(--space-sm);
-}
-
-.legal-heading > h2 {
-  min-inline-size: 0;
-  margin: 0;
-  overflow-wrap: anywhere;
-}
-
-/* A quiet hairline square in the back-to-top control's material. The
-   pseudo-element extends the hit area to the shared 48px control size
-   without enlarging the heading row. */
-.legal-heading__return {
+/* The link closing each numbered legal section, back to the contents: a quiet
+   hairline square in the back-to-top control's material, on the text column's
+   start edge. The paragraph gap above and the next heading's own margin below
+   both exceed the 8px by which the pseudo-element extends the hit area to the
+   shared 48px control size, so it never reaches the text or the heading. */
+.legal-return {
   position: relative;
   display: grid;
   place-items: center;
-  flex: none;
   inline-size: 2rem;
   block-size: 2rem;
-  margin-block-start: calc((var(--legal-heading-line) - 2rem) / 2);
+  margin-block: var(--space-md) 0;
   border: 1px solid var(--color-line);
   border-radius: var(--radius-sm);
   transition: color 0.2s ease, border-color 0.2s ease, background-color 0.2s ease;
 }
 
 /* Insets are measured from the padding box, inside the 1px border. */
-.legal-heading__return::before {
+.legal-return::before {
   content: "";
   position: absolute;
   inset: calc((2rem - var(--size-control)) / 2 - 1px);
 }
 
-/* The same 2rem mask box as .back-to-top__icon: a 20px chevron with a 1px
-   stroke that matches the hairline border. */
-.legal-heading__icon {
-  inline-size: 2rem;
+/* The exported chevron is symmetric about its 48-unit viewBox center, so the
+   1.5rem mask box draws a 15px chevron centered on the box. The box fits the
+   30px padding box, 3px from each edge, so the grid track never outgrows it
+   and the chevron sits on the control's exact center. */
+.legal-return__icon {
+  inline-size: 1.5rem;
   aspect-ratio: 1;
   background-color: currentColor;
   -webkit-mask: url("../assets/icons/chevron-up.svg") center / contain no-repeat;
@@ -382,42 +368,42 @@
 }
 
 /* Only the chevron moves; the square never shifts. */
-.legal-heading__return:focus-visible {
+.legal-return:focus-visible {
   border-color: var(--color-line-accent);
   background-color: var(--color-state-hover);
   color: var(--color-gold-300);
 }
 
-.legal-heading__return:focus-visible .legal-heading__icon {
+.legal-return:focus-visible .legal-return__icon {
   transform: translateY(-2px);
 }
 
 @media (hover: hover) {
-  .legal-heading__return:hover {
+  .legal-return:hover {
     border-color: var(--color-line-accent);
     background-color: var(--color-state-hover);
     color: var(--color-gold-300);
   }
 
-  .legal-heading__return:hover .legal-heading__icon {
+  .legal-return:hover .legal-return__icon {
     transform: translateY(-2px);
   }
 }
 
-.legal-heading__return:active {
+.legal-return:active {
   background-color: var(--color-state-active);
 }
 
 /* Only the chevron's travel is dropped; the wash, border, and focus ring remain. */
 @media (prefers-reduced-motion: reduce) {
-  .legal-heading__return:focus-visible .legal-heading__icon,
-  .legal-heading__return:hover .legal-heading__icon {
+  .legal-return:focus-visible .legal-return__icon,
+  .legal-return:hover .legal-return__icon {
     transform: none;
   }
 }
 
 @media (forced-colors: active) {
-  .legal-heading__icon {
+  .legal-return__icon {
     forced-color-adjust: none;
     background-color: LinkText;
   }
