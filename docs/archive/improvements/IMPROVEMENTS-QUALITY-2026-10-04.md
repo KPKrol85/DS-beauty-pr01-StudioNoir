@@ -1,8 +1,11 @@
 # Studio Noir — Quality Improvements
 
 **Analysis date:** 2026-10-04
+
 **Completed:** 2026-10-04
+
 **Status:** COMPLETED — all five selected improvements closed.
+
 **Scope:** Project-wide code quality, runtime resilience, accessibility regression protection, and build verification.
 
 ## Overview
@@ -18,7 +21,7 @@ No CI infrastructure or unrelated dependencies were introduced.
 ### IMP-QUALITY-01 — Keep theme switching working when browser storage is unavailable
 
 - **Status:** COMPLETED — implemented and verified.
-- **Result:** Made theme persistence resilient to unavailable, failing, or invalid `localStorage` data. Theme switching continues without storage, falls back to `prefers-color-scheme`, and does not interrupt subsequent application initialization. Preserved the existing storage key, supported theme values, CSS classes, and toggle behavior.
+- **Result:** Made theme persistence resilient to unavailable, failing, or invalid `localStorage` data; theme switching continues without storage, falls back to `prefers-color-scheme`, and does not interrupt application initialization. Preserved the existing storage key, theme values, CSS classes, and toggle behavior.
 - **Verification:** Browser checks covered storage failures, invalid values, theme switching, and initialization across content pages. `npm run build` and `git diff --check` passed.
 - **Impact:** Medium
 - **Effort:** Small
@@ -26,7 +29,7 @@ No CI infrastructure or unrelated dependencies were introduced.
 ### IMP-QUALITY-02 — Add a browser regression check for the mobile-menu state contract
 
 - **Status:** COMPLETED — implemented and verified.
-- **Result:** Corrected mobile navigation state handling across the 900px breakpoint, removed stale `inert` and ARIA states, and restored desktop navigation accessibility exposure. Fixed the mobile panel viewport behavior and introduced focused Playwright regression coverage through `npm run test:nav`. Preserved keyboard focus management, Escape handling, scroll locking, and responsive navigation behavior.
+- **Result:** Corrected mobile navigation state handling across the 900px breakpoint, removing stale `inert` and ARIA states, restoring desktop accessibility exposure, and fixing the mobile panel viewport behavior. Introduced focused Playwright regression coverage through `npm run test:nav` while preserving focus management, Escape handling, scroll locking, and responsive behavior.
 - **Verification:** Browser regression checks covered mobile menu interaction, Tab/Shift+Tab focus handling, Escape, navigation links, breakpoint transitions, and desktop accessibility semantics. `npm run test:nav`, `npm run build`, and `git diff --check` passed. CI integration was outside scope.
 - **Impact:** High
 - **Effort:** Medium
@@ -76,6 +79,6 @@ Verification results documented under individual improvements reflect checks per
 
 Browser regression coverage used Chromium. Other browser engines, real devices, and comprehensive accessibility testing were not included in the original quality improvement cycle.
 
-The repository does not currently contain a GitHub Actions CI workflow. The build safeguards remain integrated with the production build configuration.
+When this record was standardized (2026-10-10), the repository did not contain a GitHub Actions CI workflow; the build safeguards were integrated with the production build configuration.
 
 This archived document records historical decisions and verified implementation outcomes. Current repository code and configuration remain the technical source of truth.

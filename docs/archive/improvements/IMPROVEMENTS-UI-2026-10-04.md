@@ -1,8 +1,11 @@
 # Studio Noir — UI Improvements
 
 **Analysis date:** 2026-09-28
+
 **Completion date:** 2026-10-04
+
 **Status:** COMPLETED — all seven improvements closed.
+
 **Scope:** Project-wide UI consistency, typography, controls, and responsive layout.
 
 ## Overview
@@ -78,7 +81,7 @@ Later editorial material refinements were implemented separately under the DESIG
 The original UI analysis identified additional concerns outside the completed improvement scope:
 
 - **Font asset coverage:** The original Chromium inspection found incomplete glyph coverage in the bundled WOFF2 files, causing extensive system-font fallback. The later DESIGN audit also confirmed mixed fallback rendering. Font repair requires a separately approved task.
-- **Light-theme material contrast:** The original UI review identified dark translucent surfaces that remained incompatible with the light theme. These were subsequently addressed under IMP-DESIGN-01A and IMP-DESIGN-01B.
+- **Light-theme material contrast:** The original UI review identified dark translucent surfaces that remained incompatible with the light theme. These were subsequently addressed under IMP-DESIGN-01, implemented in slices IMP-DESIGN-01A and IMP-DESIGN-01B.
 - **Broader editorial composition:** Photography, section layouts, gallery presentation, and creative art direction were not included in the original UI improvement cycle.
 
 These observations reflect historical review boundaries. Current implementation and active improvement reports take precedence over the original findings.

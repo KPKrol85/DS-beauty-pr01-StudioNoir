@@ -96,10 +96,4 @@ The completed work preserved the existing navigation, booking, lightbox, respons
 
 No production deployment or full cross-browser regression is claimed.
 
-## Completion summary
-
-All eight approved design improvements were implemented and verified within their defined scopes.
-
-Studio Noir now follows a cohesive editorial direction with responsive photography, refined typography, clearer services, accessible interactive demonstrations, and consistent closing sections.
-
-**Final status:** COMPLETED — ready for documentation archival.
+This archived report records historical design decisions and verified outcomes. Current repository files remain the technical source of truth.

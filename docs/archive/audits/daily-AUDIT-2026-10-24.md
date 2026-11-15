@@ -1,11 +1,18 @@
 # Studio Noir — Audit Completion Record
 
-Project: Studio Noir — Vite MPA, vanilla HTML/CSS/JavaScript.
-Original audit date: 2026-10-21.
-Completion/archive date: 2026-10-24.
-Status: Completed.
+**Project:** Studio Noir — Vite MPA, vanilla HTML/CSS/JavaScript
 
-Scope: the original seven P1/P2 findings and two optional improvements. No P0 findings were reported.
+**Original audit date:** 2026-10-21
+
+**Completion/archive date:** 2026-10-24
+
+**Status:** Completed
+
+**Scope:** The original seven P1/P2 findings and two optional improvements.
+
+## P0
+
+None reported.
 
 ## P1
 
@@ -29,8 +36,9 @@ Scope: the original seven P1/P2 findings and two optional improvements. No P0 fi
 
 All original actionable findings are resolved or explicitly superseded, and both optional improvements are complete. Plan O-03 was an additional improvement, not an original audit finding.
 
-Verification: reviewed current sources, tests, README, npm/CI configuration, and changelog; checked shared HTML transforms on four pages; 28 selected existing Playwright cases passed against Vite dev; final diff whitespace check passed.
-Runtime checks used installed Chromium 1248 (156.0.8078.4) through a temporary launch override because the default Chromium 1243 was unavailable. Production build/PWA, CI execution, other browsers, and physical devices were not reverified.
+**Verification:** Reviewed current sources, tests, README, npm/CI configuration, and changelog; checked shared HTML transforms on four pages; 28 selected existing Playwright cases passed against Vite dev; final diff whitespace check passed. Runtime checks used installed Chromium 1248 (156.0.8078.4) through a temporary launch override because the default Chromium 1243 was unavailable.
+
+**Limitations:** Production build/PWA, CI execution, other browsers, and physical devices were not reverified.
 
 ## References
 

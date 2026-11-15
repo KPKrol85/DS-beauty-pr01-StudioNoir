@@ -1,8 +1,11 @@
 # Studio Noir — Technical Improvements
 
 **Analysis date:** 2026-10-08
+
 **Completed and archived:** 2026-10-09
+
 **Status:** COMPLETED — all four selected improvements closed.
+
 **Scope:** Project-wide technical implementation and maintenance contracts.
 
 ## Overview
@@ -18,8 +21,8 @@ No new runtime dependencies, frameworks, backend functionality, or deployment in
 ### IMP-TECH-01 — Maintain the primary navigation links in one canonical source
 
 - **Status:** COMPLETED — implemented and verified.
-- **Result:** Introduced `build/primary-navigation.js` as the canonical source for seven navigation entries. A local Vite HTML transform renders the four `.nav__list` insertion points in development and production. Preserved home-page `#section` links, legal-page `/index.html#section` destinations, navigation order, CSS/JavaScript hooks, and existing interactions. Desktop navigation links remain available without browser JavaScript; opening the mobile menu still requires JavaScript.
-- **Verification:** Development and production HTML checks confirmed labels, order, URLs, shared-label propagation, and explicit errors for invalid insertion points. Browser checks covered desktop links without JavaScript, mobile menu behavior, keyboard focus, and navigation state. `npm run build`, `npm run test:nav` (18/18), and `git diff --check` passed. The original root HTML files retain build-time insertion markers rather than fully rendered navigation lists.
+- **Result:** Introduced `build/primary-navigation.js` as the canonical source for seven navigation entries, rendered by a local Vite HTML transform into the four `.nav__list` insertion points in development and production. Preserved home-page `#section` links, legal-page `/index.html#section` destinations, navigation order, CSS/JavaScript hooks, and existing interactions. Desktop links remain available without JavaScript; opening the mobile menu still requires it.
+- **Verification:** Development and production HTML checks confirmed labels, order, URLs, shared-label propagation, and explicit errors for invalid insertion points; browser checks covered desktop links without JavaScript, mobile menu behavior, keyboard focus, and navigation state. `npm run build`, `npm run test:nav` (18/18), and `git diff --check` passed. Root HTML source files retain build-time insertion markers rather than fully rendered navigation lists.
 - **Impact:** Medium
 - **Effort:** Medium
 
@@ -35,7 +38,7 @@ No new runtime dependencies, frameworks, backend functionality, or deployment in
 
 - **Status:** COMPLETED — implemented and verified.
 - **Result:** Centralized `HOME_DOCUMENT` and `OFFLINE_DOCUMENT` in `js/pwa-paths.js`, shared by `vite.config.js` and `service-worker.js`. The precache guard validates the same fallback paths used by the service worker. Preserved network-first document handling, navigation normalization, pathname-based cache matching, service-worker lifecycle, stable output naming, and automatic content-derived cache versioning.
-- **Verification:** `npm run build` passed with resolved precache and cache-version placeholders and self-contained worker output. Two in-memory missing-input guard checks passed. Chromium installation and activation checks, followed by ten offline navigation scenarios with the preview server stopped, passed for home, legal and clean URLs, query strings, and unknown-path fallback. `git diff --check` passed. Live production PWA behavior was not verified.
+- **Verification:** `npm run build` (resolved precache and cache-version placeholders, self-contained worker output), two in-memory missing-input guard checks, and `git diff --check` passed. Chromium installation and activation checks, followed by ten offline navigation scenarios with the preview server stopped, passed for home, legal and clean URLs, query strings, and unknown-path fallback. Live production PWA behavior was not verified.
 - **Impact:** Medium
 - **Effort:** Small
 

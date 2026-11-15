@@ -1,8 +1,11 @@
 # Studio Noir — Workflow Improvements
 
 **Analysis date:** 2026-10-04
+
 **Completed and archived:** 2026-10-05
+
 **Status:** COMPLETED — all five selected improvements closed.
+
 **Scope:** Project-wide development workflow, verification, documentation, release preparation, and agent instructions.
 
 ## Overview
@@ -33,9 +36,9 @@ The project owner subsequently adopted a simplified documentation model. This re
 
 ### IMP-WORKFLOW-03 — Document the improvement-report lifecycle and archive convention
 
-- **Status:** COMPLETED — originally implemented; the completion-record format was subsequently superseded.
-- **Result:** Documented the active-report location, completion requirements, archive destination, and completion-date filename convention in both README languages. The original instructions preserved detailed proposal fields after completion. The later owner-approved documentation standard replaced this approach with concise `Status`, `Result`, `Verification`, `Impact`, and `Effort` records in `AGENTS.md`.
-- **Verification:** Static inspection confirmed the archive structure and original lifecycle guidance in both README languages. The current `AGENTS.md` defines the simplified completion format. README still contains the earlier detailed-record instructions and requires separate synchronization. No runtime checks were needed.
+- **Status:** COMPLETED — implemented and verified.
+- **Result:** Documented the active-report location, completion requirements, archive destination, and completion-date filename convention in both README languages. The original detailed completion-record format was subsequently superseded by the owner-approved concise `Status`, `Result`, `Verification`, `Impact`, and `Effort` records in `AGENTS.md`.
+- **Verification:** Static inspection confirmed the archive structure and original lifecycle guidance in both README languages; no runtime checks were needed. When this record was standardized (2026-10-10), README still contained the earlier detailed-record instructions pending separate synchronization.
 - **Impact:** Medium
 - **Effort:** Small
 
@@ -49,9 +52,9 @@ The project owner subsequently adopted a simplified documentation model. This re
 
 ### IMP-WORKFLOW-05 — Keep shared agent rules in one canonical instruction file
 
-- **Status:** COMPLETED — implemented and subsequently simplified.
-- **Result:** Consolidated shared development instructions in `AGENTS.md` and reduced `CLAUDE.md` to an import of the canonical file using `@AGENTS.md`. The owner subsequently simplified `AGENTS.md` to stable engineering guardrails, verification expectations, delivery safety, reporting rules, and concise completed-improvement records. Project architecture and implementation conventions remain governed by the current repository and approved task scope rather than fixed procedural descriptions.
-- **Verification:** Static inspection confirmed that `CLAUDE.md` imports `AGENTS.md` and contains no duplicate project rules. The current agent contract preserves source-of-truth handling, scope control, accessibility safeguards, focused verification, and restrictions on unrequested repository actions. No application tests were necessary.
+- **Status:** COMPLETED — implemented and verified.
+- **Result:** Consolidated shared development instructions in `AGENTS.md` and reduced `CLAUDE.md` to an `@AGENTS.md` import of the canonical file. The owner subsequently simplified `AGENTS.md` to stable engineering guardrails, verification expectations, delivery safety, reporting rules, and concise completed-improvement records, leaving architecture and conventions to the repository and approved task scope.
+- **Verification:** Static inspection confirmed that `CLAUDE.md` imports `AGENTS.md` without duplicate project rules, and that the simplified contract preserved source-of-truth handling, scope control, accessibility safeguards, focused verification, and restrictions on unrequested repository actions. No application tests were necessary.
 - **Impact:** Medium
 - **Effort:** Small
 
@@ -66,7 +69,7 @@ The original workflow review identified additional concerns outside its five app
 
 These are historical observations and scope decisions, not confirmation of current defects.
 
-The original improvement-report lifecycle guidance also requires alignment with the newer completion-record standard in `AGENTS.md`. This documentation synchronization is separate from the completed workflow cycle.
+Aligning the original improvement-report lifecycle guidance with the newer completion-record standard in `AGENTS.md` was a separate documentation task outside the completed workflow cycle.
 
 ## Verification limitations
 
