@@ -32,6 +32,7 @@ When an implementation task is defined, apply this policy and state `Changelog: 
 
 ### Changed
 
+- Introduced chapter, standard, and utility section tiers with narrative background bands across the home page.
 - Replaced the placeholder favicon with Studio Noir browser, Apple touch, and PWA icons.
 - Adjusted fragment scrolling and keyboard focus clearance below the sticky header.
 - Reused browser-selected gallery images in the lightbox with thumbnail fallback and offline caching.

@@ -180,34 +180,9 @@ brand plate → studio manifesto → offer chapter → people and work → booki
 
 ### IMP-DESIGN-V2-01 — Establish a chapter rhythm across the one-page sequence
 
-- **Status:** Proposed
-- **Priority:** P1
-- **Affected area:** Home sections `#about` through `#final-cta`. Shared section styles in `css/layout.css` (`.section`, `.section--muted`, `.section--cta`, `.section__header`, `.section__title`), new tier tokens in `css/tokens.css`, and section modifiers in `index.html`.
-- **Evidence:**
-  - Source: every section after the hero uses `.section` with `--space-3xl` block padding and opens with `.section__header` + `.eyebrow` + `.section__title` (`--fs-2xl`); `.section--muted` alternates on services, stylists, booking, and location.
-  - Runtime: at 1440×900, all nine titles compute to 40px, all ten sections have 72px top padding, and the page is 9,006px tall (12,753px at 390×844).
-  - Visual: full-page overviews in both themes show the same left-aligned header block repeated nine times.
-  - Historical: IMP-UI-01 deliberately made section titles quiet; IMP-DESIGN-05 – 08 diversified section interiors, not page-level pacing.
-- **Current state:** The sequence uses one opening pattern, one spacing value, and a strict two-tone alternation for sections of very different importance.
-- **Design judgment:** The page reads as a series of equal-weight panels. Nothing signals that the offer, the work, and the booking are the main chapters while location and testimonials are supporting material.
-- **Proposed improvement:** Define three section tiers, each with its own header composition, title scale, and vertical spacing:
-  - **chapter:** opens a major narrative block, for example the offer, the work, and the booking;
-  - **standard:** an ordinary section;
-  - **utility:** short supporting sections such as location.
-
-  The chapter title scale sits between the 72px hero display and the 40px standard title. Group background bands by narrative block instead of alternating them, for example services and pricing sharing one offer band, and location and the final CTA sharing one closing band. An optional restrained chapter marker may follow the numeral rules in IMP-DESIGN-V2-05.
-- **Expected value:** Clear editorial pacing with deliberate moments of emphasis and quiet, a shorter feel on mobile, and a structure the image and offer work can build on.
-- **Implementation scope:**
-  - CSS tokens and modifiers, plus header markup variants within existing sections.
-  - Unchanged: section IDs and order, the seven navigation entries and the active-section indicator, one `h1` and one `h2` per section, the eleven `[data-reveal]` containers, `scroll-padding-top`, and mobile contact-bar clearances.
-  - Legal pages use `h1.section__title`, so they must keep their current title scale unless a change is intended.
-- **Dependencies:** None. This is the foundation for IMP-DESIGN-V2-03, V2-04, and V2-06.
-- **Acceptance criteria:**
-  - At 390, 900, and 1440px in both themes, only the owner-approved chapter sections use the chapter header composition and spacing.
-  - Sections in one narrative block share a band.
-  - Legal-page titles render as before.
-  - Section IDs, navigation targets, `aria-current` tracking, reveal behavior, and heading order are unchanged, with no horizontal overflow.
-  - `npm run build`, `npm run test:nav`, and `npm run test:reveal` pass.
+- **Status:** COMPLETED — implemented and verified.
+- **Result:** Services, gallery, and booking open as chapters with an accent rule, `--space-chapter` opening space, and a `--fs-chapter` title set beside the introduction from 900px; location is a compact utility section, and the other sections keep the standard tier. Services and pricing share one offer band, and location and the final CTA share one closing editorial band; legal-page titles are unchanged.
+- **Verification:** `git diff --check`, `npm run build`, `npm run test:nav` (65), `npm run test:reveal` (2), `npm run test:mobile-contact-bar` (14), `npm run test:interactions` (18), and `npm run test:manifest` (9) passed. Headless Chromium review at 390, 900, and 1440px in both themes confirmed the tiers, bands, heading order, and fragment targets, with no horizontal overflow at 320px, 320×256, or 640×400 (200% zoom equivalent); Firefox, WebKit, and forced colors were not checked.
 - **Impact:** High
 - **Effort:** Medium
 

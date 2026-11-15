@@ -3,17 +3,10 @@
   margin: 0 auto;
 }
 
+/* Standard tier: the base section and its quiet header, shared with the
+   legal pages. */
 .section {
   padding: var(--space-3xl) 0;
-}
-
-.section--muted {
-  background: var(--color-ink-800);
-}
-
-.section--cta {
-  background: var(--color-surface-editorial);
-  box-shadow: inset 0 1px var(--color-line);
 }
 
 .section__header {
@@ -26,4 +19,84 @@
   line-height: 1.2;
   letter-spacing: -0.015em;
   text-wrap: balance;
+}
+
+/* Chapter tier: opens a major narrative block with more space above, an
+   accent rule over the header, and a display title between the section and
+   hero scales. */
+.section--chapter {
+  padding-top: var(--space-chapter);
+}
+
+.section--chapter .section__header {
+  padding-top: var(--space-lg);
+  border-top: 1px solid var(--color-line-accent);
+}
+
+.section--chapter .section__title {
+  font-size: var(--fs-chapter);
+  line-height: var(--lh-display);
+  letter-spacing: -0.02em;
+}
+
+/* Utility tier: compact supporting content with a reduced title. */
+.section--utility {
+  padding-block: var(--space-2xl);
+}
+
+.section--utility .section__header {
+  margin-bottom: var(--space-xl);
+}
+
+.section--utility .section__title {
+  font-size: var(--fs-utility);
+}
+
+/* Narrative bands: adjacent sections that share a band surface read as one
+   block, so the first gives up its bottom padding and the second its opening
+   hairline. */
+.section--muted {
+  background: var(--color-ink-800);
+}
+
+.section--editorial {
+  background: var(--color-surface-editorial);
+  box-shadow: inset 0 1px var(--color-line);
+}
+
+.section--muted:has(+ .section--muted),
+.section--editorial:has(+ .section--editorial) {
+  padding-bottom: 0;
+}
+
+.section--editorial + .section--editorial {
+  box-shadow: none;
+}
+
+/* The closing invitation ends the band with chapter-scale space. */
+.section--cta {
+  padding-bottom: var(--space-chapter);
+}
+
+/* From 900px the chapter title and its introduction share one row, on the
+   3:2 columns and gap of the booking layout. */
+@media (min-width: 900px) {
+  .section--chapter .section__header {
+    display: grid;
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    column-gap: var(--space-3xl);
+    align-items: end;
+  }
+
+  .section--chapter .section__header > .eyebrow {
+    grid-column: 1 / -1;
+  }
+
+  .section--chapter .section__title {
+    margin-bottom: 0;
+  }
+
+  .section--chapter .section__title + p {
+    margin: 0;
+  }
 }
