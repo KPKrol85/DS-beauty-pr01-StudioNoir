@@ -303,11 +303,11 @@ test.describe("gallery lightbox", () => {
     const held = new Promise((resolve) => { releaseFirst = resolve; });
     const ready = new Promise((resolve) => { firstReady = resolve; });
     const finished = new Promise((resolve) => { firstFinished = resolve; });
-    await page.route("**/assets/img/gallery/**", async (route) => {
+    await page.route("**/assets/img/work/**", async (route) => {
       const url = route.request().url();
       // Failed picture candidates leave the original WebP src as the usable fallback.
       if (url.endsWith(".avif")) return route.abort();
-      if (url.endsWith("gallery-1-800.webp")) {
+      if (url.endsWith("work-01-800.webp")) {
         const response = await route.fetch();
         firstReady();
         await held;

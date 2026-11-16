@@ -2,10 +2,10 @@
 // photographs.
 //
 // The approved PNG masters are only read. Variants go to the Git-ignored working
-// directory tmp/studio-noir-images/, never to assets/: reviewed variants are copied
-// into the production image directories as a separate manual step.
+// directory tmp/studio-noir-images/<directory>/, never to assets/: reviewed variants are
+// copied into the matching assets/img/<directory>/ as a separate manual step.
 import { mkdir, readFile, readdir, rename, rm, writeFile } from "node:fs/promises";
-import { join, relative, resolve } from "node:path";
+import { basename, dirname, extname, join, relative, resolve } from "node:path";
 import sharp from "sharp";
 
 const root = resolve(import.meta.dirname, "..");
@@ -40,20 +40,25 @@ const ROLES = {
   },
 };
 
-// Output prefixes keep the production image names referenced by the pages.
+// Each variant keeps its source's directory and filename basename, for example
+// assets/img/work/work-01.png -> tmp/studio-noir-images/work/work-01-800.avif.
 const IMAGES = [
-  { role: "campaign", source: "assets/img/hero/hero.png", name: "hero-editorial" },
-  { role: "team", source: "assets/img/stylists/team-01.png", name: "stylist-1" },
-  { role: "team", source: "assets/img/stylists/team-02.png", name: "stylist-2" },
-  { role: "team", source: "assets/img/stylists/team-03.png", name: "stylist-3" },
-  { role: "work", source: "assets/img/gallery/work-01.png", name: "gallery-1" },
-  { role: "work", source: "assets/img/gallery/work-02.png", name: "gallery-2" },
-  { role: "work", source: "assets/img/gallery/work-03.png", name: "gallery-3" },
-  { role: "work", source: "assets/img/gallery/work-04.png", name: "gallery-4" },
-  { role: "work", source: "assets/img/gallery/work-05.png", name: "gallery-5" },
-  { role: "work", source: "assets/img/gallery/work-06.png", name: "gallery-6" },
-  { role: "studio", source: "assets/img/about/about.png", name: "studio-1" },
-];
+  { role: "campaign", source: "assets/img/hero/hero.png" },
+  { role: "team", source: "assets/img/team/team-01.png" },
+  { role: "team", source: "assets/img/team/team-02.png" },
+  { role: "team", source: "assets/img/team/team-03.png" },
+  { role: "work", source: "assets/img/work/work-01.png" },
+  { role: "work", source: "assets/img/work/work-02.png" },
+  { role: "work", source: "assets/img/work/work-03.png" },
+  { role: "work", source: "assets/img/work/work-04.png" },
+  { role: "work", source: "assets/img/work/work-05.png" },
+  { role: "work", source: "assets/img/work/work-06.png" },
+  { role: "studio", source: "assets/img/about/about.png" },
+].map((image) => ({
+  ...image,
+  directory: basename(dirname(image.source)),
+  name: basename(image.source, extname(image.source)),
+}));
 
 // Chosen on the approved set: hair strands, skin texture and near-black backdrops hold at
 // 1× and 2× zoom, while lower qualities visibly smooth skin and curls. AVIF keeps full
@@ -158,8 +163,8 @@ async function main() {
   const totals = { avif: { count: 0, bytes: 0 }, webp: { count: 0, bytes: 0 } };
 
   console.log(`\nVariants (${display(OUTPUT_DIR)}/):`);
-  for (const { role, name, input } of sources) {
-    await mkdir(join(OUTPUT_DIR, role), { recursive: true });
+  for (const { role, directory, name, input } of sources) {
+    await mkdir(join(OUTPUT_DIR, directory), { recursive: true });
     for (const { width, targetKB } of ROLES[role].variants) {
       const height = heightFor(role, width);
       const resized = sharp(input)
@@ -168,7 +173,7 @@ async function main() {
         .toColourspace("srgb");
 
       for (const format of Object.keys(FORMATS)) {
-        const file = `${role}/${name}-${width}.${format}`;
+        const file = `${directory}/${name}-${width}.${format}`;
         expected.add(file);
         const label = `  ${file.padEnd(34)} ${`${width}×${height}`.padEnd(10)} ${format.toUpperCase().padEnd(5)}`;
         try {
@@ -188,7 +193,7 @@ async function main() {
 
   const unexpected = (await readdir(OUTPUT_DIR, { recursive: true }))
     .map((path) => path.replaceAll("\\", "/"))
-    .filter((path) => !Object.hasOwn(ROLES, path) && !expected.has(path));
+    .filter((path) => !sources.some((source) => source.directory === path) && !expected.has(path));
 
   const written = totals.avif.count + totals.webp.count;
   const bytes = totals.avif.bytes + totals.webp.bytes;
