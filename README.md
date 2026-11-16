@@ -163,7 +163,7 @@ npm run test:manifest            # playwright test — testy kontraktów manifes
 
 ### Generowanie wariantów obrazów
 
-`npm run images:generate` (`scripts/generate-images.js`, Sharp) tworzy warianty AVIF i WebP jedenastu zatwierdzonych zdjęć Design V2 (`DESIGN-PHOTOGRAPHY-BRIEF.md`, sekcje 6.1–6.4). Jedynymi źródłami są poniższe pliki PNG, które narzędzie wyłącznie odczytuje:
+`npm run images:generate` (`scripts/generate-images.js`, Sharp) tworzy warianty AVIF i WebP jedenastu zatwierdzonych zdjęć Design V2. Jedynymi źródłami są poniższe pliki PNG, które narzędzie wyłącznie odczytuje:
 
 | Rola | Źródło PNG | Prefiks wyniku | Warianty (AVIF + WebP) |
 | --- | --- | --- | --- |
@@ -176,7 +176,7 @@ npm run test:manifest            # playwright test — testy kontraktów manifes
 - Oryginały PNG pozostają niezmienionymi źródłami. Strony odwołują się wyłącznie do wariantów, więc PNG nie trafiają do `dist/`.
 - Przed zapisem sprawdzane są wszystkie źródła: istnienie, format PNG, proporcje (odchylenie do 0,5% korygowane centralnym przycięciem, bez rozciągania) i rozmiar nie mniejszy od największego wariantu (bez powiększania). Błąd któregokolwiek źródła kończy działanie kodem 1, zanim powstanie jakikolwiek plik.
 - Ustawienia: AVIF jakość 55, effort 6, chroma 4:4:4; WebP jakość 80, effort 6, smart subsampling, preset `photo`; skalowanie Lanczos3. Każdy plik jest przed zapisem sprawdzany: format, dokładne wymiary, 8-bitowe sRGB bez kanału alfa i bez metadanych.
-- Raport podaje wymiary, format i rozmiar każdego pliku oraz przekroczenia progów przeglądowych z sekcji 6.4 briefu (ostrzeżenia, nie błędy). Trzy warianty `gallery-4` przekraczają te progi; właściciel zatwierdził obecne kodowanie, aby zachować teksturę miedzianych włosów. Nieudana konwersja kończy działanie kodem 1, a nieaktualny plik o tej nazwie jest usuwany.
+- Raport podaje wymiary, format i rozmiar każdego pliku oraz warianty przekraczające orientacyjne progi rozmiaru, zdefiniowane dla każdej roli i szerokości w `targetKB` w skrypcie (1 KB = 1024 B; ostrzeżenia, nie błędy). Trzy warianty `gallery-4` przekraczają te progi; właściciel zatwierdził obecne kodowanie, aby zachować teksturę miedzianych włosów. Nieudana konwersja kończy działanie kodem 1, a nieaktualny plik o tej nazwie jest usuwany.
 - Ponowne uruchomienie jest bezpieczne i daje identyczne pliki: zastępowane są tylko 44 oczekiwane pliki (zapis przez plik tymczasowy), a inne pliki w katalogu wyjściowym są jedynie zgłaszane, nie usuwane.
 
 ### Weryfikacja zmian
@@ -538,7 +538,7 @@ npm run test:manifest            # playwright test — PWA manifest contract tes
 
 ### Image Variant Generation
 
-`npm run images:generate` (`scripts/generate-images.js`, Sharp) creates AVIF and WebP variants of the eleven approved Design V2 photographs (`DESIGN-PHOTOGRAPHY-BRIEF.md`, Sections 6.1–6.4). The only sources are the PNG files below, which the tool only reads:
+`npm run images:generate` (`scripts/generate-images.js`, Sharp) creates AVIF and WebP variants of the eleven approved Design V2 photographs. The only sources are the PNG files below, which the tool only reads:
 
 | Role | Source PNG | Output prefix | Variants (AVIF + WebP) |
 | --- | --- | --- | --- |
@@ -551,7 +551,7 @@ npm run test:manifest            # playwright test — PWA manifest contract tes
 - The original PNG files remain unchanged sources. The pages reference only the variants, so the PNG files are not emitted to `dist/`.
 - All sources are checked before anything is written: existence, PNG format, aspect ratio (deviations up to 0.5% are corrected by a centred crop, never by stretching), and a size no smaller than the largest variant (no upscaling). Any invalid source ends the run with exit code 1 before a file is created.
 - Settings: AVIF quality 55, effort 6, 4:4:4 chroma; WebP quality 80, effort 6, smart subsampling, `photo` preset; Lanczos3 resampling. Each file is checked before it is written: format, exact dimensions, 8-bit sRGB without an alpha channel or metadata.
-- The report lists the dimensions, format, and size of every file and any variant above the brief's Section 6.4 review targets (warnings, not errors). Three `gallery-4` variants exceed these targets; the owner approved their current encoding to preserve the copper hair texture. A failed conversion ends the run with exit code 1 and removes the stale file of that name.
+- The report lists the dimensions, format, and size of every file and any variant above the advisory size targets defined per role and width in the script's `targetKB` values (1 KB = 1024 bytes; warnings, not errors). Three `gallery-4` variants exceed these targets; the owner approved their current encoding to preserve the copper hair texture. A failed conversion ends the run with exit code 1 and removes the stale file of that name.
 - Repeated runs are safe and produce identical files: only the 44 expected files are replaced (written through a temporary file), and other files in the output directory are reported, not deleted.
 
 ### Change Verification

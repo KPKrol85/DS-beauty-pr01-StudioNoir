@@ -1,9 +1,9 @@
 // Generates the AVIF and WebP delivery variants of the eleven approved Design V2
-// photographs (DESIGN-PHOTOGRAPHY-BRIEF.md, Sections 6.1–6.4).
+// photographs.
 //
 // The approved PNG masters are only read. Variants go to the Git-ignored working
-// directory tmp/studio-noir-images/, never to assets/: the deployed variants stay
-// untouched until the reviewed output is integrated in a separate task.
+// directory tmp/studio-noir-images/, never to assets/: reviewed variants are copied
+// into the production image directories as a separate manual step.
 import { mkdir, readFile, readdir, rename, rm, writeFile } from "node:fs/promises";
 import { join, relative, resolve } from "node:path";
 import sharp from "sharp";
@@ -11,8 +11,8 @@ import sharp from "sharp";
 const root = resolve(import.meta.dirname, "..");
 const OUTPUT_DIR = resolve(root, "tmp/studio-noir-images");
 
-// Display ratio and delivery widths per role. targetKB holds the Section 6.4 review
-// targets (1 KB = 1024 bytes, as in the brief): exceeding one is reported, not fatal,
+// Display ratio and delivery widths per role. targetKB holds advisory size targets
+// per variant (1 KB = 1024 bytes): exceeding one is reported, not fatal,
 // because detailed frames may need more bytes to keep their quality.
 const TEAM_AND_WORK = {
   ratio: [4, 5],
@@ -40,7 +40,7 @@ const ROLES = {
   },
 };
 
-// Target prefixes follow the existing image slots and the brief's Section 6.2 mapping.
+// Output prefixes keep the production image names referenced by the pages.
 const IMAGES = [
   { role: "campaign", source: "assets/img/hero/hero.png", name: "hero-editorial" },
   { role: "team", source: "assets/img/stylists/team-01.png", name: "stylist-1" },
@@ -197,7 +197,7 @@ async function main() {
       `${kb(bytes)} KB in total (AVIF ${kb(totals.avif.bytes)} KB, WebP ${kb(totals.webp.bytes)} KB).`
   );
   if (aboveTarget.length > 0) {
-    console.log(`\nAbove the Section 6.4 review targets (review, not errors):\n${aboveTarget.map((line) => `  - ${line}`).join("\n")}`);
+    console.log(`\nAbove the advisory size targets (review, not errors):\n${aboveTarget.map((line) => `  - ${line}`).join("\n")}`);
   }
   if (unexpected.length > 0) {
     console.log(`\nOther files in ${display(OUTPUT_DIR)}/ were left untouched:\n${unexpected.map((path) => `  - ${path}`).join("\n")}`);
