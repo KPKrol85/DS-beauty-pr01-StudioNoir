@@ -35,6 +35,7 @@ Aktualny zakres:
   Playfair Display 1.203 pochodzi z [Google Fonts, commit `8b0a1d0f5983c89bc2b93f1b5fb55f9e252744b5`](https://github.com/google/fonts/tree/8b0a1d0f5983c89bc2b93f1b5fb55f9e252744b5/ofl/playfairdisplay); oryginalny TTF spakowano do WOFF2 bez subsettingu ani zmian glifów, metryk i nazw. Inter 4.001 to niezmieniony `InterVariable.woff2` z [wydania autora `v4.1`](https://github.com/rsms/inter/tree/v4.1/docs/font-files) (oś rozmiaru optycznego 14–32). Oba fonty są na SIL OFL 1.1; pełne noty i licencje w `public/font-licenses/playfair-display-OFL.txt` oraz `public/font-licenses/inter-OFL.txt` trafiają do `dist/font-licenses/` podczas buildu.
 - **Build:** Vite `^8.3.1` (8.3.1 w `package-lock.json`) — zależność deweloperska (`devDependencies`); wejścia buildu konfigurowane przez `build.rolldownOptions`.
 - **Testy:** Playwright — `@playwright/test` `^1.63.0` (1.63.0 w `package-lock.json`), zależność deweloperska używana przez skoncentrowane testy regresji przeglądarkowej nawigacji, paska szybkiego kontaktu, interakcji (rezerwacja, lightbox, „Wróć na górę”, trwałość motywu), pojawiania się sekcji, inicjalizacji motywu oraz kontraktów manifestu PWA (zrzuty ekranu i skróty).
+- **Obrazy:** Sharp `^0.35.5` (0.35.5 w `package-lock.json`) — zależność deweloperska używana wyłącznie przez `npm run images:generate`; nie uczestniczy w buildzie Vite i nie trafia do przeglądarki.
 - **Środowisko:** Node.js `^20.19.0 || >=22.12.0` (`engines` w `package.json`), npm (`package-lock.json`).
 - **Wdrożenie:** konfiguracja Netlify (`netlify.toml`, `public/_redirects`).
 
@@ -80,6 +81,8 @@ Aktualny zakres:
 │   ├── primary-navigation.js # wspólne wpisy i transformacja HTML nawigacji
 │   ├── shared-header.js    # wspólny nagłówek i warianty strony głównej/prawnych (transformacja HTML)
 │   └── shared-footer.js    # wspólna stopka i przycisk „Wróć na górę” (transformacja HTML)
+├── scripts/
+│   └── generate-images.js  # generator wariantów AVIF/WebP z zatwierdzonych PNG (npm run images:generate)
 ├── css/
 │   ├── style.css           # punkt wejścia CSS (@import warstw)
 │   ├── tokens.css
@@ -142,6 +145,7 @@ npm ci
 npm run dev                      # vite — serwer deweloperski, domyślnie http://localhost:5173
 npm run build                    # vite build — build produkcyjny do dist/
 npm run preview                  # vite preview — podgląd dist/, domyślnie http://localhost:4173
+npm run images:generate          # node scripts/generate-images.js — robocze warianty AVIF/WebP w tmp/studio-noir-images/
 npm run test:nav                 # playwright test — testy regresji przeglądarkowej wspólnego kontraktu nawigacji
 npm run test:mobile-contact-bar  # playwright test — testy regresji przeglądarkowej paska szybkiego kontaktu
 npm run test:interactions        # playwright test — testy regresji przeglądarkowej rezerwacji, lightboxa, „Wróć na górę” i trwałości motywu
@@ -154,6 +158,23 @@ npm run test:manifest            # playwright test — testy kontraktów manifes
 - Wszystkie sześć skryptów `test:*` korzysta z `playwright.config.js`, który sam uruchamia dedykowany serwer Vite dev na porcie 5183; wymagana jest przeglądarka Chromium dla Playwright (`npx playwright install chromium`).
 - Strony korzystają ze ścieżek absolutnych i modułów ES, dlatego wymagają serwera HTTP — nie należy otwierać plików HTML bezpośrednio z dysku.
 - Service worker jest rejestrowany tylko w buildzie produkcyjnym (`import.meta.env.PROD` w `js/main.js`), a więc w `npm run preview`, ale nie w `npm run dev`.
+
+### Generowanie wariantów obrazów
+
+`npm run images:generate` (`scripts/generate-images.js`, Sharp) tworzy warianty AVIF i WebP jedenastu zatwierdzonych zdjęć Design V2 (`DESIGN-PHOTOGRAPHY-BRIEF.md`, sekcje 6.1–6.4). Jedynymi źródłami są poniższe pliki PNG, które narzędzie wyłącznie odczytuje:
+
+| Rola | Źródło PNG | Prefiks wyniku | Warianty (AVIF + WebP) |
+| --- | --- | --- | --- |
+| Campaign | `assets/img/hero/hero.png` | `hero-editorial` | 720×540, 1200×900 |
+| Team 01–03 | `assets/img/stylists/team-01.png` … `team-03.png` | `stylist-1` … `stylist-3` | 480×600, 800×1000 |
+| Work 01–06 | `assets/img/gallery/work-01.png` … `work-06.png` | `gallery-1` … `gallery-6` | 480×600, 800×1000 |
+| Studio | `assets/img/about/about.png` | `studio-1` | 720×480, 1200×800 |
+
+- Wynik to 44 pliki (22 AVIF, 22 WebP) w wykluczonym z Git katalogu `tmp/studio-noir-images/<rola>/` (`campaign`, `team`, `work`, `studio`), np. `work/gallery-1-800.avif`. Narzędzie nie zapisuje niczego w `assets/`: strony nadal korzystają z dotychczasowych wariantów, a przeniesienie nowych należy do osobnego zadania integracji (IMP-DESIGN-V2-02).
+- Przed zapisem sprawdzane są wszystkie źródła: istnienie, format PNG, proporcje (odchylenie do 0,5% korygowane centralnym przycięciem, bez rozciągania) i rozmiar nie mniejszy od największego wariantu (bez powiększania). Błąd któregokolwiek źródła kończy działanie kodem 1, zanim powstanie jakikolwiek plik.
+- Ustawienia: AVIF jakość 55, effort 6, chroma 4:4:4; WebP jakość 80, effort 6, smart subsampling, preset `photo`; skalowanie Lanczos3. Każdy plik jest przed zapisem sprawdzany: format, dokładne wymiary, 8-bitowe sRGB bez kanału alfa i bez metadanych.
+- Raport podaje wymiary, format i rozmiar każdego pliku oraz przekroczenia progów przeglądowych z sekcji 6.4 briefu (ostrzeżenia, nie błędy). Nieudana konwersja kończy działanie kodem 1, a nieaktualny plik o tej nazwie jest usuwany.
+- Ponowne uruchomienie jest bezpieczne i daje identyczne pliki: zastępowane są tylko 44 oczekiwane pliki (zapis przez plik tymczasowy), a inne pliki w katalogu wyjściowym są jedynie zgłaszane, nie usuwane.
 
 ### Weryfikacja zmian
 
@@ -222,6 +243,7 @@ Dobór kontroli:
 | Rezerwacja i lightbox: `js/booking.js`, `js/lightbox.js`, markup i style sekcji rezerwacji, galerii i lightboxa | `npm run build`, `npm run test:interactions`, `npm run test:mobile-contact-bar` (ukrycie paska przy otwartym lightboxie), `git diff --check` |
 | Manifest PWA: `public/manifest.webmanifest`, zrzuty ekranu w `public/assets/screenshots/pwa/`, ikony skrótów w `public/assets/icons/shortcuts/` | `npm run build`, `npm run test:manifest`, `git diff --check` |
 | `service-worker.js`, `js/pwa-paths.js`, precache, `offline.html`, produkcyjne działanie PWA | `npm run build`, następnie `npm run preview`; `git diff --check` |
+| Generator wariantów obrazów: `scripts/generate-images.js` | `npm run images:generate` (44 pliki, kod wyjścia 0), `git diff --check` |
 | Wyłącznie dokumentacja | `git diff --check` |
 
 ### Ciągła integracja (CI)
@@ -385,6 +407,7 @@ Current scope:
   Playfair Display 1.203 comes from [Google Fonts, commit `8b0a1d0f5983c89bc2b93f1b5fb55f9e252744b5`](https://github.com/google/fonts/tree/8b0a1d0f5983c89bc2b93f1b5fb55f9e252744b5/ofl/playfairdisplay); the original TTF was packed into WOFF2 without subsetting or changes to glyphs, metrics, or names. Inter 4.001 is the unchanged `InterVariable.woff2` from [the author's `v4.1` release](https://github.com/rsms/inter/tree/v4.1/docs/font-files) (optical size axis 14–32). Both fonts use SIL OFL 1.1; full notices and licenses in `public/font-licenses/playfair-display-OFL.txt` and `public/font-licenses/inter-OFL.txt` are included in `dist/font-licenses/` during the build.
 - **Build:** Vite `^8.3.1` (8.3.1 in `package-lock.json`) — a development dependency (`devDependencies`); build inputs are configured through `build.rolldownOptions`.
 - **Testing:** Playwright — `@playwright/test` `^1.63.0` (1.63.0 in `package-lock.json`), a development dependency used by the focused browser regression tests for the navigation, the mobile contact bar, interactions (booking, lightbox, "Wróć na górę", theme persistence), section reveal, theme initialization, and the PWA manifest contracts (screenshots and shortcuts).
+- **Images:** Sharp `^0.35.5` (0.35.5 in `package-lock.json`) — a development dependency used only by `npm run images:generate`; it takes no part in the Vite build and is not shipped to the browser.
 - **Environment:** Node.js `^20.19.0 || >=22.12.0` (`engines` in `package.json`), npm (`package-lock.json`).
 - **Deployment:** Netlify configuration (`netlify.toml`, `public/_redirects`).
 
@@ -430,6 +453,8 @@ Current scope:
 │   ├── primary-navigation.js # shared entries and navigation HTML transform
 │   ├── shared-header.js    # shared header and home/legal variants (HTML transform)
 │   └── shared-footer.js    # shared footer and "Wróć na górę" button (HTML transform)
+├── scripts/
+│   └── generate-images.js  # AVIF/WebP variant generator for the approved PNGs (npm run images:generate)
 ├── css/
 │   ├── style.css           # CSS entry point (@import of layers)
 │   ├── tokens.css
@@ -492,6 +517,7 @@ npm ci
 npm run dev                      # vite — development server, default http://localhost:5173
 npm run build                    # vite build — production build into dist/
 npm run preview                  # vite preview — serves dist/, default http://localhost:4173
+npm run images:generate          # node scripts/generate-images.js — working AVIF/WebP variants in tmp/studio-noir-images/
 npm run test:nav                 # playwright test — browser regression tests for the shared navigation contract
 npm run test:mobile-contact-bar  # playwright test — browser regression tests for the mobile contact bar
 npm run test:interactions        # playwright test — browser regression tests for booking, the lightbox, "Wróć na górę", and theme persistence
@@ -504,6 +530,23 @@ npm run test:manifest            # playwright test — PWA manifest contract tes
 - All six `test:*` scripts use `playwright.config.js`, which starts its own dedicated Vite dev server on port 5183; the Playwright Chromium browser is required (`npx playwright install chromium`).
 - Pages use absolute paths and ES modules, so they require an HTTP server — the HTML files should not be opened directly from disk.
 - The service worker is registered only in production builds (`import.meta.env.PROD` in `js/main.js`), so it is active in `npm run preview` but not in `npm run dev`.
+
+### Image Variant Generation
+
+`npm run images:generate` (`scripts/generate-images.js`, Sharp) creates AVIF and WebP variants of the eleven approved Design V2 photographs (`DESIGN-PHOTOGRAPHY-BRIEF.md`, Sections 6.1–6.4). The only sources are the PNG files below, which the tool only reads:
+
+| Role | Source PNG | Output prefix | Variants (AVIF + WebP) |
+| --- | --- | --- | --- |
+| Campaign | `assets/img/hero/hero.png` | `hero-editorial` | 720×540, 1200×900 |
+| Team 01–03 | `assets/img/stylists/team-01.png` … `team-03.png` | `stylist-1` … `stylist-3` | 480×600, 800×1000 |
+| Work 01–06 | `assets/img/gallery/work-01.png` … `work-06.png` | `gallery-1` … `gallery-6` | 480×600, 800×1000 |
+| Studio | `assets/img/about/about.png` | `studio-1` | 720×480, 1200×800 |
+
+- The output is 44 files (22 AVIF, 22 WebP) in the Git-ignored `tmp/studio-noir-images/<role>/` directory (`campaign`, `team`, `work`, `studio`), for example `work/gallery-1-800.avif`. The tool writes nothing to `assets/`: pages keep using the current variants, and moving the new ones belongs to the separate integration task (IMP-DESIGN-V2-02).
+- All sources are checked before anything is written: existence, PNG format, aspect ratio (deviations up to 0.5% are corrected by a centred crop, never by stretching), and a size no smaller than the largest variant (no upscaling). Any invalid source ends the run with exit code 1 before a file is created.
+- Settings: AVIF quality 55, effort 6, 4:4:4 chroma; WebP quality 80, effort 6, smart subsampling, `photo` preset; Lanczos3 resampling. Each file is checked before it is written: format, exact dimensions, 8-bit sRGB without an alpha channel or metadata.
+- The report lists the dimensions, format, and size of every file and any variant above the brief's Section 6.4 review targets (warnings, not errors). A failed conversion ends the run with exit code 1 and removes the stale file of that name.
+- Repeated runs are safe and produce identical files: only the 44 expected files are replaced (written through a temporary file), and other files in the output directory are reported, not deleted.
 
 ### Change Verification
 
@@ -572,6 +615,7 @@ Choosing checks:
 | Booking and lightbox: `js/booking.js`, `js/lightbox.js`, booking, gallery, and lightbox markup and styles | `npm run build`, `npm run test:interactions`, `npm run test:mobile-contact-bar` (bar hidden while the lightbox is open), `git diff --check` |
 | PWA manifest: `public/manifest.webmanifest`, screenshots in `public/assets/screenshots/pwa/`, shortcut icons in `public/assets/icons/shortcuts/` | `npm run build`, `npm run test:manifest`, `git diff --check` |
 | `service-worker.js`, `js/pwa-paths.js`, precache, `offline.html`, production PWA behaviour | `npm run build`, then `npm run preview`; `git diff --check` |
+| Image variant generator: `scripts/generate-images.js` | `npm run images:generate` (44 files, exit code 0), `git diff --check` |
 | Documentation only | `git diff --check` |
 
 ### Continuous Integration (CI)

@@ -66,6 +66,7 @@ When an implementation task is defined, apply this policy and state `Changelog: 
 
 ### Build and Tooling
 
+- Added the Sharp-based `images:generate` script, which validates the approved photography masters and generates AVIF/WebP variants in a Git-ignored working directory.
 - Migrated production builds to Vite with six HTML entry points and hashed assets.
 - Moved the manifest, icons, SEO files, and Netlify redirects into `public/`.
 - Centralized shared headers, footers, and primary navigation with build-time markup validation.
