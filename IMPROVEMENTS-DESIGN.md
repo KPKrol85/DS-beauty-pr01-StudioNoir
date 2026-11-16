@@ -188,35 +188,9 @@ brand plate → studio manifesto → offer chapter → people and work → booki
 
 ### IMP-DESIGN-V2-02 — Art-direct photography by role and widen the shot vocabulary
 
-- **Status:** Proposed
-- **Priority:** P1
-- **Affected area:** `assets/img/hero`, `assets/img/stylists`, `assets/img/gallery`, a possible new studio image location, the related `<picture>` markup and Polish `alt` text in `index.html`, and the AI-image disclosure in `README.md` (an owner-approved documentation follow-up).
-- **Evidence:**
-  - Source: ten raster images with AVIF/WebP variants; `README.md` declares them AI-generated demonstration images.
-  - Visual: all ten share one shot grammar (studio portrait, near-black backdrop, black garment, warm key light). The hero subject and stylist portrait 1 share an archetype and pose, and gallery image 1 repeats it. The hero raster contains a baked "Noir" wordmark cropped as "N…oir". The gallery promises "Tekstura, światło, ruch." but contains no texture or motion frame. The craft-focused About section has no image.
-  - Runtime: imageless stretches of 2,429px and 3,604px at 1440px.
-  - Historical: IMP-DESIGN-03 replaced placeholders with this coherent set.
-- **Current state:** One consistent but uniform portrait series serves three different roles: campaign, team, and work.
-- **Design judgment:** Coherence was the right first-cycle goal. Uniformity now blurs the difference between who works at the studio and what the studio produces, and the visual story never leaves the portrait studio.
-- **Proposed improvement:** Write and apply an image-role brief with four roles:
-  - **Campaign (hero):** the brand image. Decide whether the baked "Noir" lettering stays as a signature or the image is regenerated so the typography owns the brand.
-  - **Team (stylists):** one consistent portrait format, clearly distinct from the work images (for example half-length with a consistent eye-line, on a neutral graphite backdrop or in a salon setting), with archetypes clearly different from the hero.
-  - **Work (gallery):** a mix of scales: a texture or colour close-up, back or profile results, and one motion frame. Keep six items unless the owner changes the count.
-  - **Studio:** one or two atmosphere or process frames (hands, tools, light, chair), placed in About and optionally the closing.
-
-  Shared constants: warm key light, palette compatibility, and defined crop families and focal points per breakpoint.
-- **Expected value:** Clear role distinction without relying on captions, more credible visual storytelling of craft, and imagery spread across the page sequence.
-- **Implementation scope:**
-  - May be delivered as four slices: (1) brief and owner approval; (2) asset production with the existing variant convention (480/800px; 720/1200px for the hero); (3) placement and Polish alt text; (4) visual review.
-  - Unchanged: the `<picture>` pattern, explicit `width`/`height`, lazy loading, hero preload and `fetchpriority`, lightbox `currentSrc` reuse, automatic on-demand image caching, the six gallery buttons and their labelling contract, and AI-image disclosure.
-- **Dependencies:** Owner approval of new demonstration assets and their disclosure (Section 4); IMP-DESIGN-V2-01 for placing the studio image.
-- **Acceptance criteria:**
-  - In a side-by-side review, the campaign, team, and work roles are distinguishable without captions, and the hero subject cannot be mistaken for a listed stylist.
-  - The gallery contains at least two distinct scales.
-  - About carries one studio image at 900px and above, without pushing the manifesto heading below the first screen of the section.
-  - Every new image has Polish alt text, explicit dimensions, and AVIF/WebP variants; the hero remains preloaded.
-  - Final balance is approved with the final assets, not placeholders.
-  - `npm run build` and `npm run test:interactions` pass.
+- **Status:** COMPLETED — implemented and verified.
+- **Result:** Eleven approved AI-generated photographs in four roles (Campaign, Team, Work, Studio) replace the hero, stylist, and gallery images in their existing AVIF/WebP slots, and the Studio photograph sits beneath the About values without displacing the manifesto heading. Every image carries Polish alt text and explicit dimensions, gallery captions 01, 04, and 06 match the new work, `assets/img/studio/` variants are cached on demand, and the three PWA screenshots that showed the previous photography were recaptured.
+- **Verification:** `npm run build`, `npm run test:interactions` (18/18), `npm run test:manifest` (9/9), and `git diff --check` passed; the build listed all 44 variants for on-demand caching outside the installation precache, and a production preview confirmed on-demand caching and offline loading of the Studio variant and the new `og:image` on four pages. Headless Chromium crop review at 390–1440px in both themes kept every Section 5 safe zone, and the owner approved the final visual balance; Firefox, WebKit, physical devices, and screen readers were not checked.
 - **Impact:** High
 - **Effort:** Large
 

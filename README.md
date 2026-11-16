@@ -11,7 +11,7 @@ Projekt jest budowany przez Vite jako aplikacja wielostronicowa (MPA). Kod dzia�
 Aktualny zakres:
 
 - rezerwacja jest demonstracją działającą wyłącznie po stronie przeglądarki — akcja „Zakończ demo” zmienia jedynie status w interfejsie; wybór nie jest nigdzie wysyłany ani zapisywany i nie tworzy wizyty;
-- obrazy w `assets/img/` (hero, styliści, galeria) to demonstracyjne obrazy wygenerowane przez AI na potrzeby fikcyjnego Studio Noir; nie dokumentują realizacji rzeczywistego salonu. Oryginały PNG są przechowywane obok responsywnych wariantów AVIF i WebP, a strony odwołują się wyłącznie do wariantów;
+- jedenaście fotografii w `assets/img/` (hero, sekcja O studio, styliści, galeria) to demonstracyjne obrazy wygenerowane przez AI na potrzeby fikcyjnego Studio Noir; przedstawione osoby, w tym styliści, są fikcyjne, a zdjęcia nie dokumentują realizacji rzeczywistego salonu. Zatwierdzone oryginały PNG są wyłącznie źródłami wariantów; strony odwołują się tylko do responsywnych wariantów AVIF i WebP;
 - `privacy.html`, `terms.html` i `cookies.html` zawierają treści prawne i informacyjne opracowane dla demonstracyjnego serwisu Studio Noir; nie stanowią gotowej dokumentacji prawnej dla rzeczywistego salonu.
 - dane kontaktowe publikowane w sekcji Lokalizacja, w stopkach, w dokumentach prawnych i w alternatywnych kanałach kontaktu należą do autora projektu (KP_Code Digital Studio) i nie są danymi działającego salonu fryzjerskiego; godziny otwarcia pozostają przykładem demonstracyjnym.
 
@@ -74,9 +74,11 @@ Aktualny zakres:
 ├── assets/
 │   ├── fonts/              # fonty WOFF2
 │   └── img/
-│       ├── hero/           # obraz hero: oryginał PNG, warianty AVIF/WebP
-│       ├── stylists/       # portrety stylistów: oryginały PNG, warianty AVIF/WebP
-│       └── gallery/        # zdjęcia galerii: oryginały PNG, warianty AVIF/WebP
+│       ├── hero/           # Campaign: źródło hero.png, warianty AVIF/WebP hero-editorial
+│       ├── about/          # Studio: źródło about.png (warianty w studio/)
+│       ├── studio/         # Studio: warianty AVIF/WebP studio-1 (sekcja O studio)
+│       ├── stylists/       # Team: źródła team-01…03.png, warianty AVIF/WebP stylist-1…3
+│       └── gallery/        # Work: źródła work-01…06.png, warianty AVIF/WebP gallery-1…6
 ├── build/
 │   ├── primary-navigation.js # wspólne wpisy i transformacja HTML nawigacji
 │   ├── shared-header.js    # wspólny nagłówek i warianty strony głównej/prawnych (transformacja HTML)
@@ -170,10 +172,11 @@ npm run test:manifest            # playwright test — testy kontraktów manifes
 | Work 01–06 | `assets/img/gallery/work-01.png` … `work-06.png` | `gallery-1` … `gallery-6` | 480×600, 800×1000 |
 | Studio | `assets/img/about/about.png` | `studio-1` | 720×480, 1200×800 |
 
-- Wynik to 44 pliki (22 AVIF, 22 WebP) w wykluczonym z Git katalogu `tmp/studio-noir-images/<rola>/` (`campaign`, `team`, `work`, `studio`), np. `work/gallery-1-800.avif`. Narzędzie nie zapisuje niczego w `assets/`: strony nadal korzystają z dotychczasowych wariantów, a przeniesienie nowych należy do osobnego zadania integracji (IMP-DESIGN-V2-02).
+- Wynik to 44 pliki (22 AVIF, 22 WebP) w wykluczonym z Git katalogu `tmp/studio-noir-images/<rola>/` (`campaign`, `team`, `work`, `studio`), np. `work/gallery-1-800.avif`. Narzędzie nie zapisuje niczego w `assets/`: po przeglądzie wyniku warianty kopiuje się bez zmiany nazw do katalogów produkcyjnych — `campaign/` do `assets/img/hero/`, `team/` do `assets/img/stylists/`, `work/` do `assets/img/gallery/`, `studio/` do `assets/img/studio/`.
+- Oryginały PNG pozostają niezmienionymi źródłami. Strony odwołują się wyłącznie do wariantów, więc PNG nie trafiają do `dist/`.
 - Przed zapisem sprawdzane są wszystkie źródła: istnienie, format PNG, proporcje (odchylenie do 0,5% korygowane centralnym przycięciem, bez rozciągania) i rozmiar nie mniejszy od największego wariantu (bez powiększania). Błąd któregokolwiek źródła kończy działanie kodem 1, zanim powstanie jakikolwiek plik.
 - Ustawienia: AVIF jakość 55, effort 6, chroma 4:4:4; WebP jakość 80, effort 6, smart subsampling, preset `photo`; skalowanie Lanczos3. Każdy plik jest przed zapisem sprawdzany: format, dokładne wymiary, 8-bitowe sRGB bez kanału alfa i bez metadanych.
-- Raport podaje wymiary, format i rozmiar każdego pliku oraz przekroczenia progów przeglądowych z sekcji 6.4 briefu (ostrzeżenia, nie błędy). Nieudana konwersja kończy działanie kodem 1, a nieaktualny plik o tej nazwie jest usuwany.
+- Raport podaje wymiary, format i rozmiar każdego pliku oraz przekroczenia progów przeglądowych z sekcji 6.4 briefu (ostrzeżenia, nie błędy). Trzy warianty `gallery-4` przekraczają te progi; właściciel zatwierdził obecne kodowanie, aby zachować teksturę miedzianych włosów. Nieudana konwersja kończy działanie kodem 1, a nieaktualny plik o tej nazwie jest usuwany.
 - Ponowne uruchomienie jest bezpieczne i daje identyczne pliki: zastępowane są tylko 44 oczekiwane pliki (zapis przez plik tymczasowy), a inne pliki w katalogu wyjściowym są jedynie zgłaszane, nie usuwane.
 
 ### Weryfikacja zmian
@@ -334,7 +337,7 @@ Opcjonalnie, przed krokiem 5, to samo polecenie bez flagi `--prod` (`npx netlify
 - Strona główna i strony prawne deklarują favicony z tego samego katalogu: ICO (16, 32 i 48 px), PNG 96×96, SVG z wariantem jasnym i ciemnym zależnym od `prefers-color-scheme` przeglądarki oraz Apple touch icon 180×180. `404.html` i `offline.html` deklarują te same favicony bez Apple touch icon.
 - `js/main.js` rejestruje `/service-worker.js` po zdarzeniu `load`, wyłącznie w buildzie produkcyjnym.
 - `js/pwa-paths.js` definiuje wspólne stałe `HOME_DOCUMENT` (`/index.html`) i `OFFLINE_DOCUMENT` (`/offline.html`), używane przez kontrolę precache w `vite.config.js` i obsługę nawigacji bez połączenia w `service-worker.js`.
-- Podczas buildu plugin `studio-noir-precache` zastępuje w workerze znaczniki `__STUDIO_NOIR_PRECACHE__`, `__STUDIO_NOIR_ON_DEMAND_IMAGES__` i `__STUDIO_NOIR_CACHE_VERSION__`. Lista precache obejmuje pliki wyjściowe buildu poza samym `service-worker.js` oraz pliki z `public/` z wyjątkiem nazw zaczynających się od `_` i katalogu `assets/screenshots/`. Zrzuty ekranu manifestu pobiera wyłącznie okno instalacji przeglądarki, więc nie trafiają do cache workera ani nie wpływają na wersję cache; ikony skrótów pozostają w precache. Wyjątkiem są warianty obrazów redakcyjnych z `assets/img/hero/`, `assets/img/stylists/` i `assets/img/gallery/`: nie trafiają do precache instalacyjnego, lecz na osobną listę obrazów buforowanych na żądanie. Wersja cache to fragment skrótu SHA-256 z kodu workera oraz nazw i zawartości plików z obu list. Kontrole, którymi plugin przerywa build, opisuje sekcja [Weryfikacja zmian](#weryfikacja-zmian).
+- Podczas buildu plugin `studio-noir-precache` zastępuje w workerze znaczniki `__STUDIO_NOIR_PRECACHE__`, `__STUDIO_NOIR_ON_DEMAND_IMAGES__` i `__STUDIO_NOIR_CACHE_VERSION__`. Lista precache obejmuje pliki wyjściowe buildu poza samym `service-worker.js` oraz pliki z `public/` z wyjątkiem nazw zaczynających się od `_` i katalogu `assets/screenshots/`. Zrzuty ekranu manifestu pobiera wyłącznie okno instalacji przeglądarki, więc nie trafiają do cache workera ani nie wpływają na wersję cache; ikony skrótów pozostają w precache. Wyjątkiem są warianty obrazów redakcyjnych z `assets/img/hero/`, `assets/img/studio/`, `assets/img/stylists/` i `assets/img/gallery/`: nie trafiają do precache instalacyjnego, lecz na osobną listę obrazów buforowanych na żądanie. Wersja cache to fragment skrótu SHA-256 z kodu workera oraz nazw i zawartości plików z obu list. Kontrole, którymi plugin przerywa build, opisuje sekcja [Weryfikacja zmian](#weryfikacja-zmian).
 - Instalacja zapisuje zasoby z listy precache w cache `studio-noir-<wersja>` i wywołuje `skipWaiting()`; aktywacja usuwa wyłącznie starsze cache z prefiksem `studio-noir-` i przejmuje otwarte karty (`clients.claim()`).
 - Nawigacja korzysta najpierw z sieci. Bez połączenia worker zwraca zapisaną stronę (również dla adresów bez rozszerzenia, np. `/privacy`) lub `offline.html`.
 - Worker przechwytuje żądania GET z tej samej domeny do zasobów z listy precache i z listy obrazów na żądanie: zwraca wpis z cache, a w razie jego braku pobiera zasób z sieci. Obraz z listy na żądanie trafia do cache bieżącej wersji dopiero po udanej odpowiedzi sieci. Bez połączenia dostępne są więc tylko te warianty obrazów, które wcześniej pobrano przy tej wersji cache; obrazy niewyświetlone lub inny wariant wybrany przez przeglądarkę mogą być niedostępne. Pozostałe żądania, żądania inne niż GET i żądania do innych domen nie są przechwytywane.
@@ -345,9 +348,9 @@ Opcjonalnie, przed krokiem 5, to samo polecenie bez flagi `--prod` (`npx netlify
 
 - Brak bibliotek i frameworków w kodzie uruchamianym w przeglądarce.
 - Fonty hostowane lokalnie z `font-display: swap`; strona główna i strony prawne wstępnie ładują dwa pliki fontów zmiennych (`rel="preload"`) potrzebne dla marki, nagłówków i tekstu początkowego widoku. Pozostałe grubości korzystają z tych samych plików.
-- Obrazy hero, stylistów i galerii są osadzone w `<picture>`: `<source type="image/avif">` podaje warianty AVIF, a `img` — warianty WebP jako wersję zapasową. `srcset` (720 i 1200 px dla hero, 480 i 800 px dla stylistów i galerii) oraz `sizes` dopasowane do układu pozwalają przeglądarce wybrać wariant.
+- Obrazy hero, sekcji O studio, stylistów i galerii są osadzone w `<picture>`: `<source type="image/avif">` podaje warianty AVIF, a `img` — warianty WebP jako wersję zapasową. `srcset` (720 i 1200 px dla hero i zdjęcia Studio, 480 i 800 px dla stylistów i galerii) oraz `sizes` dopasowane do układu pozwalają przeglądarce wybrać wariant.
 - Strona główna wstępnie ładuje warianty AVIF obrazu hero (`rel="preload"` z `imagesrcset`, `imagesizes` i `fetchpriority="high"`), a obraz hero ma `fetchpriority="high"`.
-- Obrazy stylistów i galerii mają `loading="lazy"` oraz jawne atrybuty `width` i `height`.
+- Zdjęcie Studio oraz obrazy stylistów i galerii mają `loading="lazy"` oraz jawne atrybuty `width` i `height`.
 - Build Vite minifikuje CSS i JS oraz nadaje zasobom w `dist/assets/` nazwy z hashem.
 
 ### Dane i trwałość stanu
@@ -364,7 +367,7 @@ Opcjonalnie, przed krokiem 5, to samo polecenie bez flagi `--prod` (`npx netlify
 - Strukturę nagłówka i warianty linków logo i rezerwacji oraz kompaktowego CTA zmienia się w `build/shared-header.js`. Cztery źródłowe strony zawierają wyłącznie znaczniki `<!-- studio-noir:shared-header -->` i `<!-- studio-noir:shared-footer -->` w miejscach nagłówka i stopki. Kolejność transformacji `pre` w `vite.config.js` musi pozostać `sharedHeader(root)` → `sharedFooter(root)` → `primaryNavigation(root)`; nawigacja wypełnia znaczniki list wygenerowane przez oba renderery, a błędna kolejność przerywa transformację.
 - Pozostałą zawartość stopki (marka, linki prawne, dane kontaktowe, linki społecznościowe, prawa autorskie) i markup przycisku „Wróć na górę” zmienia się wyłącznie w `build/shared-footer.js`; zmiana obejmuje wszystkie cztery strony.
 - `.gitignore` wyklucza wyniki buildu, zależności i lokalne artefakty. `.gitattributes` określa LF dla tekstowych źródeł i konfiguracji oraz traktuje fonty i obrazy rastrowe jako binarne. `.editorconfig` ustala UTF-8, LF, wcięcia po dwie spacje i końcowy znak nowej linii; zachowuje końcowe spacje w Markdown.
-- Nowa strona HTML wymaga dodania wejścia w `build.rolldownOptions.input` w `vite.config.js`; brak wejścia dla strony w katalogu głównym przerywa build. Nowe strony i nowe pliki w `public/` (poza `assets/screenshots/`) trafiają do listy precache automatycznie, a nowe warianty obrazów z `assets/img/hero/`, `assets/img/stylists/` i `assets/img/gallery/` używane przez strony — na listę obrazów na żądanie.
+- Nowa strona HTML wymaga dodania wejścia w `build.rolldownOptions.input` w `vite.config.js`; brak wejścia dla strony w katalogu głównym przerywa build. Nowe strony i nowe pliki w `public/` (poza `assets/screenshots/`) trafiają do listy precache automatycznie, a nowe warianty obrazów z `assets/img/hero/`, `assets/img/studio/`, `assets/img/stylists/` i `assets/img/gallery/` używane przez strony — na listę obrazów na żądanie.
 - Wersji cache ani list cache nie zmienia się ręcznie; znaczniki `__STUDIO_NOIR_PRECACHE__`, `__STUDIO_NOIR_ON_DEMAND_IMAGES__` i `__STUDIO_NOIR_CACHE_VERSION__` muszą pozostać w `service-worker.js`.
 - Historia zmian jest prowadzona w [docs/CHANGELOG.md](docs/CHANGELOG.md).
 - Cykl raportu usprawnień:
@@ -383,7 +386,7 @@ The project is built with Vite as a multi-page application (MPA). The browser-si
 Current scope:
 
 - booking is a demonstration that runs entirely in the browser — the "Zakończ demo" action only changes the status shown in the interface; the selection is not sent or stored anywhere and no appointment is created;
-- the images in `assets/img/` (hero, stylists, gallery) are AI-generated demonstration images created for the fictional Studio Noir; they do not document the work of a real salon. The original PNG files are kept alongside responsive AVIF and WebP variants, and the pages reference only the variants;
+- the eleven photographs in `assets/img/` (hero, About section, stylists, gallery) are AI-generated demonstration images created for the fictional Studio Noir; the people shown, including the stylists, are fictional, and the photographs do not document the work of a real salon. The approved original PNG files serve only as variant sources; the pages reference only the responsive AVIF and WebP variants;
 - `privacy.html`, `terms.html`, and `cookies.html` contain legal and informational content written for the Studio Noir demonstration site; they are not ready-to-use legal documentation for a real salon.
 - the contact details published in the location section, the footers, the legal documents, and the alternative contact channels belong to the project author (KP_Code Digital Studio) and are not those of an operating hair salon; the opening hours remain a demonstration example.
 
@@ -446,9 +449,11 @@ Current scope:
 ├── assets/
 │   ├── fonts/              # WOFF2 fonts
 │   └── img/
-│       ├── hero/           # hero image: original PNG, AVIF/WebP variants
-│       ├── stylists/       # stylist portraits: original PNGs, AVIF/WebP variants
-│       └── gallery/        # gallery images: original PNGs, AVIF/WebP variants
+│       ├── hero/           # Campaign: hero.png source, hero-editorial AVIF/WebP variants
+│       ├── about/          # Studio: about.png source (variants in studio/)
+│       ├── studio/         # Studio: studio-1 AVIF/WebP variants (About section)
+│       ├── stylists/       # Team: team-01…03.png sources, stylist-1…3 AVIF/WebP variants
+│       └── gallery/        # Work: work-01…06.png sources, gallery-1…6 AVIF/WebP variants
 ├── build/
 │   ├── primary-navigation.js # shared entries and navigation HTML transform
 │   ├── shared-header.js    # shared header and home/legal variants (HTML transform)
@@ -542,10 +547,11 @@ npm run test:manifest            # playwright test — PWA manifest contract tes
 | Work 01–06 | `assets/img/gallery/work-01.png` … `work-06.png` | `gallery-1` … `gallery-6` | 480×600, 800×1000 |
 | Studio | `assets/img/about/about.png` | `studio-1` | 720×480, 1200×800 |
 
-- The output is 44 files (22 AVIF, 22 WebP) in the Git-ignored `tmp/studio-noir-images/<role>/` directory (`campaign`, `team`, `work`, `studio`), for example `work/gallery-1-800.avif`. The tool writes nothing to `assets/`: pages keep using the current variants, and moving the new ones belongs to the separate integration task (IMP-DESIGN-V2-02).
+- The output is 44 files (22 AVIF, 22 WebP) in the Git-ignored `tmp/studio-noir-images/<role>/` directory (`campaign`, `team`, `work`, `studio`), for example `work/gallery-1-800.avif`. The tool writes nothing to `assets/`: after the output is reviewed, the variants are copied without renaming into the production directories — `campaign/` to `assets/img/hero/`, `team/` to `assets/img/stylists/`, `work/` to `assets/img/gallery/`, and `studio/` to `assets/img/studio/`.
+- The original PNG files remain unchanged sources. The pages reference only the variants, so the PNG files are not emitted to `dist/`.
 - All sources are checked before anything is written: existence, PNG format, aspect ratio (deviations up to 0.5% are corrected by a centred crop, never by stretching), and a size no smaller than the largest variant (no upscaling). Any invalid source ends the run with exit code 1 before a file is created.
 - Settings: AVIF quality 55, effort 6, 4:4:4 chroma; WebP quality 80, effort 6, smart subsampling, `photo` preset; Lanczos3 resampling. Each file is checked before it is written: format, exact dimensions, 8-bit sRGB without an alpha channel or metadata.
-- The report lists the dimensions, format, and size of every file and any variant above the brief's Section 6.4 review targets (warnings, not errors). A failed conversion ends the run with exit code 1 and removes the stale file of that name.
+- The report lists the dimensions, format, and size of every file and any variant above the brief's Section 6.4 review targets (warnings, not errors). Three `gallery-4` variants exceed these targets; the owner approved their current encoding to preserve the copper hair texture. A failed conversion ends the run with exit code 1 and removes the stale file of that name.
 - Repeated runs are safe and produce identical files: only the 44 expected files are replaced (written through a temporary file), and other files in the output directory are reported, not deleted.
 
 ### Change Verification
@@ -706,7 +712,7 @@ Optionally, before step 5, the same command without the `--prod` flag (`npx netl
 - The home page and the legal pages declare favicons from the same directory: an ICO (16, 32, and 48 px), a 96×96 PNG, an SVG with light and dark variants driven by the browser's `prefers-color-scheme`, and a 180×180 Apple touch icon. `404.html` and `offline.html` declare the same favicons without the Apple touch icon.
 - `js/main.js` registers `/service-worker.js` after the `load` event, in production builds only.
 - `js/pwa-paths.js` defines the shared `HOME_DOCUMENT` (`/index.html`) and `OFFLINE_DOCUMENT` (`/offline.html`) constants, used by the precache guard in `vite.config.js` and offline navigation handling in `service-worker.js`.
-- During the build, the `studio-noir-precache` plugin replaces the `__STUDIO_NOIR_PRECACHE__`, `__STUDIO_NOIR_ON_DEMAND_IMAGES__`, and `__STUDIO_NOIR_CACHE_VERSION__` markers in the worker. The precache list covers build output files other than `service-worker.js`, plus the files from `public/`, except names starting with `_` and the `assets/screenshots/` directory. Manifest screenshots are fetched only by the browser's install dialog, so they are not stored in the worker cache and do not affect the cache version; shortcut icons remain precached. The exception is the editorial image variants from `assets/img/hero/`, `assets/img/stylists/`, and `assets/img/gallery/`: they are excluded from the installation precache and placed on a separate on-demand image list. The cache version is a truncated SHA-256 hash of the worker code and the names and contents of the files on both lists. The checks with which the plugin fails the build are listed under [Change Verification](#change-verification).
+- During the build, the `studio-noir-precache` plugin replaces the `__STUDIO_NOIR_PRECACHE__`, `__STUDIO_NOIR_ON_DEMAND_IMAGES__`, and `__STUDIO_NOIR_CACHE_VERSION__` markers in the worker. The precache list covers build output files other than `service-worker.js`, plus the files from `public/`, except names starting with `_` and the `assets/screenshots/` directory. Manifest screenshots are fetched only by the browser's install dialog, so they are not stored in the worker cache and do not affect the cache version; shortcut icons remain precached. The exception is the editorial image variants from `assets/img/hero/`, `assets/img/studio/`, `assets/img/stylists/`, and `assets/img/gallery/`: they are excluded from the installation precache and placed on a separate on-demand image list. The cache version is a truncated SHA-256 hash of the worker code and the names and contents of the files on both lists. The checks with which the plugin fails the build are listed under [Change Verification](#change-verification).
 - Installation stores the precache-list assets in the `studio-noir-<version>` cache and calls `skipWaiting()`; activation deletes only older caches with the `studio-noir-` prefix and takes control of open tabs (`clients.claim()`).
 - Navigation requests are network-first. When offline, the worker returns the cached page (including extensionless URLs such as `/privacy`) or `offline.html`.
 - The worker intercepts same-origin GET requests for assets on the precache list and the on-demand image list: it returns the cached entry, falling back to the network when no entry exists. An on-demand image is added to the current cache version only after a successful network response. Offline, therefore, only image variants previously fetched under that cache version are available; images that were never displayed, or a different variant selected by the browser, may be unavailable. Other requests, non-GET requests, and cross-origin requests are not intercepted.
@@ -717,9 +723,9 @@ Optionally, before step 5, the same command without the `--prod` flag (`npx netl
 
 - No libraries or frameworks in the browser-side code.
 - Self-hosted fonts with `font-display: swap`; the home page and the legal pages preload two variable font files (`rel="preload"`) needed for the brand, headings, and text in the initial view. Other weights reuse the same files.
-- Hero, stylist, and gallery images use `<picture>`: `<source type="image/avif">` provides the AVIF variants, and the `img` provides WebP variants as the fallback. `srcset` (720 and 1200 px for the hero, 480 and 800 px for stylists and gallery) and layout-matched `sizes` let the browser select a variant.
+- Hero, About section, stylist, and gallery images use `<picture>`: `<source type="image/avif">` provides the AVIF variants, and the `img` provides WebP variants as the fallback. `srcset` (720 and 1200 px for the hero and the Studio photograph, 480 and 800 px for stylists and gallery) and layout-matched `sizes` let the browser select a variant.
 - The home page preloads the hero AVIF variants (`rel="preload"` with `imagesrcset`, `imagesizes`, and `fetchpriority="high"`), and the hero image itself uses `fetchpriority="high"`.
-- Stylist and gallery images use `loading="lazy"` and explicit `width` and `height` attributes.
+- The Studio photograph and the stylist and gallery images use `loading="lazy"` and explicit `width` and `height` attributes.
 - The Vite build minifies CSS and JS and gives assets in `dist/assets/` content-hashed filenames.
 
 ### Data and State Persistence
@@ -736,7 +742,7 @@ Optionally, before step 5, the same command without the `--prod` flag (`npx netl
 - Header structure and the logo, booking-link, and compact-CTA variants are changed in `build/shared-header.js`. The four source pages contain only `<!-- studio-noir:shared-header -->` and `<!-- studio-noir:shared-footer -->` markers in place of the header and footer. The `pre` transform order in `vite.config.js` must stay `sharedHeader(root)` → `sharedFooter(root)` → `primaryNavigation(root)`; navigation fills the list markers emitted by both renderers, and an incorrect order fails the transformation.
 - The rest of the footer (brand, legal links, contact details, social links, copyright) and the "Wróć na górę" button markup are changed only in `build/shared-footer.js`; a change applies to all four pages.
 - `.gitignore` excludes build output, dependencies, and local artifacts. `.gitattributes` sets LF for text sources and configuration and treats fonts and raster images as binary. `.editorconfig` sets UTF-8, LF, two-space indentation, and a final newline; it preserves trailing spaces in Markdown.
-- A new HTML page requires a new entry in `build.rolldownOptions.input` in `vite.config.js`; a root-level page without an entry fails the build. New pages and new files in `public/` (outside `assets/screenshots/`) are added to the precache list automatically, and new image variants from `assets/img/hero/`, `assets/img/stylists/`, and `assets/img/gallery/` used by the pages are added to the on-demand image list.
+- A new HTML page requires a new entry in `build.rolldownOptions.input` in `vite.config.js`; a root-level page without an entry fails the build. New pages and new files in `public/` (outside `assets/screenshots/`) are added to the precache list automatically, and new image variants from `assets/img/hero/`, `assets/img/studio/`, `assets/img/stylists/`, and `assets/img/gallery/` used by the pages are added to the on-demand image list.
 - The cache version and cache lists are never changed manually; the `__STUDIO_NOIR_PRECACHE__`, `__STUDIO_NOIR_ON_DEMAND_IMAGES__`, and `__STUDIO_NOIR_CACHE_VERSION__` markers must remain in `service-worker.js`.
 - The change history is kept in [docs/CHANGELOG.md](docs/CHANGELOG.md).
 - Improvement-report lifecycle:

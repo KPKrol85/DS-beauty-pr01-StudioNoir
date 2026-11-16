@@ -124,6 +124,21 @@
   margin: 0;
 }
 
+/* The studio photograph closes the values column: after the values in the
+   narrow flow, beneath them in the 2fr column from 900px. */
+.about__visual {
+  display: block;
+  margin-top: var(--space-sm);
+}
+
+.about__visual img {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 3 / 2;
+  object-fit: cover;
+  border-radius: var(--radius-sm);
+}
+
 .service-list {
   margin: 0;
   padding: 0;

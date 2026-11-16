@@ -60,7 +60,7 @@ function precacheServiceWorker() {
           assets.set(name, output.type === "chunk" ? output.code : output.source);
           // Editorial variants are cached when viewed, not all at worker installation.
           if (output.type === "asset" && output.originalFileNames.some((path) =>
-            /^assets\/img\/(hero|stylists|gallery)\//.test(path.replaceAll("\\", "/"))
+            /^assets\/img\/(hero|stylists|gallery|studio)\//.test(path.replaceAll("\\", "/"))
           )) onDemandImages.add(name);
         }
 

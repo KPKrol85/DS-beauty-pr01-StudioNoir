@@ -32,6 +32,8 @@ When an implementation task is defined, apply this policy and state `Changelog: 
 
 ### Changed
 
+- Replaced the hero, stylist, and gallery photography with an art-directed AI-generated collection and added a Studio photograph to the About section, with updated Polish alt text and gallery captions.
+- Refreshed the PWA installation screenshots that showed the previous photography.
 - Introduced chapter, standard, and utility section tiers with narrative background bands across the home page.
 - Replaced the placeholder favicon with Studio Noir browser, Apple touch, and PWA icons.
 - Adjusted fragment scrolling and keyboard focus clearance below the sticky header.
@@ -66,6 +68,7 @@ When an implementation task is defined, apply this policy and state `Changelog: 
 
 ### Build and Tooling
 
+- Extended on-demand service-worker image caching to the Studio photograph variants.
 - Added the Sharp-based `images:generate` script, which validates the approved photography masters and generates AVIF/WebP variants in a Git-ignored working directory.
 - Migrated production builds to Vite with six HTML entry points and hashed assets.
 - Moved the manifest, icons, SEO files, and Netlify redirects into `public/`.
