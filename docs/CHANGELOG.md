@@ -66,6 +66,7 @@ When an implementation task is defined, apply this policy and state `Changelog: 
 - Updated gallery editorial content while retaining AI-image disclosure in the README.
 - Kept the home-header booking CTA inactive until visible.
 - Applied KP_Code portfolio disclosures across site content, metadata, and legal pages.
+- Refined the light theme with a dark gallery chapter and ivory mats around the hero and stylist photographs.
 
 ### Build and Tooling
 

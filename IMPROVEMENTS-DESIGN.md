@@ -196,31 +196,9 @@ brand plate → studio manifesto → offer chapter → people and work → booki
 
 ### IMP-DESIGN-V2-03 — Make the light theme a deliberate photographic edition
 
-- **Status:** Proposed
-- **Priority:** P1
-- **Affected area:** Theme tokens in `css/tokens.css`; image presentation in `css/sections.css` (`.hero__visual`, `.stylist-card img`, `.gallery`); a band modifier for `#gallery` in `index.html`.
-- **Evidence:**
-  - Source: `.theme--light` remaps every surface token, but no image rule differs by theme; images only receive `--radius-sm`.
-  - Visual: in the dark theme, photo backdrops dissolve into `#0b0b0e`. In the light theme, the hero (653×490 at 1440px), three portraits, and a gallery mass about 1,400px tall render as hard-edged black blocks on `#f5f1ec`.
-  - Historical: IMP-DESIGN-01 paired surfaces across themes but did not address how imagery relates to each theme.
-- **Current state:** Both themes present identical dark-backdrop photography; only the surrounding surfaces change.
-- **Design judgment:** The dark edition is composed around the photographs; the light edition inherits them. Both are functional, but only one feels designed.
-- **Proposed improvement:** Adopt one coherent light-edition treatment, recommended as a combination of two parts:
-  - **(a) Darkroom band:** the gallery keeps a noir band in both themes, with band-scoped tokens for text, captions, numbers, icons, and focus outlines, so the light page passes through one intentional dark room.
-  - **(b) Printed-plate treatment:** in the light theme, the hero and team photographs get an ivory mat, a hairline frame, or a caption rule, so dark images read as mounted prints rather than holes in the page.
-
-  Light-backdrop image variants are not recommended because they would double the asset set.
-- **Expected value:** A light theme that is an intentional edition, with photography integrated in both themes and a strong signature moment (the darkroom) unique to Studio Noir.
-- **Implementation scope:**
-  - CSS-only plus one section modifier.
-  - Unchanged: `public/theme-bootstrap.js`, `color-scheme`, `meta theme-color`, theme persistence, the lightbox overlay and dialog, and dark-theme appearance (apart from deliberate shared refinements).
-  - Focus outlines inside the darkroom band must use a token readable on the dark ground.
-- **Dependencies:** IMP-DESIGN-V2-01 for band grouping. Re-review after IMP-DESIGN-V2-02 if images change.
-- **Acceptance criteria:**
-  - In the light theme at 390, 900, and 1440px, the gallery renders on a dark band, with contrast verified for captions, numbers, preview icons, and focus outlines (at least 4.5:1 for text and 3:1 for non-text indicators, measured during implementation).
-  - The hero and stylist images show the chosen plate treatment.
-  - Switching themes without a reload updates the band and plates correctly.
-  - `npm run build`, `npm run test:theme-first-paint`, and `npm run test:interactions` pass.
+- **Status:** COMPLETED — implemented and verified.
+- **Result:** Introduced a dark editorial gallery band in the light theme, with scoped text, accent, and focus colors. Added subtle ivory framing to the hero and stylist photographs without changing image dimensions, crops, or dark-theme appearance.
+- **Verification:** `git diff --check`, `npm run build`, and `npm run test:theme-first-paint` (28/28) passed. Chromium checks at 390, 900, and 1440px confirmed responsive layout, theme switching, and gallery contrast (7.91–16.88:1). Physical devices, Firefox, and WebKit were not tested.
 - **Impact:** High
 - **Effort:** Medium
 
