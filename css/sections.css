@@ -37,6 +37,13 @@
   border-radius: var(--radius-sm);
 }
 
+/* Paint the mat outside the image box to preserve its responsive crop. */
+.theme--light :where(.hero__visual, .stylist-card) img {
+  box-shadow:
+    0 0 0 var(--space-2xs) var(--color-surface-editorial),
+    0 0 0 calc(var(--space-2xs) + 1px) var(--color-line);
+}
+
 @media (max-width: 767px) {
   .hero__actions .button {
     scroll-margin-bottom: var(--mobile-contact-bar-clearance);
@@ -298,6 +305,18 @@
   .pricing__contact .button {
     scroll-margin-bottom: var(--mobile-contact-bar-clearance);
   }
+}
+
+/* In the light edition, reuse the Noir palette within the gallery chapter. */
+.theme--light :where(.section--darkroom) {
+  --color-ink-200: #e8e7e4;
+  --color-ink-100: #f7f5f2;
+  --color-gold-400: #c7a47e;
+  --color-gold-300: #d6b996;
+  --color-line: rgba(232, 231, 228, 0.14);
+  --color-line-accent: rgba(199, 164, 126, 0.36);
+  background: #141418;
+  color: var(--color-ink-200);
 }
 
 .gallery {
