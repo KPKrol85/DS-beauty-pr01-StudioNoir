@@ -204,32 +204,9 @@ brand plate → studio manifesto → offer chapter → people and work → booki
 
 ### IMP-DESIGN-V2-04 — Compose the offer chapter in two registers
 
-- **Status:** Proposed
-- **Priority:** P2
-- **Affected area:** `#services` and `#pricing` markup in `index.html`; `.service-list*` and `.pricing*` styles in `css/sections.css`.
-- **Evidence:**
-  - Source: both `.service-list__item` and `.pricing__item` are hairline rows with an 18px Playfair `h3`, an Inter description, and a gold Inter-600 price. `.pricing__item` adds `--space-lg` padding from 600px.
-  - Runtime: package titles start 24px right of the section and service text edge (184 vs 160px at 1440px; 69 vs 45px at 900px). Services and pricing together are 1,623px tall at 1440px and 2,296px at 390px. Services carry five 48px outlined "Zarezerwuj" buttons.
-  - Visual: the two consecutive sections read as one list repeated.
-  - Historical: IMP-DESIGN-06 replaced service cards with a list and clarified the packages.
-- **Current state:** Base services and signature packages use one row grammar with equal visual weight. Per-row booking buttons are the heaviest element in each service row, while the same action on stylist cards is a quiet text link.
-- **Design judgment:** The first cycle achieved clarity; the next step is distinction. "Sygnaturowe" packages are not currently presented as anything more than additional rows.
-- **Proposed improvement:** Present services and pricing as one offer chapter (IMP-DESIGN-V2-01) with two typographic registers:
-  - **Base services:** a typeset menu where name and price share the primary line, the description is secondary, and the booking link uses one quieter inline treatment shared with the stylist cards.
-  - **Signature packages:** a distinct register where each package's components are typeset as a sequence (for example "Diagnoza · cięcie · stylizacja") and the price uses the display-figure style from IMP-DESIGN-V2-05, set once on the editorial surface and aligned to the section's text edge.
-- **Expected value:** A clearer offer hierarchy, a stronger "signature" identity, less button repetition, and a shorter mobile offer.
-- **Implementation scope:** Unchanged:
-  - the `#services` and `#pricing` IDs and the "Usługi" and "Cennik" navigation targets;
-  - the five `data-booking-preselect-service` links, their `href="#booking"`, `aria-label` values, no-JavaScript behavior, 48px target height, and mobile `scroll-margin-bottom`;
-  - all prices and copy, the demo note, and the "Kontakt z autorem" link.
-- **Dependencies:** IMP-DESIGN-V2-01; IMP-DESIGN-V2-05 for figure style.
-- **Acceptance criteria:**
-  - At 390, 900, and 1440px in both themes, base services and packages are distinguishable at a glance through typography and composition, not color alone.
-  - Service and package text edges align with the section title.
-  - The services section at 390×844 is shorter than the current 1,365px.
-  - All five preselection links keep a visible focus outline and select the correct option.
-  - No horizontal overflow at 320px.
-  - `npm run build`, `npm run test:interactions`, and `npm run test:mobile-contact-bar` pass.
+- **Status:** COMPLETED — implemented and verified.
+- **Result:** Reorganized base services into a compact editorial menu with aligned names and prices, secondary descriptions, and inline booking links shared with stylist cards. Distinguished signature packages through stronger typography, prominent prices, and responsive composition while preserving all content and booking contracts.
+- **Verification:** `git diff --check`, `npm run build`, `npm run test:interactions` (18/18), and `npm run test:mobile-contact-bar` (14/14) passed. Chromium checks in both themes at 390, 900, and 1440px confirmed content alignment, accessible booking links with 48px targets, correct preselection for all five services, no horizontal overflow at 320px, and a 43.3% reduction in services section height (1320px to 748.34px at 390×844). Verification was limited to Chromium with emulated viewports.
 - **Impact:** Medium
 - **Effort:** Medium
 
