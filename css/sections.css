@@ -154,31 +154,41 @@
 
 .service-list__item {
   display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: var(--space-sm);
-  padding-block: var(--space-lg);
+  grid-template-columns: minmax(0, 1fr) fit-content(50%);
+  grid-template-areas:
+    "title price"
+    "desc action";
+  align-items: baseline;
+  column-gap: var(--space-sm);
+  padding-block: var(--space-sm);
   border-top: 1px solid var(--color-line);
 }
 
 .service-list__title {
-  margin-bottom: var(--space-xs);
+  grid-area: title;
+  margin: 0;
 }
 
 .service-list__desc {
+  grid-area: desc;
+  align-self: center;
   margin: 0;
   max-inline-size: var(--measure-intro);
+  font-size: var(--fs-sm);
   text-wrap: pretty;
 }
 
 .service-list__price {
+  grid-area: price;
   justify-self: end;
-  text-align: right;
-  white-space: nowrap;
+  text-align: end;
   font-weight: 600;
   color: var(--color-gold-300);
 }
 
 .service-list__action {
+  grid-area: action;
+  align-self: center;
   justify-self: end;
 }
 
@@ -225,12 +235,11 @@
   background: transparent;
 }
 
+.service-list__action,
 .stylist-card__action {
   display: inline-flex;
   align-items: center;
-  justify-self: start;
   min-height: var(--size-control);
-  margin-top: var(--space-2xs);
   padding-block: var(--space-xs);
   color: var(--color-gold-300);
   font-size: var(--fs-sm);
@@ -240,58 +249,60 @@
   transition: text-decoration-color 0.2s ease;
 }
 
+.stylist-card__action {
+  justify-self: start;
+  margin-top: var(--space-2xs);
+}
+
+.service-list__action:focus-visible,
 .stylist-card__action:focus-visible {
   text-decoration-color: var(--color-line-accent);
 }
 
 @media (hover: hover) {
+  .service-list__action:hover,
   .stylist-card__action:hover {
     text-decoration-color: var(--color-line-accent);
   }
 }
 
+.service-list__action:active,
 .stylist-card__action:active {
   color: var(--color-gold-400);
 }
 
-@media (max-width: 767px) {
-  .stylist-card__action {
-    scroll-margin-bottom: var(--mobile-contact-bar-clearance);
-  }
+.section--pricing {
+  background: var(--color-surface-editorial);
 }
 
 .pricing {
-  display: grid;
-  gap: var(--space-md);
+  border-block-start: 1px solid var(--color-line);
 }
 
-/* Narrow screens: the name and price share the first line, and the description
-   takes the full row width beneath them. Rows sit flush with the section edge. */
 .pricing__item {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  grid-template-areas:
-    "title price"
-    "desc desc";
-  align-items: baseline;
-  column-gap: var(--space-md);
-  padding: var(--space-lg) 0;
-  border-bottom: 1px solid var(--color-line);
+  gap: var(--space-xs);
+  padding-block: var(--space-lg);
+  border-block-end: 1px solid var(--color-line);
 }
 
 .pricing__title {
-  grid-area: title;
+  margin: 0;
+  font-size: var(--fs-xl);
+  font-weight: 500;
+  line-height: var(--lh-display);
 }
 
 .pricing__desc {
-  grid-area: desc;
+  margin: 0;
+  max-inline-size: var(--measure-intro);
   text-wrap: pretty;
 }
 
 .pricing__price {
-  grid-area: price;
-  white-space: nowrap;
+  font-size: var(--fs-lg);
   font-weight: 600;
+  line-height: var(--lh-heading);
   color: var(--color-gold-300);
 }
 
@@ -302,6 +313,7 @@
 
 @media (max-width: 767px) {
   .service-list__action,
+  .stylist-card__action,
   .pricing__contact .button {
     scroll-margin-bottom: var(--mobile-contact-bar-clearance);
   }
@@ -1227,26 +1239,6 @@
     column-gap: var(--space-xl);
   }
 
-  .service-list__item {
-    grid-template-columns: minmax(0, 1fr) auto;
-    column-gap: var(--space-xl);
-  }
-
-  .service-list__body {
-    grid-row: span 2;
-  }
-
-  .pricing__item {
-    grid-template-areas:
-      "title price"
-      "desc price";
-    padding: var(--space-lg);
-  }
-
-  .pricing__price {
-    align-self: center;
-  }
-
   .gallery {
     grid-template-columns: repeat(6, minmax(0, 1fr));
   }
@@ -1303,11 +1295,25 @@
 @media (min-width: 900px) {
   .service-list__item {
     grid-template-columns: minmax(0, 1fr) auto auto;
-    align-items: center;
+    grid-template-areas:
+      "title price action"
+      "desc . action";
+    column-gap: var(--space-xl);
   }
 
-  .service-list__body {
-    grid-row: auto;
+  .pricing__item {
+    grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+    align-items: baseline;
+    column-gap: var(--space-3xl);
+  }
+
+  .pricing__title {
+    grid-column: 1 / -1;
+    font-size: var(--fs-utility);
+  }
+
+  .pricing__price {
+    font-size: var(--fs-xl);
   }
 
   .about__layout {

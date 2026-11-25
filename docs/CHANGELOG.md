@@ -32,6 +32,7 @@ When an implementation task is defined, apply this policy and state `Changelog: 
 
 ### Changed
 
+- Reorganized the offer into a compact service menu with inline booking links and a distinct layout for signature packages.
 - Refined the light theme with a dark gallery chapter and ivory mats around the hero and stylist photographs.
 - Replaced the hero, stylist, and gallery photography with an art-directed AI-generated collection and added a Studio photograph to the About section, with updated Polish alt text and gallery captions.
 - Refreshed the PWA installation screenshots that showed the previous photography.
