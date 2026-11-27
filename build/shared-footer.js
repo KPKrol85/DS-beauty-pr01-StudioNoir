@@ -62,7 +62,7 @@ function renderFooter(page) {
             <span class="brand-symbol footer__symbol" aria-hidden="true"></span>
             <p class="footer__logo">Studio Noir</p>
             <p class="footer__tagline">Hair &amp; Style</p>
-            <p class="footer__note">Fikcyjne studio fryzjerskie — projekt demonstracyjny z portfolio KP_Code Digital Studio. Usługi, ceny i informacje o salonie mają charakter przykładowy.</p>
+            <p class="footer__note">Fikcyjne studio fryzjerskie — projekt demonstracyjny z portfolio KP_Code Digital Studio. Usługi, ceny i&nbsp;informacje o&nbsp;salonie mają charakter przykładowy.</p>
           </div>
           <nav class="footer__group" aria-labelledby="footer-navigation-title">
             <h2 class="footer__heading" id="footer-navigation-title">Nawigacja</h2>

@@ -111,15 +111,23 @@
 .about__value {
   display: grid;
   grid-template-columns: 2.5rem minmax(0, 1fr);
+  align-items: baseline;
   gap: var(--space-md);
   padding-block: var(--space-lg);
   border-top: 1px solid var(--color-line);
 }
 
-.about__number {
-  font-family: var(--font-display);
-  font-size: var(--fs-xl);
-  line-height: var(--lh-heading);
+/* Figure policy: indices, prices, and ratings use lining figures. Indices
+   share one marker in Inter, the face with tabular figures (`tnum`); the
+   bundled Playfair Display offers lining (`lnum`) but not tabular figures. */
+.about__number,
+.booking__index,
+.gallery__number {
+  font-family: var(--font-body);
+  font-size: var(--fs-xs);
+  font-weight: 500;
+  letter-spacing: var(--tracking-label);
+  font-variant-numeric: lining-nums tabular-nums;
   color: var(--color-gold-300);
 }
 
@@ -183,6 +191,7 @@
   justify-self: end;
   text-align: end;
   font-weight: 600;
+  font-variant-numeric: lining-nums tabular-nums;
   color: var(--color-gold-300);
 }
 
@@ -303,6 +312,7 @@
   font-size: var(--fs-lg);
   font-weight: 600;
   line-height: var(--lh-heading);
+  font-variant-numeric: lining-nums tabular-nums;
   color: var(--color-gold-300);
 }
 
@@ -411,10 +421,7 @@
 }
 
 .gallery__number {
-  color: var(--color-gold-400);
-  font-size: var(--fs-xs);
   line-height: 1.75;
-  font-variant-numeric: tabular-nums;
 }
 
 .gallery__preview {
@@ -485,14 +492,6 @@
   margin-bottom: var(--space-md);
   font-size: var(--fs-xl);
   font-weight: 500;
-}
-
-.booking__index {
-  font-family: var(--font-body);
-  font-size: var(--fs-xs);
-  font-weight: 500;
-  letter-spacing: var(--tracking-label);
-  color: var(--color-gold-300);
 }
 
 .booking__options {
@@ -712,6 +711,7 @@
 .testimonials__score {
   font-family: var(--font-display);
   font-size: var(--fs-lg);
+  font-variant-numeric: lining-nums;
   color: var(--color-ink-100);
 }
 

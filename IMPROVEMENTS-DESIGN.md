@@ -212,31 +212,9 @@ brand plate → studio manifesto → offer chapter → people and work → booki
 
 ### IMP-DESIGN-V2-05 — Typeset Polish editorial details: numerals and line breaks
 
-- **Status:** Proposed
-- **Priority:** P2
-- **Affected area:** Numeral and index styles (`.about__number`, `.booking__index`, `.gallery__number`, `.testimonials__score`, price classes); short copy in `index.html`, the legal-page headings, and `build/shared-footer.js`.
-- **Evidence:**
-  - Source / Runtime: `.about__number` computes `font-family: "Playfair Display"` with `font-variant-numeric: normal`. `.booking__index` uses tracked 12px Inter; `.gallery__number` uses tabular 12px Inter.
-  - Visual: old-style Playfair figures make "01" read close to "o1" and set "4.9 / 5.0" with mixed heights, while prices use Inter lining figures. Single-letter words hang at line ends: "Fryzjerstwo w", "Kontakt z", "stylistów z", "Krótkie cięcie z", "tonów, a", "informacje o" (viewports in Section 3).
-- **Current state:** Three numeral treatments serve one indexing role, and display text breaks without Polish typesetting conventions.
-- **Design judgment:** Hanging single-letter words are a recognized flaw in Polish editorial typesetting and are most visible at display sizes. A single index style would make numbering a coherent motif rather than three accidents.
-- **Proposed improvement:**
-  - Define one figure policy: lining figures for indices, prices, and ratings; old-style figures only in running Playfair text, if at all.
-  - Define one index style shared by About, booking, gallery, and any chapter marker.
-  - Bind single-letter Polish words (a, i, o, u, w, z and their capitals) to the following word in headings, display text, captions, short copy, and the shared footer. Applying this to legal prose is an owner decision.
-- **Expected value:** Editorial polish at the scale where readers notice it most, and a consistent numbering motif that supports the chapter system.
-- **Implementation scope:**
-  - No wording changes and no new font files.
-  - Verify that the bundled Playfair Display file supports lining figures (`lnum`) before relying on them; otherwise set indices in Inter.
-  - Apply binding in canonical sources only (root HTML and `build/shared-*.js`), never in `dist/`.
-- **Dependencies:** None. Coordinate with IMP-DESIGN-V2-01 and V2-04.
-- **Acceptance criteria:**
-  - At 320, 390, 900, and 1440px, no heading, display line, caption, or short copy ends with a single-letter word.
-  - Indices in About, booking, and gallery share one style.
-  - Prices, ratings, and indices use the defined figure style.
-  - Accessible names are unchanged.
-  - No overflow at 320px or at 200% zoom.
-  - `npm run build` and `npm run test:nav` (footer navigation) pass.
+- **Status:** COMPLETED — implemented and verified.
+- **Result:** Indices in About, booking, and gallery share one Inter marker with tabular lining figures, prices use tabular lining figures, and the rating uses Playfair lining figures; the bundled fonts were confirmed to provide Playfair `lnum` (no `tnum`) and Inter `tnum` (lining by default). Single-letter Polish words are bound with `&nbsp;` in home-page headings and short copy, gallery captions, testimonials, the shared footer note, and legal headings with their contents entries; legal prose, navigation labels, and JavaScript-managed booking text are unchanged.
+- **Verification:** `git diff --check`, `npm run build`, `npm run test:nav` (65/65), and `npm run test:interactions` (18/18) passed, and the source diff is whitespace-only after normalization. A Chromium line-end scan at 320, 390, 900, and 1440px, 640×400, and 320×256 in both themes found no hanging single-letter word in scope and no horizontal overflow; index contrast is at least 5.10:1. Chromium only; accessible names are whitespace-equivalent but contain U+00A0.
 - **Impact:** Medium
 - **Effort:** Small
 
